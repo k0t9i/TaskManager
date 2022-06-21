@@ -215,7 +215,7 @@ final class Project extends AggregateRoot
 
     public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
     {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureIsOwner($currentUserId);
 
         if ($this->isOwner($owner->userId)) {
@@ -236,7 +236,7 @@ final class Project extends AggregateRoot
 
     public function addParticipant(ProjectParticipant $participant): void
     {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
 
         if ($this->isParticipant($participant->userId)) {
             throw new UserIsAlreadyParticipantException();
@@ -255,7 +255,7 @@ final class Project extends AggregateRoot
 
     public function removeParticipant(ProjectParticipant $participant, UserId $currentUserId): void
     {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureCanChangeProjectParticipant($participant->userId, $currentUserId);
 
         if (!$this->isParticipant($participant->userId)) {
@@ -313,7 +313,7 @@ final class Project extends AggregateRoot
      */
     public function changeStatus(ProjectStatus $status, UserId $currentUserId): void
     {
-        $this->status?->ensureCanBeChangedTo($status);
+        $this->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureIsOwner($currentUserId);
 
         // Close project tasks if project was closed
@@ -346,7 +346,7 @@ final class Project extends AggregateRoot
         User $owner,
         UserId $currentUserId
     ): void {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureCanChangeTask($owner->getId(), $currentUserId);
 
         if ($startDate->isGreaterThan($this->finishDate)) {
@@ -385,24 +385,19 @@ final class Project extends AggregateRoot
         TaskFinishDate $finishDate,
         UserId $currentUserId
     ): void {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
 
-        if ($startDate->isGreaterThan($this->finishDate)) {
+        if ($startDate->isGreaterThan($this->getFinishDate())) {
             throw new TaskStartDateGreaterThanProjectFinishDateException();
         }
-        if ($finishDate->isGreaterThan($this->finishDate)) {
+        if ($finishDate->isGreaterThan($this->getFinishDate())) {
             throw new TaskFinishDateGreaterThanProjectFinishDateException();
         }
         $this->ensureProjectTaskExits($id);
         $task = $this->tasks[$id->value];
-        $task->getStatus()?->ensureAllowsModification();
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
-        $task->setName($name);
-        $task->setBrief($brief);
-        $task->setDescription($description);
-        $task->setStartDate($startDate);
-        $task->setFinishDate($finishDate);
+        $task->changeInformation($name, $brief, $description, $startDate, $finishDate);
 
         $this->registerEvent(new TaskInformationWasChangedEvent(
             $id->value,
@@ -417,7 +412,7 @@ final class Project extends AggregateRoot
 
     public function deleteTask(TaskId $id, UserId $currentUserId): void
     {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectTaskExits($id);
 
         $task = $this->tasks[$id->value];
@@ -432,10 +427,10 @@ final class Project extends AggregateRoot
 
     public function changeTaskStatus(TaskId $id, TaskStatus $status, UserId $currentUserId): void
     {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectTaskExits($id);
         $task = $this->tasks[$id->value];
-        $task->getStatus()?->ensureCanBeChangedTo($status);
+        $task->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
         $task->setStatus($status);

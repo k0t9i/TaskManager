@@ -192,6 +192,21 @@ class Task
         }
     }
 
+    public function changeInformation(
+        TaskName $name,
+        TaskBrief $brief,
+        TaskDescription $description,
+        TaskStartDate $startDate,
+        TaskFinishDate $finishDate,
+    ) : void {
+        $this->getStatus()->ensureAllowsModification();
+        $this->setName($name);
+        $this->setBrief($brief);
+        $this->setDescription($description);
+        $this->setStartDate($startDate);
+        $this->setFinishDate($finishDate);
+    }
+
     private function ensureFinishDateGreaterThanStart()
     {
         if ($this->startDate->isGreaterThan($this->finishDate)) {
