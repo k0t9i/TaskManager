@@ -7,7 +7,9 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 
 final class TaskStatusWasChangedEvent extends DomainEvent
 {
-    public function __construct(public readonly int $status)
-    {
+    public function __construct(
+        public readonly string $id,
+        public readonly int $status
+    ) {
     }
 }

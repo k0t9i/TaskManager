@@ -7,7 +7,9 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 
 final class ProjectParticipantWasRemovedEvent extends DomainEvent
 {
-    public function __construct(public readonly string $participantId)
-    {
+    public function __construct(
+        public readonly string $id,
+        public readonly string $participantId
+    ) {
     }
 }

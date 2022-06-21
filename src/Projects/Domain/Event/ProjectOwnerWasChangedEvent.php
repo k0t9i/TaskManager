@@ -7,7 +7,9 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 
 final class ProjectOwnerWasChangedEvent extends DomainEvent
 {
-    public function __construct(public readonly string $ownerId)
-    {
+    public function __construct(
+        public readonly string $id,
+        public readonly string $ownerId
+    ) {
     }
 }

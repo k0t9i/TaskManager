@@ -8,6 +8,7 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 final class ProjectInformationWasChangedEvent extends DomainEvent
 {
     public function __construct(
+        public readonly string $id,
         public readonly string $name,
         public readonly string $description,
         public readonly string $finishDate,

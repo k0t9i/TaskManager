@@ -230,7 +230,10 @@ final class Project extends AggregateRoot
         }
         $this->owner = $owner;
 
-        $this->registerEvent(new ProjectOwnerWasChangedEvent($this->owner->userId->value));
+        $this->registerEvent(new ProjectOwnerWasChangedEvent(
+            $this->getId()->value,
+            $this->owner->userId->value
+        ));
     }
 
     public function addParticipant(ProjectParticipant $participant): void
@@ -246,7 +249,10 @@ final class Project extends AggregateRoot
 
         $this->participants[$participant->userId->value] = $participant;
 
-        $this->registerEvent(new ProjectParticipantWasAddedEvent($participant->userId->value));
+        $this->registerEvent(new ProjectParticipantWasAddedEvent(
+            $this->getId()->value,
+            $participant->userId->value
+        ));
     }
 
     public function removeParticipant(ProjectParticipant $participant, UserId $currentUserId): void
@@ -265,7 +271,10 @@ final class Project extends AggregateRoot
 
         unset($this->participants[$participant->userId->value]);
 
-        $this->registerEvent(new ProjectParticipantWasRemovedEvent($participant->userId->value));
+        $this->registerEvent(new ProjectParticipantWasRemovedEvent(
+            $this->getId()->value,
+            $participant->userId->value
+        ));
     }
 
     public function changeInformation(
@@ -284,15 +293,22 @@ final class Project extends AggregateRoot
         foreach ($this->tasks as $task) {
             if ($task->getStartDate()->isGreaterThan($this->finishDate)) {
                 $task->setStartDate(new TaskStartDate($this->finishDate->getValue()));
-                $this->registerEvent(new TaskStartDateWasChangedEvent($task->getStartDate()->getValue()));
+                $this->registerEvent(new TaskStartDateWasChangedEvent(
+                    $task->getId()->value,
+                    $task->getStartDate()->getValue()
+                ));
             }
             if ($task->getFinishDate()->isGreaterThan($this->finishDate)) {
                 $task->setFinishDate(new TaskFinishDate($this->finishDate->getValue()));
-                $this->registerEvent(new TaskFinishDateWasChangedEvent($task->getFinishDate()->getValue()));
+                $this->registerEvent(new TaskFinishDateWasChangedEvent(
+                    $task->getId()->value,
+                    $task->getFinishDate()->getValue()
+                ));
             }
         }
 
         $this->registerEvent(new ProjectInformationWasChangedEvent(
+            $this->getId()->value,
             $this->name->value,
             $this->description->value,
             $this->finishDate->getValue()
@@ -321,6 +337,7 @@ final class Project extends AggregateRoot
                 if ($task->getStatus() instanceof ActiveTaskStatus) {
                     $task->setStatus(new ClosedTaskStatus());
                     $this->registerEvent(new TaskStatusWasChangedEvent(
+                        $task->getId()->value,
                         TaskStatusFactory::scalarFromObject($task->getStatus())
                     ));
                 }
@@ -329,6 +346,7 @@ final class Project extends AggregateRoot
         $this->status = $status;
 
         $this->registerEvent(new ProjectStatusWasChangedEvent(
+            $this->getId()->value,
             ProjectStatusFactory::scalarFromObject($status)
         ));
     }
@@ -423,8 +441,7 @@ final class Project extends AggregateRoot
         unset($this->tasks[$id->value]);
 
         $this->registerEvent(new TaskWasDeletedEvent(
-            $id->value,
-            $this->id->value,
+            $id->value
         ));
     }
 
@@ -439,6 +456,7 @@ final class Project extends AggregateRoot
         $task->setStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
+            $task->getId()->value,
             TaskStatusFactory::scalarFromObject($status)
         ));
     }

@@ -8,7 +8,7 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 final class ProjectRequestStatusWasChangedEvent extends DomainEvent
 {
     public function __construct(
-        public string $requestId,
+        public string $id,
         public readonly int $status
     ) {
     }
