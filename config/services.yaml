@@ -22,6 +22,7 @@ services:
             - '../src/**/Domain/Entity/*'
             - '../src/**/Domain/Exception/*'
             - '../src/**/Domain/ValueObject/*'
+            - '../src/**/Domain/Event/*'
             - '../src/Shared/Infrastructure/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
