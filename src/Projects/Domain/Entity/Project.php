@@ -42,9 +42,7 @@ use App\Projects\Domain\ValueObject\ProjectRequestUser;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Tasks\Domain\Entity\Task;
-use App\Tasks\Domain\Event\TaskFinishDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskInformationWasChangedEvent;
-use App\Tasks\Domain\Event\TaskStartDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
 use App\Tasks\Domain\Event\TaskWasCreatedEvent;
 use App\Tasks\Domain\Event\TaskWasDeletedEvent;
@@ -283,7 +281,7 @@ final class Project extends AggregateRoot
         ProjectFinishDate $finishDate,
         UserId $currentUserId
     ): void {
-        $this->status?->ensureAllowsModification();
+        $this->getStatus()->ensureAllowsModification();
         $this->ensureIsOwner($currentUserId);
 
         $this->name = $name;
@@ -291,20 +289,7 @@ final class Project extends AggregateRoot
         $this->finishDate = $finishDate;
 
         foreach ($this->tasks as $task) {
-            if ($task->getStartDate()->isGreaterThan($this->finishDate)) {
-                $task->setStartDate(new TaskStartDate($this->finishDate->getValue()));
-                $this->registerEvent(new TaskStartDateWasChangedEvent(
-                    $task->getId()->value,
-                    $task->getStartDate()->getValue()
-                ));
-            }
-            if ($task->getFinishDate()->isGreaterThan($this->finishDate)) {
-                $task->setFinishDate(new TaskFinishDate($this->finishDate->getValue()));
-                $this->registerEvent(new TaskFinishDateWasChangedEvent(
-                    $task->getId()->value,
-                    $task->getFinishDate()->getValue()
-                ));
-            }
+            $task->limitDatesByProjectFinishDate($this);
         }
 
         $this->registerEvent(new ProjectInformationWasChangedEvent(

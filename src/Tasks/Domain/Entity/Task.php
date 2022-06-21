@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Projects\Domain\Entity\Project;
+use App\Tasks\Domain\Event\TaskFinishDateWasChangedEvent;
+use App\Tasks\Domain\Event\TaskStartDateWasChangedEvent;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
@@ -170,6 +172,24 @@ class Task
     public function isOwner(UserId $userId): bool
     {
         return $this->owner->getId()->value === $userId->value;
+    }
+
+    public function limitDatesByProjectFinishDate(Project $project): void
+    {
+        if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
+            $this->setStartDate(new TaskStartDate($project->getFinishDate()->getValue()));
+            $project->registerEvent(new TaskStartDateWasChangedEvent(
+                $this->getId()->value,
+                $this->getStartDate()->getValue()
+            ));
+        }
+        if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
+            $this->setFinishDate(new TaskFinishDate($project->getFinishDate()->getValue()));
+            $project->registerEvent(new TaskFinishDateWasChangedEvent(
+                $this->getId()->value,
+                $this->getFinishDate()->getValue()
+            ));
+        }
     }
 
     private function ensureFinishDateGreaterThanStart()
