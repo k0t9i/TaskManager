@@ -9,21 +9,25 @@ use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\Projects\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
+use App\Projects\Domain\Event\ProjectRequestStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectRequestWasCreatedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
 use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
+use App\Projects\Domain\Exception\ProjectRequestNotExistException;
 use App\Projects\Domain\Exception\ProjectTaskNotExistException;
 use App\Projects\Domain\Exception\ProjectUserNotExistException;
 use App\Projects\Domain\Exception\UserHasProjectTaskException;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
+use App\Projects\Domain\Factory\ProjectRequestStatusFactory;
 use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
+use App\Projects\Domain\ValueObject\ConfirmedProjectRequestStatus;
 use App\Projects\Domain\ValueObject\PendingProjectRequestStatus;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectFinishDate;
@@ -33,6 +37,7 @@ use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipant;
 use App\Projects\Domain\ValueObject\ProjectRequestChangeDate;
 use App\Projects\Domain\ValueObject\ProjectRequestId;
+use App\Projects\Domain\ValueObject\ProjectRequestStatus;
 use App\Projects\Domain\ValueObject\ProjectRequestUser;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
@@ -431,7 +436,7 @@ final class Project extends AggregateRoot
         $task->getStatus()?->ensureCanBeChangedTo($status);
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
-        $task->setStatus(new ClosedTaskStatus());
+        $task->setStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
             TaskStatusFactory::scalarFromObject($status)
@@ -466,6 +471,30 @@ final class Project extends AggregateRoot
         ));
     }
 
+    public function changeProjectRequestStatus(
+        ProjectRequestId $id,
+        ProjectRequestStatus $status,
+        UserId $currentUserId)
+    : void {
+        $this->getStatus()->ensureAllowsModification();
+        $this->ensureProjectRequestExits($id);
+        $request = $this->requests[$id->value];
+        $request->getStatus()->ensureCanBeChangedTo($status);
+        $this->ensureIsOwner($currentUserId);
+
+        $request->setStatus($status);
+        if ($status instanceof ConfirmedProjectRequestStatus) {
+            $this->addParticipant(
+                new ProjectParticipant($request->getUser()->userId)
+            );
+        }
+
+        $this->registerEvent(new ProjectRequestStatusWasChangedEvent(
+            $request->getId()->value,
+            ProjectRequestStatusFactory::scalarFromObject($status)
+        ));
+    }
+
     private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
     {
         if (!$this->isOwner($currentUserId) && $participantId->value !== $currentUserId->value) {
@@ -484,6 +513,13 @@ final class Project extends AggregateRoot
     {
         if (!array_key_exists($taskId->value, $this->tasks)) {
             throw new ProjectTaskNotExistException();
+        }
+    }
+
+    private function ensureProjectRequestExits(ProjectRequestId $requestId): void
+    {
+        if (!array_key_exists($requestId->value, $this->requests)) {
+            throw new ProjectRequestNotExistException();
         }
     }
 }
