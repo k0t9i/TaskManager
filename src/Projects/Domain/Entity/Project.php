@@ -52,7 +52,6 @@ use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateExceptio
 use App\Tasks\Domain\Factory\TaskStatusFactory;
 use App\Tasks\Domain\TaskCollection;
 use App\Tasks\Domain\ValueObject\ActiveTaskStatus;
-use App\Tasks\Domain\ValueObject\ClosedTaskStatus;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskFinishDate;
@@ -316,16 +315,9 @@ final class Project extends AggregateRoot
         $this->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureIsOwner($currentUserId);
 
-        // Close project tasks if project was closed
         if ($status instanceof ClosedProjectStatus) {
             foreach ($this->tasks as $task) {
-                if ($task->getStatus() instanceof ActiveTaskStatus) {
-                    $task->setStatus(new ClosedTaskStatus());
-                    $this->registerEvent(new TaskStatusWasChangedEvent(
-                        $task->getId()->value,
-                        TaskStatusFactory::scalarFromObject($task->getStatus())
-                    ));
-                }
+                $task->closeTaskIfProjectWasClosed($this);
             }
         }
         $this->status = $status;
@@ -430,10 +422,9 @@ final class Project extends AggregateRoot
         $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectTaskExits($id);
         $task = $this->tasks[$id->value];
-        $task->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
-        $task->setStatus($status);
+        $task->changeStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
             $task->getId()->value,
@@ -477,10 +468,9 @@ final class Project extends AggregateRoot
         $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectRequestExits($id);
         $request = $this->requests[$id->value];
-        $request->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureIsOwner($currentUserId);
 
-        $request->setStatus($status);
+        $request->changeStatus($status);
         if ($status instanceof ConfirmedProjectRequestStatus) {
             $this->addParticipant(
                 new ProjectParticipant($request->getUser()->userId)

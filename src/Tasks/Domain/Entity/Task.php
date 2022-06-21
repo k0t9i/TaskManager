@@ -6,7 +6,11 @@ namespace App\Tasks\Domain\Entity;
 use App\Projects\Domain\Entity\Project;
 use App\Tasks\Domain\Event\TaskFinishDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStartDateWasChangedEvent;
+use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
+use App\Tasks\Domain\Factory\TaskStatusFactory;
+use App\Tasks\Domain\ValueObject\ActiveTaskStatus;
+use App\Tasks\Domain\ValueObject\ClosedTaskStatus;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskFinishDate;
@@ -39,14 +43,6 @@ class Task
     public function getProject(): Project
     {
         return $this->project;
-    }
-
-    /**
-     * @param Project $project
-     */
-    public function setProject(Project $project): void
-    {
-        $this->project = $project;
     }
 
     /**
@@ -116,7 +112,7 @@ class Task
     /**
      * @param TaskName $name
      */
-    public function setName(TaskName $name): void
+    private function setName(TaskName $name): void
     {
         $this->name = $name;
     }
@@ -124,7 +120,7 @@ class Task
     /**
      * @param TaskBrief $brief
      */
-    public function setBrief(TaskBrief $brief): void
+    private function setBrief(TaskBrief $brief): void
     {
         $this->brief = $brief;
     }
@@ -132,7 +128,7 @@ class Task
     /**
      * @param TaskDescription $description
      */
-    public function setDescription(TaskDescription $description): void
+    private function setDescription(TaskDescription $description): void
     {
         $this->description = $description;
     }
@@ -140,7 +136,7 @@ class Task
     /**
      * @param TaskStartDate $startDate
      */
-    public function setStartDate(TaskStartDate $startDate): void
+    private function setStartDate(TaskStartDate $startDate): void
     {
         $this->startDate = $startDate;
     }
@@ -148,23 +144,15 @@ class Task
     /**
      * @param TaskFinishDate $finishDate
      */
-    public function setFinishDate(TaskFinishDate $finishDate): void
+    private function setFinishDate(TaskFinishDate $finishDate): void
     {
         $this->finishDate = $finishDate;
     }
 
     /**
-     * @param User $owner
-     */
-    public function setOwner(User $owner): void
-    {
-        $this->owner = $owner;
-    }
-
-    /**
      * @param TaskStatus $status
      */
-    public function setStatus(TaskStatus $status): void
+    private function setStatus(TaskStatus $status): void
     {
         $this->status = $status;
     }
@@ -198,13 +186,30 @@ class Task
         TaskDescription $description,
         TaskStartDate $startDate,
         TaskFinishDate $finishDate,
-    ) : void {
+    ): void {
         $this->getStatus()->ensureAllowsModification();
         $this->setName($name);
         $this->setBrief($brief);
         $this->setDescription($description);
         $this->setStartDate($startDate);
         $this->setFinishDate($finishDate);
+    }
+
+    public function closeTaskIfProjectWasClosed(Project $project): void
+    {
+        if ($this->getStatus() instanceof ActiveTaskStatus) {
+            $this->setStatus(new ClosedTaskStatus());
+            $project->registerEvent(new TaskStatusWasChangedEvent(
+                $this->getId()->value,
+                TaskStatusFactory::scalarFromObject($this->getStatus())
+            ));
+        }
+    }
+
+    public function changeStatus(TaskStatus $status): void
+    {
+        $this->getStatus()->ensureCanBeChangedTo($status);
+        $this->setStatus($status);
     }
 
     private function ensureFinishDateGreaterThanStart()

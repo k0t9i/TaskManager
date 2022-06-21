@@ -36,27 +36,11 @@ final class ProjectRequest
     }
 
     /**
-     * @param Project $project
-     */
-    public function setProject(Project $project): void
-    {
-        $this->project = $project;
-    }
-
-    /**
      * @return ProjectRequestUser
      */
     public function getUser(): ProjectRequestUser
     {
         return $this->user;
-    }
-
-    /**
-     * @param ProjectRequestUser $user
-     */
-    public function setUser(ProjectRequestUser $user): void
-    {
-        $this->user = $user;
     }
 
     /**
@@ -68,14 +52,6 @@ final class ProjectRequest
     }
 
     /**
-     * @param ProjectRequestStatus $status
-     */
-    public function setStatus(ProjectRequestStatus $status): void
-    {
-        $this->status = $status;
-    }
-
-    /**
      * @return ProjectRequestChangeDate
      */
     public function getChangeDate(): ProjectRequestChangeDate
@@ -84,10 +60,16 @@ final class ProjectRequest
     }
 
     /**
-     * @param ProjectRequestChangeDate $changeDate
+     * @param ProjectRequestStatus $status
      */
-    public function setChangeDate(ProjectRequestChangeDate $changeDate): void
+    private function setStatus(ProjectRequestStatus $status): void
     {
-        $this->changeDate = $changeDate;
+        $this->status = $status;
+    }
+
+    public function changeStatus(ProjectRequestStatus $status): void
+    {
+        $this->getStatus()->ensureCanBeChangedTo($status);
+        $this->setStatus($status);
     }
 }
