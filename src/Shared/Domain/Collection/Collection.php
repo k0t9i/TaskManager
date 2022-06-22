@@ -101,6 +101,12 @@ abstract class Collection implements CollectionInterface
         return count($this->items);
     }
 
+    public function exists(mixed $item): bool
+    {
+        $this->ensureIsValidType($item);
+        return in_array($item, $this->items, true);
+    }
+
     private function ensureIsValidType(mixed $value): void
     {
         if (!is_a($value, $this->getType())) {

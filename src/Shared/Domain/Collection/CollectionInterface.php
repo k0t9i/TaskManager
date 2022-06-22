@@ -9,6 +9,7 @@ use IteratorAggregate;
 
 interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
 {
+    public function exists(mixed $item): bool;
     public function getAdded(): array;
     public function getDeleted(): array;
     public function flush(): void;
