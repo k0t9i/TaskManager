@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\ValueObject;
+namespace App\ProjectRequests\Domain\ValueObject;
 
-final class ConfirmedProjectRequestStatus extends ProjectRequestStatus
+final class ConfirmedRequestStatus extends RequestStatus
 {
     protected function getNextStatuses(): array
     {

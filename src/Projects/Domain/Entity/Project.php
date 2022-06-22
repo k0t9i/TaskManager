@@ -4,41 +4,28 @@ declare(strict_types=1);
 namespace App\Projects\Domain\Entity;
 
 use App\Projects\Domain\Collection\ProjectParticipantCollection;
-use App\Projects\Domain\Collection\ProjectRequestCollection;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Projects\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\Projects\Domain\Event\ProjectRequestStatusWasChangedEvent;
-use App\Projects\Domain\Event\ProjectRequestWasCreatedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
 use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
-use App\Projects\Domain\Exception\ProjectRequestNotExistException;
 use App\Projects\Domain\Exception\ProjectTaskNotExistException;
 use App\Projects\Domain\Exception\ProjectUserNotExistException;
 use App\Projects\Domain\Exception\UserHasProjectTaskException;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
-use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
-use App\Projects\Domain\Factory\ProjectRequestStatusFactory;
 use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
-use App\Projects\Domain\ValueObject\ConfirmedProjectRequestStatus;
-use App\Projects\Domain\ValueObject\PendingProjectRequestStatus;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipant;
-use App\Projects\Domain\ValueObject\ProjectRequestChangeDate;
-use App\Projects\Domain\ValueObject\ProjectRequestId;
-use App\Projects\Domain\ValueObject\ProjectRequestStatus;
-use App\Projects\Domain\ValueObject\ProjectRequestUser;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Tasks\Domain\Entity\Task;
@@ -74,11 +61,6 @@ final class Project extends AggregateRoot
      */
     private TaskCollection $tasks;
 
-    /**
-     * @var ProjectRequest[]|ProjectRequestCollection
-     */
-    private ProjectRequestCollection $requests;
-
     public function __construct(
         private ProjectId $id,
         private ProjectName $name,
@@ -89,7 +71,6 @@ final class Project extends AggregateRoot
     ) {
         $this->tasks = new TaskCollection();
         $this->participants = new ProjectParticipantCollection();
-        $this->requests = new ProjectRequestCollection();
     }
 
     /**
@@ -155,19 +136,6 @@ final class Project extends AggregateRoot
         $this->tasks = $tasks;
     }
 
-    /**
-     * @return ProjectRequestCollection|ProjectRequest[]
-     */
-    public function getRequests(): ProjectRequestCollection
-    {
-        return $this->requests;
-    }
-
-    public function setRequests(ProjectRequestCollection $requests): void
-    {
-        $this->requests = $requests;
-    }
-
     public static function create(
         ProjectId $id,
         ProjectName $name,
@@ -230,25 +198,6 @@ final class Project extends AggregateRoot
         $this->registerEvent(new ProjectOwnerWasChangedEvent(
             $this->getId()->value,
             $this->owner->userId->value
-        ));
-    }
-
-    public function addParticipant(ProjectParticipant $participant): void
-    {
-        $this->getStatus()->ensureAllowsModification();
-
-        if ($this->isParticipant($participant->userId)) {
-            throw new UserIsAlreadyParticipantException();
-        }
-        if ($this->isOwner($participant->userId)) {
-            throw new UserIsAlreadyOwnerException();
-        }
-
-        $this->participants[$participant->userId->value] = $participant;
-
-        $this->registerEvent(new ProjectParticipantWasAddedEvent(
-            $this->getId()->value,
-            $participant->userId->value
         ));
     }
 
@@ -432,57 +381,6 @@ final class Project extends AggregateRoot
         ));
     }
 
-    public function createProjectRequest(ProjectRequestId $id, ProjectRequestUser $requestUser): void
-    {
-        $this->getStatus()->ensureAllowsModification();
-        if ($this->isParticipant($requestUser->userId)) {
-            throw new UserIsAlreadyParticipantException();
-        }
-        if ($this->isOwner($requestUser->userId)) {
-            throw new UserIsAlreadyOwnerException();
-        }
-
-        $status = new PendingProjectRequestStatus();
-
-        $request = new ProjectRequest(
-            $id,
-            $this,
-            $requestUser,
-            $status,
-            new ProjectRequestChangeDate(date('c'))
-        );
-        $this->requests[$request->id->value] = $request;
-
-        $this->registerEvent(new ProjectRequestWasCreatedEvent(
-            $request->id->value,
-            $request->project->getId()->value,
-            $request->user->userId->value,
-        ));
-    }
-
-    public function changeProjectRequestStatus(
-        ProjectRequestId $id,
-        ProjectRequestStatus $status,
-        UserId $currentUserId)
-    : void {
-        $this->getStatus()->ensureAllowsModification();
-        $this->ensureProjectRequestExits($id);
-        $request = $this->requests[$id->value];
-        $this->ensureIsOwner($currentUserId);
-
-        $request->changeStatus($status);
-        if ($status instanceof ConfirmedProjectRequestStatus) {
-            $this->addParticipant(
-                new ProjectParticipant($request->getUser()->userId)
-            );
-        }
-
-        $this->registerEvent(new ProjectRequestStatusWasChangedEvent(
-            $request->getId()->value,
-            ProjectRequestStatusFactory::scalarFromObject($status)
-        ));
-    }
-
     private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
     {
         if (!$this->isOwner($currentUserId) && $participantId->value !== $currentUserId->value) {
@@ -501,13 +399,6 @@ final class Project extends AggregateRoot
     {
         if (!array_key_exists($taskId->value, $this->tasks)) {
             throw new ProjectTaskNotExistException();
-        }
-    }
-
-    private function ensureProjectRequestExits(ProjectRequestId $requestId): void
-    {
-        if (!array_key_exists($requestId->value, $this->requests)) {
-            throw new ProjectRequestNotExistException();
         }
     }
 }

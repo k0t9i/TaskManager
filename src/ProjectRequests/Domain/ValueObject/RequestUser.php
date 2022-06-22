@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\ValueObject;
+namespace App\ProjectRequests\Domain\ValueObject;
 
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
 use App\Users\Domain\ValueObject\UserId;
 use App\Users\Domain\ValueObject\UserLastname;
 
-final class ProjectRequestUser
+final class RequestUser
 {
     public function __construct(
         public readonly UserId $userId,

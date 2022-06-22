@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\CQ;
+namespace App\ProjectRequests\Application\CQ;
 
 use App\Shared\Domain\Bus\Command\CommandInterface;
 
-final class CreateRequestToProjectCommand implements CommandInterface
+final class ConfirmRequestCommand implements CommandInterface
 {
     public function __construct(
-        public string $projectId,
+        public string $id,
         public string $currentUserId
     ) {
     }
