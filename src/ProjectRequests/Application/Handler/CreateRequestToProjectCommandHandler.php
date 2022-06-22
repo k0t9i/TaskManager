@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace App\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\CQ\CreateRequestToProjectCommand;
-use App\ProjectRequests\Domain\Entity\Request;
-use App\ProjectRequests\Domain\Entity\RequestProject;
-use App\ProjectRequests\Domain\Repository\RequestRepositoryInterface;
+use App\ProjectRequests\Domain\Entity\RequestUser;
+use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
-use App\ProjectRequests\Domain\ValueObject\RequestUser;
-use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
@@ -20,8 +17,7 @@ use App\Users\Domain\ValueObject\UserId;
 final class CreateRequestToProjectCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly RequestRepositoryInterface $requestRepository,
-        private readonly ProjectRepositoryInterface $projectRepository,
+        private readonly ProjectRequestRepositoryInterface $projectRequestRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
@@ -30,18 +26,11 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
 
     public function __invoke(CreateRequestToProjectCommand $command): void
     {
-        $project = $this->projectRepository->getById(new ProjectId($command->projectId));
+        $project = $this->projectRequestRepository->getById(new ProjectId($command->projectId));
         $user = $this->userRepository->getById(new UserId($command->userId));
 
-        $request = Request::create(
+        $project->createRequest(
             new RequestId($this->uuidGenerator->generate()),
-            new RequestProject(
-                $project->getId(),
-                $project->getName(),
-                $project->getStatus(),
-                $project->getOwner(),
-                $project->getParticipants()
-            ),
             new RequestUser(
                 $user->getId(),
                 $user->getFirstname(),
@@ -50,7 +39,7 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
             )
         );
 
-        $this->requestRepository->create($request);
-        $this->eventBus->dispatch(...$request->releaseEvents());
+        $this->projectRequestRepository->update($project);
+        $this->eventBus->dispatch(...$project->releaseEvents());
     }
 }

@@ -5,7 +5,7 @@ namespace App\ProjectRequests\Domain\Exception;
 
 use DomainException;
 
-final class RequestNotExistException extends DomainException
+final class ProjectRequestNotExistsException extends DomainException
 {
 
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\ProjectRequests\Domain\ValueObject;
+namespace App\ProjectRequests\Domain\Entity;
 
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
