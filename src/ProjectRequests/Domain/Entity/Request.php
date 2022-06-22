@@ -19,11 +19,11 @@ use App\Users\Domain\ValueObject\UserId;
 final class Request extends AggregateRoot
 {
     public function __construct(
-        public readonly RequestId $id,
-        public readonly RequestProject $project,
-        public readonly RequestUser $user,
-        public readonly RequestStatus $status,
-        public readonly RequestChangeDate $changeDate
+        private RequestId $id,
+        private RequestProject $project,
+        private RequestUser $user,
+        private RequestStatus $status,
+        private RequestChangeDate $changeDate
     ) {
     }
 
@@ -32,12 +32,12 @@ final class Request extends AggregateRoot
         $status = new PendingRequestStatus();
         $changeDate = new RequestChangeDate(date('c'));
         $request = new self($id, $project, $requestUser, $status, $changeDate);
-        $project->addRequest($request);
+        $project->setRequest($request);
 
         $request->registerEvent(new RequestWasCreatedEvent(
-            $request->id->value,
-            $request->project->getId()->value,
-            $request->user->userId->value,
+            $request->getId()->value,
+            $request->getProject()->getId()->value,
+            $request->getUser()->userId->value,
         ));
 
         return $request;
@@ -47,17 +47,11 @@ final class Request extends AggregateRoot
         RequestStatus $status,
         UserId        $currentUserId
     ): void {
-        $this->project->ensureCanPerformOwnerOperations($currentUserId);
+        $this->getProject()->ensureCanPerformOwnerOperations($currentUserId);
 
         $this->getStatus()->ensureCanBeChangedTo($status);
-        $this->setStatus($status);
-        if ($status instanceof ConfirmedRequestStatus) {
-            $this->project->addParticipantFromRequest($this);
-            $this->registerEvent(new ProjectParticipantWasAddedEvent(
-                $this->project->getId()->value,
-                $this->getUser()->userId->value
-            ));
-        }
+        $this->status = $status;
+        $this->addParticipantIfNeeded($status);
 
         $this->registerEvent(new RequestStatusWasChangedEvent(
             $this->getId()->value,
@@ -75,13 +69,29 @@ final class Request extends AggregateRoot
         return $this->user;
     }
 
-    private function getStatus(): RequestStatus
+    public function getProject(): RequestProject
+    {
+        return $this->project;
+    }
+
+    public function getStatus(): RequestStatus
     {
         return $this->status;
     }
 
-    private function setStatus(RequestStatus $status): void
+    public function getChangeDate(): RequestChangeDate
     {
-        $this->status = $status;
+        return $this->changeDate;
+    }
+
+    private function addParticipantIfNeeded(RequestStatus $status): void
+    {
+        if ($status instanceof ConfirmedRequestStatus) {
+            $this->getProject()->addParticipantFromRequest($this);
+            $this->registerEvent(new ProjectParticipantWasAddedEvent(
+                $this->getProject()->getId()->value,
+                $this->getUser()->userId->value
+            ));
+        }
     }
 }

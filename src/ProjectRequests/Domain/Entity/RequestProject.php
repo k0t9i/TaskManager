@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\ProjectRequests\Domain\Entity;
 
-use App\ProjectRequests\Domain\Collection\RequestCollection;
-use App\ProjectRequests\Domain\Exception\RequestNotExistException;
 use App\Projects\Domain\Collection\ProjectParticipantCollection;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
@@ -12,43 +10,40 @@ use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
+use App\Projects\Domain\ValueObject\ProjectParticipant;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Users\Domain\ValueObject\UserId;
 
 
 final class RequestProject
 {
-    /**
-     * @var Request[]|RequestCollection
-     */
-    private RequestCollection $requests;
+    private Request $request;
 
     public function __construct(
-        private ProjectId $id,
-        private ProjectName $name,
-        private ProjectStatus $status,
-        private ProjectOwner $owner,
-        private ProjectParticipantCollection $participants
-    ) {
+        private ProjectId                    $id,
+        private ProjectName                  $name,
+        private ProjectStatus                $status,
+        private ProjectOwner                 $owner,
+        private ProjectParticipantCollection $participants,
+    )
+    {
     }
 
-    public function addRequest(Request $request): void
+    public function setRequest(Request $request): void
     {
         $this->getStatus()->ensureAllowsModification();
         $this->ensureUserIsNotAlreadyInProject($request->getUser()->userId);
-        $this->requests[$request->id->value] = $request;
+        $this->request = $request;
     }
 
-    public function addParticipantFromRequest(Request $request): void
+    public function addParticipantFromRequest(): void
     {
         $this->getStatus()->ensureAllowsModification();
-        if (!array_key_exists($request->getId()->value, $this->requests)) {
-            throw new RequestNotExistException();
-        }
 
-        $participant = $request->getUser();
+        $participant = $this->getRequest()->getUser();
         $this->ensureUserIsNotAlreadyInProject($participant->userId);
-        $this->participants[$participant->userId->value] = $participant;
+        $participants = $this->getParticipants();
+        $participants[$participant->userId->value] = $participant;
     }
 
     public function ensureCanPerformOwnerOperations(UserId $userId): void
@@ -65,24 +60,43 @@ final class RequestProject
         return $this->id;
     }
 
-    private function getStatus(): ProjectStatus
+    public function getStatus(): ProjectStatus
     {
         return $this->status;
     }
 
-    private function getName(): ProjectName
+    public function getName(): ProjectName
     {
         return $this->name;
     }
 
+    public function getOwner(): ProjectOwner
+    {
+        return $this->owner;
+    }
+
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return ProjectParticipantCollection|ProjectParticipant[]
+     */
+    public function getParticipants(): ProjectParticipantCollection
+    {
+        return $this->participants;
+    }
+
     private function isOwner(UserId $userId): bool
     {
-        return $this->owner->userId->value === $userId->value;
+        return $this->getOwner()->userId->value === $userId->value;
     }
 
     private function isParticipant(UserId $userId): bool
     {
-        return isset($this->participants[$userId->value]);
+        $participants = $this->getParticipants();
+        return isset($participants[$userId->value]);
     }
 
     private function ensureUserIsNotAlreadyInProject(UserId $userId): void
