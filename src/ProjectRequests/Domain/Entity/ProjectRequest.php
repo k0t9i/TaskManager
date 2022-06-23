@@ -12,9 +12,7 @@ use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Exception\UserAlreadyHasProjectRequestException;
 use App\ProjectRequests\Domain\Factory\RequestStatusFactory;
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
-use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
-use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
@@ -38,10 +36,7 @@ final class ProjectRequest extends AggregateRoot
 
     public function createRequest(RequestId $id, UserId $requestUserId): Request
     {
-        //TODO move to request
-        $status = new PendingRequestStatus();
-        $changeDate = new RequestChangeDate(date('c'));
-        $request = new Request($id, $requestUserId, $status, $changeDate);
+        $request = Request::create($id, $requestUserId);
         $this->addRequest($request);
 
         $request->registerEvent(new RequestWasCreatedEvent(
