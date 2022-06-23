@@ -49,5 +49,44 @@ class UuidTest extends TestCase
             );
         }
     }
+
+    public function testIsEqual(): void
+    {
+        $uuid = self::getMockForAbstractClass(
+            Uuid::class,
+            ['d18ee56e-3c5b-440a-a471-4012558e6908']
+        );
+        $equals = self::getMockForAbstractClass(
+            Uuid::class,
+            ['d18ee56e-3c5b-440a-a471-4012558e6908']
+        );
+        $notEquals = self::getMockForAbstractClass(
+            Uuid::class,
+            ['d18ee56e-9999-440a-a471-4012558e6908']
+        );
+        $otherClass = self::getMockForAbstractClass(
+            Uuid::class,
+            ['d18ee56e-3c5b-440a-a471-4012558e6908'],
+            mockClassName: 'OtherClass'
+        );
+
+        self::assertTrue($uuid->isEqual($equals));
+        self::assertTrue($equals->isEqual($uuid));
+        self::assertFalse($uuid->isEqual($notEquals));
+        self::assertFalse($notEquals->isEqual($uuid));
+        self::assertFalse($uuid->isEqual($otherClass));
+        self::assertFalse($otherClass->isEqual($uuid));
+    }
+
+    public function testCreateFrom(): void
+    {
+        $uuid = self::getMockForAbstractClass(
+            Uuid::class,
+            ['d18ee56e-3c5b-440a-a471-4012558e6908']
+        );
+        $otherUuid = TestedUuid::createFrom($uuid);
+        self::assertInstanceOf(TestedUuid::class, $otherUuid);
+        self::assertEquals($uuid->value, $otherUuid->value);
+    }
 }
 
