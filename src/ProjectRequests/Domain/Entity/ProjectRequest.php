@@ -10,8 +10,6 @@ use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Exception\UserAlreadyHasProjectRequestException;
-use App\ProjectRequests\Domain\Factory\RequestStatusFactory;
-use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
@@ -57,15 +55,15 @@ final class ProjectRequest extends AggregateRoot
         if (!$this->isOwner($currentUserId)) {
             throw new UserIsNotOwnerException();
         }
-        if (!$this->requests->exists($requestId)) {
+        if (!$this->getRequests()->exists($requestId)) {
             throw new ProjectRequestNotExistsException();
         }
 
         /** @var Request $request */
-        $request = $this->requests->get($requestId->getHash());
+        $request = $this->getRequests()->get($requestId->getHash());
         $request->changeStatus($status);
 
-        if ($status instanceof ConfirmedRequestStatus) {
+        if ($request->isConfirmed()) {
             $this->addParticipantFromRequest($request->getUserId());
             $this->registerEvent(new ProjectParticipantWasAddedEvent(
                 $this->getId()->value,
@@ -75,7 +73,7 @@ final class ProjectRequest extends AggregateRoot
 
         $this->registerEvent(new RequestStatusWasChangedEvent(
             $this->getId()->value,
-            RequestStatusFactory::scalarFromObject($status)
+            $request->getStatus()->getScalar()
         ));
     }
 

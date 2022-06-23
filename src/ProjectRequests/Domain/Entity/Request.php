@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\ProjectRequests\Domain\Entity;
 
+use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
@@ -57,5 +58,10 @@ final class Request implements Hashable
     public function getHash(): string
     {
         return $this->getId()->getHash();
+    }
+
+    public function isConfirmed(): bool
+    {
+        return $this->status instanceof ConfirmedRequestStatus;
     }
 }
