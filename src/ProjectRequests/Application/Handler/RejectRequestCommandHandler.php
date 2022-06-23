@@ -9,7 +9,7 @@ use App\ProjectRequests\Domain\ValueObject\RejectedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class RejectRequestCommandHandler implements CommandHandlerInterface
 {

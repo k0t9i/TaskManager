@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\Repository;
 
+use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Entity\User;
-use App\Users\Domain\ValueObject\UserId;
 
 interface UserRepositoryInterface
 {

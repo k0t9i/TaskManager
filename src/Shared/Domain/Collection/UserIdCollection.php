@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\ProjectRequests\Domain\Collection;
+namespace App\Shared\Domain\Collection;
 
-use App\Shared\Domain\Collection\Collection;
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserId;
 
 //TODO move to shared
 class UserIdCollection extends Collection

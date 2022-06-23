@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
+use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Exception\UserNotExistException;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 

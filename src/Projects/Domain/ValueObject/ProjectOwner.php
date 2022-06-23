@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\ValueObject;
 
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserId;
 
 class ProjectOwner
 {

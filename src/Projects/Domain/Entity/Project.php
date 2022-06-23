@@ -28,6 +28,7 @@ use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipant;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Event\TaskInformationWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
@@ -47,7 +48,6 @@ use App\Tasks\Domain\ValueObject\TaskName;
 use App\Tasks\Domain\ValueObject\TaskStartDate;
 use App\Tasks\Domain\ValueObject\TaskStatus;
 use App\Users\Domain\Entity\User;
-use App\Users\Domain\ValueObject\UserId;
 
 final class Project extends AggregateRoot
 {

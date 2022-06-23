@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectParticipant implements Hashable
 {

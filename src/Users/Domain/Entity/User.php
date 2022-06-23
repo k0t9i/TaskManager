@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\Entity;
 
+use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
-use App\Users\Domain\ValueObject\UserId;
 use App\Users\Domain\ValueObject\UserLastname;
 
 class User

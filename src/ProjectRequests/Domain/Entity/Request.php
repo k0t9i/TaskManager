@@ -9,7 +9,7 @@ use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Collection\Hashable;
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class Request implements Hashable
 {

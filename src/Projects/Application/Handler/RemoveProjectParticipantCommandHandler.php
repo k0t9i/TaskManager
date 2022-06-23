@@ -9,8 +9,8 @@ use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectParticipant;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserId;
 
 final class RemoveProjectParticipantCommandHandler implements CommandHandlerInterface
 {

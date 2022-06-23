@@ -8,6 +8,7 @@ use App\Projects\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\CQ\CreateTaskCommand;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
@@ -16,7 +17,6 @@ use App\Tasks\Domain\ValueObject\TaskId;
 use App\Tasks\Domain\ValueObject\TaskName;
 use App\Tasks\Domain\ValueObject\TaskStartDate;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserId;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {

@@ -5,6 +5,7 @@ namespace App\Tasks\Domain\Entity;
 
 use App\Projects\Domain\Entity\Project;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Event\TaskFinishDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStartDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
@@ -20,7 +21,6 @@ use App\Tasks\Domain\ValueObject\TaskName;
 use App\Tasks\Domain\ValueObject\TaskStartDate;
 use App\Tasks\Domain\ValueObject\TaskStatus;
 use App\Users\Domain\Entity\User;
-use App\Users\Domain\ValueObject\UserId;
 
 class Task implements Hashable
 {

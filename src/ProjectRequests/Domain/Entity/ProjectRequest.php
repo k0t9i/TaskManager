@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\ProjectRequests\Domain\Entity;
 
 use App\ProjectRequests\Domain\Collection\RequestCollection;
-use App\ProjectRequests\Domain\Collection\UserIdCollection;
 use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
@@ -18,7 +17,8 @@ use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Users\Domain\ValueObject\UserId;
+use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectRequest extends AggregateRoot
 {

@@ -7,9 +7,9 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\CQ\DeleteTaskCommand;
 use App\Tasks\Domain\ValueObject\TaskId;
-use App\Users\Domain\ValueObject\UserId;
 
 class DeleteTaskCommandHandler implements CommandHandlerInterface
 {
