@@ -7,10 +7,9 @@ use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Users\Domain\ValueObject\UserId;
 
-final class Request extends AggregateRoot
+final class Request
 {
     public function __construct(
         private RequestId $id,
