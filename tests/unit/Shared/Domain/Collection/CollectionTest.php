@@ -78,5 +78,19 @@ class CollectionTest extends TestCase
         self::expectException(InvalidArgumentException::class);
         new TestedCollection($items);
     }
+
+    public function testExists(): void
+    {
+        $exists = new CollectionItem();
+        $notExists = new CollectionItem();
+        $items = [
+            new CollectionItem(),
+            $exists,
+            new CollectionItem()
+        ];
+        $collection = new TestedCollection($items);
+        self::assertTrue($collection->exists($exists));
+        self::assertFalse($collection->exists($notExists));
+    }
 }
 
