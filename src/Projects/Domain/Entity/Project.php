@@ -167,7 +167,7 @@ final class Project extends AggregateRoot
 
     public function isOwner(UserId $userId): bool
     {
-        return $this->owner->userId->value === $userId->value;
+        return $this->owner->userId->isEqual($userId);
     }
 
     public function isParticipant(UserId $userId): bool

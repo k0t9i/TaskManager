@@ -159,7 +159,7 @@ class Task
 
     public function isOwner(UserId $userId): bool
     {
-        return $this->owner->getId()->value === $userId->value;
+        return $this->owner->getId()->isEqual($userId);
     }
 
     public function limitDatesByProjectFinishDate(Project $project): void

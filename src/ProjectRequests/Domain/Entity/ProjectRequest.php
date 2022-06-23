@@ -133,7 +133,7 @@ final class ProjectRequest extends AggregateRoot
     {
         /** @var Request $request */
         foreach ($this->requests as $request) {
-            if ($request->getUserId()->value === $userId->value) {
+            if ($request->getUserId()->isEqual($userId)) {
                 throw new UserAlreadyHasProjectRequestException();
             }
         }
@@ -151,7 +151,7 @@ final class ProjectRequest extends AggregateRoot
 
     private function isOwner(UserId $userId): bool
     {
-        return $this->getOwnerId()->value === $userId->value;
+        return $this->getOwnerId()->isEqual($userId);
     }
 
     private function isParticipant(UserId $userId): bool
