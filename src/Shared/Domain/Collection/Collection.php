@@ -9,16 +9,30 @@ use Traversable;
 
 abstract class Collection implements CollectionInterface
 {
+    /**
+     * @var Hashable[]
+     */
     private array $items = [];
+
+    /**
+     * @var Hashable[]
+     */
     private array $added = [];
+
+    /**
+     * @var Hashable[]
+     */
     private array $deleted = [];
 
+    /**
+     * @param array|Hashable $items
+     */
     public function __construct(array $items = [])
     {
         foreach ($items as $item) {
             $this->ensureIsValidType($item);
+            $this->items[$item->getHash()] = $item;
         }
-        $this->items = $items;
     }
 
     abstract protected function getType(): string;
@@ -55,60 +69,56 @@ abstract class Collection implements CollectionInterface
     /**
      * @inheritDoc
      */
-    public function offsetExists(mixed $offset): bool
-    {
-        return array_key_exists($offset, $this->items);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->items[$offset];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        $this->ensureIsValidType($value);
-        if (!isset($this->items[$offset]) && !isset($this->deleted[$offset])) {
-            $this->added[$offset] = $value;
-        }
-        $this->items[$offset] = $value;
-        unset($this->deleted[$offset]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function offsetUnset(mixed $offset): void
-    {
-        if (isset($this->items[$offset]) && !isset($this->added[$offset])) {
-            $this->deleted[$offset] = $this->items[$offset];
-        }
-        unset($this->items[$offset]);
-        unset($this->added[$offset]);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function count(): int
     {
         return count($this->items);
     }
 
-    public function exists(mixed $item): bool
+    public function get(string $key): Hashable
+    {
+        return $this->items[$key];
+    }
+
+    public function add(Hashable $item): void
     {
         $this->ensureIsValidType($item);
-        return in_array($item, $this->items, true);
+        $key = $item->getHash();
+        if (!isset($this->items[$key]) && !isset($this->deleted[$key])) {
+            $this->added[$key] = $item;
+        }
+        $this->items[$key] = $item;
+        unset($this->deleted[$key]);
+    }
+
+    public function remove(Hashable $item): void
+    {
+        $key = $item->getHash();
+        if (isset($this->items[$key]) && !isset($this->added[$key])) {
+            $this->deleted[$key] = $this->items[$key];
+        }
+        unset($this->items[$key]);
+        unset($this->added[$key]);
+    }
+
+    public function exists(Hashable $item): bool
+    {
+        $this->ensureIsValidType($item);
+        return array_key_exists($item->getHash(), $this->items);
+    }
+
+    public function hashExists(string $hash): bool
+    {
+        return array_key_exists($hash, $this->items);
     }
 
     private function ensureIsValidType(mixed $value): void
     {
+        if (!$value instanceof Hashable) {
+            throw new InvalidArgumentException(sprintf(
+                'Object must be of type %s',
+                Hashable::class
+            ));
+        }
         if (!is_a($value, $this->getType())) {
             throw new InvalidArgumentException(sprintf('Object must be of type %s', $this->getType()));
         }

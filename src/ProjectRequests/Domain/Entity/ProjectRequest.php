@@ -39,7 +39,7 @@ final class ProjectRequest extends AggregateRoot
         $request = Request::create($id, $requestUserId);
         $this->addRequest($request);
 
-        $request->registerEvent(new RequestWasCreatedEvent(
+        $this->registerEvent(new RequestWasCreatedEvent(
             $id->value,
             $this->getId()->value,
             $requestUserId->value,
@@ -61,14 +61,15 @@ final class ProjectRequest extends AggregateRoot
             throw new ProjectRequestNotExistsException();
         }
 
-        $request = $this->requests[$requestId->value];
+        /** @var Request $request */
+        $request = $this->requests->get($requestId->getHash());
         $request->changeStatus($status);
 
         if ($status instanceof ConfirmedRequestStatus) {
-            $this->addParticipantFromRequest($request->getUser()->userId);
+            $this->addParticipantFromRequest($request->getUserId());
             $this->registerEvent(new ProjectParticipantWasAddedEvent(
                 $this->getId()->value,
-                $request->getUser()->userId->value
+                $request->getUserId()->value
             ));
         }
 
@@ -83,7 +84,7 @@ final class ProjectRequest extends AggregateRoot
         $this->getStatus()->ensureAllowsModification();
         $this->ensureIsUserAlreadyInProject($request->getUserId());
         $this->ensureDoesUserAlreadyHaveRequest($request->getUserId());
-        $this->requests[$request->getId()->value] = $request;
+        $this->getRequests()->add($request);
     }
 
     public function getId(): ProjectRequestId
@@ -120,14 +121,13 @@ final class ProjectRequest extends AggregateRoot
     {
         $this->getStatus()->ensureAllowsModification();
         $this->ensureIsUserAlreadyInProject($participantId);
-        $participants = $this->getParticipantIds();
-        $participants[$participantId->value] = $participantId;
+        $this->getParticipantIds()->add($participantId);
     }
 
     private function ensureDoesUserAlreadyHaveRequest(UserId $userId): void
     {
         /** @var Request $request */
-        foreach ($this->requests as $request) {
+        foreach ($this->getRequests() as $request) {
             if ($request->getUserId()->isEqual($userId)) {
                 throw new UserAlreadyHasProjectRequestException();
             }

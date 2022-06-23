@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
+use App\Shared\Domain\Collection\Hashable;
 use InvalidArgumentException;
 use Stringable;
 
-abstract class Uuid implements Stringable
+abstract class Uuid implements Stringable, Hashable
 {
     public function __construct(public readonly string $value)
     {
@@ -26,6 +27,11 @@ abstract class Uuid implements Stringable
     public static function createFrom(Uuid $other): static
     {
         return new static($other->value);
+    }
+
+    public function getHash(): string
+    {
+        return $this->value;
     }
 
     private function ensureIsValidUuid(string $value): void

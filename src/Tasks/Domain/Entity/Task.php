@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Projects\Domain\Entity\Project;
+use App\Shared\Domain\Collection\Hashable;
 use App\Tasks\Domain\Event\TaskFinishDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStartDateWasChangedEvent;
 use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
@@ -21,7 +22,7 @@ use App\Tasks\Domain\ValueObject\TaskStatus;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\ValueObject\UserId;
 
-class Task
+class Task implements Hashable
 {
     public function __construct(
         private TaskId $id,
@@ -217,5 +218,10 @@ class Task
         if ($this->startDate->isGreaterThan($this->finishDate)) {
             throw new TaskStartDateGreaterThanFinishDateException();
         }
+    }
+
+    public function getHash(): string
+    {
+        return $this->getId()->getHash();
     }
 }

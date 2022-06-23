@@ -3,14 +3,24 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Collection;
 
-use ArrayAccess;
 use Countable;
 use IteratorAggregate;
 
-interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
+interface CollectionInterface extends Countable, IteratorAggregate
 {
-    public function exists(mixed $item): bool;
+    public function get(string $key): Hashable;
+    public function exists(Hashable $item): bool;
+    public function hashExists(string $hash): bool;
+    public function add(Hashable $item): void;
+    public function remove(Hashable $item): void;
+    /**
+     * @return Hashable[]
+     */
     public function getAdded(): array;
+
+    /**
+     * @return Hashable[]
+     */
     public function getDeleted(): array;
     public function flush(): void;
     public function isDirty(): bool;

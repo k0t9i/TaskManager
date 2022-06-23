@@ -172,7 +172,7 @@ final class Project extends AggregateRoot
 
     public function isParticipant(UserId $userId): bool
     {
-        return isset($this->participants[$userId->value]);
+        return $this->participants->hashExists($userId->getHash());
     }
 
     public function isUserInProject(UserId $userId): bool
@@ -215,7 +215,7 @@ final class Project extends AggregateRoot
             }
         }
 
-        unset($this->participants[$participant->userId->value]);
+        $this->participants->remove($participant);
 
         $this->registerEvent(new ProjectParticipantWasRemovedEvent(
             $this->getId()->value,
@@ -302,7 +302,7 @@ final class Project extends AggregateRoot
 
         $status = new ActiveTaskStatus();
         $task = new Task($id, $name, $brief, $description, $startDate, $finishDate, $owner, $status, $this);
-        $this->tasks[$id->value] = $task;
+        $this->tasks->add($task);
 
         $this->registerEvent(new TaskWasCreatedEvent(
             $id->value,
@@ -335,7 +335,8 @@ final class Project extends AggregateRoot
             throw new TaskFinishDateGreaterThanProjectFinishDateException();
         }
         $this->ensureProjectTaskExits($id);
-        $task = $this->tasks[$id->value];
+        /** @var Task $task */
+        $task = $this->tasks->get($id->getHash());
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
         $task->changeInformation($name, $brief, $description, $startDate, $finishDate);
@@ -356,10 +357,11 @@ final class Project extends AggregateRoot
         $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectTaskExits($id);
 
-        $task = $this->tasks[$id->value];
+        /** @var Task $task */
+        $task = $this->tasks->get($id->getHash());
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
-        unset($this->tasks[$id->value]);
+        $this->tasks->remove($task);
 
         $this->registerEvent(new TaskWasDeletedEvent(
             $id->value
@@ -370,7 +372,8 @@ final class Project extends AggregateRoot
     {
         $this->getStatus()->ensureAllowsModification();
         $this->ensureProjectTaskExits($id);
-        $task = $this->tasks[$id->value];
+        /** @var Task $task */
+        $task = $this->tasks->get($id->getHash());
         $this->ensureCanChangeTask($task->getOwner()->getId(), $currentUserId);
 
         $task->changeStatus($status);

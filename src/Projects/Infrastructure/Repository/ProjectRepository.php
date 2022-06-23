@@ -41,7 +41,7 @@ class ProjectRepository implements ProjectRepositoryInterface
                 ->fetchAllAssociative();
             $participants = [];
             foreach ($rawParticipants as $participant) {
-                $participants[$participant['user_id']] = new ProjectParticipant(
+                $participants[] = new ProjectParticipant(
                     new UserId($participant['user_id'])
                 );
             }

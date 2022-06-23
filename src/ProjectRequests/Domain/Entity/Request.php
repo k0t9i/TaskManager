@@ -7,9 +7,10 @@ use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
+use App\Shared\Domain\Collection\Hashable;
 use App\Users\Domain\ValueObject\UserId;
 
-final class Request
+final class Request implements Hashable
 {
     public function __construct(
         private RequestId $id,
@@ -51,5 +52,10 @@ final class Request
     public function getChangeDate(): RequestChangeDate
     {
         return $this->changeDate;
+    }
+
+    public function getHash(): string
+    {
+        return $this->getId()->getHash();
     }
 }
