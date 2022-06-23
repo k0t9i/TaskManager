@@ -7,12 +7,13 @@ use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Users\Domain\ValueObject\UserId;
 
 final class Request extends AggregateRoot
 {
     public function __construct(
         private RequestId $id,
-        private RequestUser $user,
+        private UserId $userId,
         private RequestStatus $status,
         private RequestChangeDate $changeDate
     ) {
@@ -30,9 +31,9 @@ final class Request extends AggregateRoot
         return $this->id;
     }
 
-    public function getUser(): RequestUser
+    public function getUserId(): UserId
     {
-        return $this->user;
+        return $this->userId;
     }
 
     public function getStatus(): RequestStatus

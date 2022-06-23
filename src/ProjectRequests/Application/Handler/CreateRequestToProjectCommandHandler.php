@@ -4,10 +4,9 @@ declare(strict_types=1);
 namespace App\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\CQ\CreateRequestToProjectCommand;
-use App\ProjectRequests\Domain\Entity\RequestUser;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
+use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
-use App\Projects\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\UuidGeneratorInterface;
@@ -26,17 +25,12 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
 
     public function __invoke(CreateRequestToProjectCommand $command): void
     {
-        $project = $this->projectRequestRepository->getById(new ProjectId($command->projectId));
+        $project = $this->projectRequestRepository->getById(new ProjectRequestId($command->projectId));
         $user = $this->userRepository->getById(new UserId($command->userId));
 
         $project->createRequest(
             new RequestId($this->uuidGenerator->generate()),
-            new RequestUser(
-                $user->getId(),
-                $user->getFirstname(),
-                $user->getLastname(),
-                $user->getEmail()
-            )
+            $user->getId()
         );
 
         $this->projectRequestRepository->update($project);

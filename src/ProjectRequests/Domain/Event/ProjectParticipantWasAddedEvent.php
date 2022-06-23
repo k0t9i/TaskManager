@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\Event;
+namespace App\ProjectRequests\Domain\Event;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 

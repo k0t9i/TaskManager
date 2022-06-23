@@ -5,6 +5,7 @@ namespace App\ProjectRequests\Domain\Entity;
 
 use App\ProjectRequests\Domain\Collection\RequestCollection;
 use App\ProjectRequests\Domain\Collection\UserIdCollection;
+use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
@@ -12,14 +13,13 @@ use App\ProjectRequests\Domain\Exception\UserAlreadyHasProjectRequestException;
 use App\ProjectRequests\Domain\Factory\RequestStatusFactory;
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
+use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
-use App\Projects\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
-use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Users\Domain\ValueObject\UserId;
@@ -27,33 +27,27 @@ use App\Users\Domain\ValueObject\UserId;
 final class ProjectRequest extends AggregateRoot
 {
     public function __construct(
-        private ProjectId         $id,
-        private ProjectStatus     $status,
-        private string            $name,
-        private UserId            $ownerId,
-        /**
-         * @var UserIdCollection|UserId[]
-         */
-        private UserIdCollection  $participantIds,
-        /**
-         * @var RequestCollection|Request[]
-         */
+        private ProjectRequestId $id,
+        private ProjectStatus $status,
+        private string $name,
+        private UserId $ownerId,
+        private UserIdCollection $participantIds,
         private RequestCollection $requests
     ) {
     }
 
-    public function createRequest(RequestId $id, RequestUser $requestUser): Request
+    public function createRequest(RequestId $id, UserId $requestUserId): Request
     {
         //TODO move to request
         $status = new PendingRequestStatus();
         $changeDate = new RequestChangeDate(date('c'));
-        $request = new Request($id, $requestUser, $status, $changeDate);
+        $request = new Request($id, $requestUserId, $status, $changeDate);
         $this->addRequest($request);
 
         $request->registerEvent(new RequestWasCreatedEvent(
             $id->value,
             $this->getId()->value,
-            $requestUser->userId->value,
+            $requestUserId->value,
         ));
 
         return $request;
@@ -92,12 +86,12 @@ final class ProjectRequest extends AggregateRoot
     public function addRequest(Request $request): void
     {
         $this->getStatus()->ensureAllowsModification();
-        $this->ensureIsUserAlreadyInProject($request->getUser()->userId);
-        $this->ensureDoesUserAlreadyHaveRequest($request->getUser()->userId);
+        $this->ensureIsUserAlreadyInProject($request->getUserId());
+        $this->ensureDoesUserAlreadyHaveRequest($request->getUserId());
         $this->requests[$request->getId()->value] = $request;
     }
 
-    public function getId(): ProjectId
+    public function getId(): ProjectRequestId
     {
         return $this->id;
     }
@@ -139,7 +133,7 @@ final class ProjectRequest extends AggregateRoot
     {
         /** @var Request $request */
         foreach ($this->requests as $request) {
-            if ($request->getUser()->userId->value === $userId->value) {
+            if ($request->getUserId()->value === $userId->value) {
                 throw new UserAlreadyHasProjectRequestException();
             }
         }
