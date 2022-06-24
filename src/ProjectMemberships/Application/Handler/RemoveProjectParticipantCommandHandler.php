@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\Handler;
+namespace App\ProjectMemberships\Application\Handler;
 
-use App\Projects\Application\CQ\RemoveProjectParticipantCommand;
-use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Domain\ValueObject\ProjectId;
-use App\Projects\Domain\ValueObject\ProjectParticipant;
+use App\ProjectMemberships\Application\CQ\RemoveProjectParticipantCommand;
+use App\ProjectMemberships\Domain\Repository\MembershipRepositoryInterface;
+use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\UserId;
@@ -15,7 +14,7 @@ use App\Users\Domain\Repository\UserRepositoryInterface;
 final class RemoveProjectParticipantCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly ProjectRepositoryInterface $projectRepository,
+        private readonly MembershipRepositoryInterface $membershipRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly EventBusInterface $eventBus,
     ) {
@@ -23,15 +22,15 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
 
     public function __invoke(RemoveProjectParticipantCommand $command): void
     {
-        $project = $this->projectRepository->getById(new ProjectId($command->projectId));
+        $membership = $this->membershipRepository->findById(new MembershipId($command->membershipId));
         $participant = $this->userRepository->getById(new UserId($command->participantId));
 
-        $project->removeParticipant(
-            new ProjectParticipant($participant->getId()),
+        $membership->removeParticipant(
+            $participant->getId(),
             new UserId($command->currentUserId)
         );
 
-        $this->projectRepository->update($project);
-        $this->eventBus->dispatch(...$project->releaseEvents());
+        $this->membershipRepository->update($membership);
+        $this->eventBus->dispatch(...$membership->releaseEvents());
     }
 }

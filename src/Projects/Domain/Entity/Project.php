@@ -3,18 +3,13 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
-use App\Projects\Domain\Collection\ProjectParticipantCollection;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
-use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
 use App\Projects\Domain\Exception\ProjectTaskNotExistException;
 use App\Projects\Domain\Exception\ProjectUserNotExistException;
-use App\Projects\Domain\Exception\UserHasProjectTaskException;
 use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\Factory\ProjectStatusFactory;
@@ -25,7 +20,6 @@ use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
-use App\Projects\Domain\ValueObject\ProjectParticipant;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\UserId;
@@ -52,11 +46,6 @@ use App\Users\Domain\Entity\User;
 final class Project extends AggregateRoot
 {
     /**
-     * @var ProjectParticipant[]|ProjectParticipantCollection
-     */
-    private ProjectParticipantCollection $participants;
-
-    /**
      * @var Task[]|TaskCollection
      */
     private TaskCollection $tasks;
@@ -70,7 +59,6 @@ final class Project extends AggregateRoot
         private ProjectOwner $owner
     ) {
         $this->tasks = new TaskCollection();
-        $this->participants = new ProjectParticipantCollection();
     }
 
     /**
@@ -108,19 +96,6 @@ final class Project extends AggregateRoot
     public function getOwner(): ProjectOwner
     {
         return $this->owner;
-    }
-
-    /**
-     * @return ProjectParticipant[]|ProjectParticipantCollection
-     */
-    public function getParticipants(): ProjectParticipantCollection
-    {
-        return $this->participants;
-    }
-
-    public function setParticipants(ProjectParticipantCollection $value): void
-    {
-        $this->participants = $value;
     }
 
     /**
@@ -170,14 +145,9 @@ final class Project extends AggregateRoot
         return $this->owner->userId->isEqual($userId);
     }
 
-    public function isParticipant(UserId $userId): bool
-    {
-        return $this->participants->hashExists($userId->getHash());
-    }
-
     public function isUserInProject(UserId $userId): bool
     {
-        return $this->isOwner($userId) || $this->isParticipant($userId);
+        return $this->isOwner($userId);
     }
 
     public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
@@ -198,28 +168,6 @@ final class Project extends AggregateRoot
         $this->registerEvent(new ProjectOwnerWasChangedEvent(
             $this->getId()->value,
             $this->owner->userId->value
-        ));
-    }
-
-    public function removeParticipant(ProjectParticipant $participant, UserId $currentUserId): void
-    {
-        $this->getStatus()->ensureAllowsModification();
-        $this->ensureCanChangeProjectParticipant($participant->userId, $currentUserId);
-
-        if (!$this->isParticipant($participant->userId)) {
-            throw new ProjectParticipantNotExistException();
-        }
-        foreach ($this->tasks as $task) {
-            if ($task->isOwner($participant->userId)) {
-                throw new UserHasProjectTaskException();
-            }
-        }
-
-        $this->participants->remove($participant);
-
-        $this->registerEvent(new ProjectParticipantWasRemovedEvent(
-            $this->getId()->value,
-            $participant->userId->value
         ));
     }
 
@@ -382,13 +330,6 @@ final class Project extends AggregateRoot
             $task->getId()->value,
             TaskStatusFactory::scalarFromObject($status)
         ));
-    }
-
-    private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
-    {
-        if (!$this->isOwner($currentUserId) && $participantId->value !== $currentUserId->value) {
-            throw new InsufficientPermissionsToChangeProjectParticipantException();
-        }
     }
 
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
