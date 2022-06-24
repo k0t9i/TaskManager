@@ -7,7 +7,6 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
-use App\ProjectTasks\Domain\Collection\TaskCollection;
 use App\ProjectTasks\Domain\Entity\Task;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,7 +36,6 @@ class ProjectRepository implements ProjectRepositoryInterface
             foreach ($rawTasks as $task) {
                 $tasks[$task->getId()->value] = $task;
             }
-            $project->setTasks(new TaskCollection($tasks));
         }
 
         return $project;

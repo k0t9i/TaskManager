@@ -3,19 +3,16 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
+use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
-use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectStatus;
-use App\ProjectTasks\Domain\Collection\TaskCollection;
-use App\ProjectTasks\Domain\Entity\Task;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\DateTime;
@@ -23,10 +20,6 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class Project extends AggregateRoot
 {
-    /**
-     * @var Task[]|TaskCollection
-     */
-    private TaskCollection $tasks;
 
     public function __construct(
         private ProjectId $id,
@@ -34,56 +27,9 @@ final class Project extends AggregateRoot
         private ProjectDescription $description,
         private DateTime $finishDate,
         private ProjectStatus $status,
-        private ProjectOwner $owner
+        private UserId $ownerId,
+        private ProjectTaskCollection $tasks
     ) {
-        $this->tasks = new TaskCollection();
-    }
-
-    /**
-     * @return ProjectId
-     */
-    public function getId(): ProjectId
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return ProjectName
-     */
-    public function getName(): ProjectName
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return ProjectDescription
-     */
-    public function getDescription(): ProjectDescription
-    {
-        return $this->description;
-    }
-
-    public function getFinishDate(): DateTime
-    {
-        return $this->finishDate;
-    }
-
-    public function getOwner(): ProjectOwner
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @return Task[]
-     */
-    public function getTasks(): TaskCollection
-    {
-        return $this->tasks;
-    }
-
-    public function setTasks(TaskCollection $tasks): void
-    {
-        $this->tasks = $tasks;
     }
 
     public static function create(
@@ -91,33 +37,29 @@ final class Project extends AggregateRoot
         ProjectName $name,
         ProjectDescription $description,
         DateTime $finishDate,
-        ProjectOwner $owner
+        UserId $ownerId
     ): self {
         $status = new ActiveProjectStatus();
-        $project = new self($id, $name, $description, $finishDate, $status, $owner);
+        $project = new self(
+            $id,
+            $name,
+            $description,
+            $finishDate,
+            $status,
+            $ownerId,
+            new ProjectTaskCollection()
+        );
 
         $project->registerEvent(new ProjectWasCreatedEvent(
             $id->value,
             $name->value,
             $description->value,
             $finishDate->getValue(),
-            ProjectStatusFactory::scalarFromObject($status),
-            $owner->userId->value
+            $status->getScalar(),
+            $ownerId->value
         ));
 
         return $project;
-    }
-
-    public function ensureIsOwner(UserId $userId): void
-    {
-        if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException();
-        }
-    }
-
-    public function isOwner(UserId $userId): bool
-    {
-        return $this->owner->userId->isEqual($userId);
     }
 
     public function changeInformation(
@@ -133,6 +75,7 @@ final class Project extends AggregateRoot
         $this->description = $description;
         $this->finishDate = $finishDate;
 
+        /** @var ProjectTask $task */
         foreach ($this->tasks as $task) {
             $task->limitDatesByProjectFinishDate($this);
         }
@@ -146,14 +89,6 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @return ProjectStatus
-     */
-    public function getStatus(): ProjectStatus
-    {
-        return $this->status;
-    }
-
-    /**
      * @param ProjectStatus $status
      */
     public function changeStatus(ProjectStatus $status, UserId $currentUserId): void
@@ -162,6 +97,7 @@ final class Project extends AggregateRoot
         $this->ensureIsOwner($currentUserId);
 
         if ($status instanceof ClosedProjectStatus) {
+            /** @var ProjectTask $task */
             foreach ($this->tasks as $task) {
                 $task->closeTaskIfProjectWasClosed($this);
             }
@@ -170,7 +106,57 @@ final class Project extends AggregateRoot
 
         $this->registerEvent(new ProjectStatusWasChangedEvent(
             $this->getId()->value,
-            ProjectStatusFactory::scalarFromObject($status)
+            $status->getScalar()
         ));
+    }
+
+    public function getId(): ProjectId
+    {
+        return $this->id;
+    }
+
+    public function getName(): ProjectName
+    {
+        return $this->name;
+    }
+
+    public function getDescription(): ProjectDescription
+    {
+        return $this->description;
+    }
+
+    public function getFinishDate(): DateTime
+    {
+        return $this->finishDate;
+    }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function getOwnerId(): UserId
+    {
+        return $this->ownerId;
+    }
+
+    /**
+     * @return ProjectTaskCollection|ProjectTask[]
+     */
+    public function getTasks(): ProjectTaskCollection
+    {
+        return $this->tasks;
+    }
+
+    public function ensureIsOwner(UserId $userId): void
+    {
+        if (!$this->isOwner($userId)) {
+            throw new UserIsNotOwnerException();
+        }
+    }
+
+    private function isOwner(UserId $userId): bool
+    {
+        return $this->ownerId->isEqual($userId);
     }
 }
