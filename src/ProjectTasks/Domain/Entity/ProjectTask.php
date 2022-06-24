@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\ProjectTasks\Domain\Entity;
 
-use App\Projects\Domain\Exception\ProjectTaskNotExistException;
-use App\Projects\Domain\Exception\ProjectUserNotExistException;
 use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\ProjectTasks\Domain\Collection\TaskCollection;
@@ -13,6 +11,8 @@ use App\ProjectTasks\Domain\Event\TaskStatusWasChangedEvent;
 use App\ProjectTasks\Domain\Event\TaskWasCreatedEvent;
 use App\ProjectTasks\Domain\Event\TaskWasDeletedEvent;
 use App\ProjectTasks\Domain\Exception\InsufficientPermissionsToChangeTaskException;
+use App\ProjectTasks\Domain\Exception\ProjectTaskNotExistException;
+use App\ProjectTasks\Domain\Exception\ProjectUserNotExistException;
 use App\ProjectTasks\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDateException;
 use App\ProjectTasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;

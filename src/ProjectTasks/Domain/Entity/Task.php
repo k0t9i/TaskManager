@@ -102,9 +102,14 @@ class Task implements Hashable
         return $this->status;
     }
 
-    public function isOwner(UserId $userId): bool
-    {
-        return $this->ownerId->isEqual($userId);
+    public function changeInformation(TaskInformation $information): void {
+        $this->getStatus()->ensureAllowsModification();
+        $this->name = $information->name;
+        $this->brief = $information->brief;
+        $this->description = $information->description;
+        $this->startDate = $information->startDate;
+        $this->finishDate = $information->finishDate;
+        $this->ensureFinishDateGreaterThanStart();
     }
 
     public function limitDatesByProjectFinishDate(Project $project): void
@@ -123,16 +128,6 @@ class Task implements Hashable
                 $this->getFinishDate()->getValue()
             ));
         }
-    }
-
-    public function changeInformation(TaskInformation $information): void {
-        $this->getStatus()->ensureAllowsModification();
-        $this->name = $information->name;
-        $this->brief = $information->brief;
-        $this->description = $information->description;
-        $this->startDate = $information->startDate;
-        $this->finishDate = $information->finishDate;
-        $this->ensureFinishDateGreaterThanStart();
     }
 
     public function closeTaskIfProjectWasClosed(Project $project): void

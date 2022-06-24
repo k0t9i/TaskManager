@@ -10,11 +10,11 @@ use App\ProjectMemberships\Domain\Exception\ProjectOwnerOwnsProjectTaskException
 use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
-use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
-use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
+use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Membership extends AggregateRoot

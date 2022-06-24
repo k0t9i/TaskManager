@@ -12,12 +12,12 @@ use App\ProjectRequests\Domain\Exception\UserAlreadyHasProjectRequestException;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
-use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
-use App\Projects\Domain\Exception\UserIsAlreadyParticipantException;
-use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
+use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
+use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectRequest extends AggregateRoot

@@ -6,7 +6,6 @@ namespace App\Projects\Domain\Entity;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
@@ -19,6 +18,7 @@ use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\ProjectTasks\Domain\Collection\TaskCollection;
 use App\ProjectTasks\Domain\Entity\Task;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Project extends AggregateRoot
