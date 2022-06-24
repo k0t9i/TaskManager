@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace App\Projects\Domain\Entity;
 
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
-use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
-use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
@@ -124,27 +121,6 @@ final class Project extends AggregateRoot
     public function isOwner(UserId $userId): bool
     {
         return $this->owner->userId->isEqual($userId);
-    }
-
-    public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
-    {
-        $this->getStatus()->ensureAllowsModification();
-        $this->ensureIsOwner($currentUserId);
-
-        if ($this->isOwner($owner->userId)) {
-            throw new UserIsAlreadyOwnerException();
-        }
-        foreach ($this->tasks as $task) {
-            if ($task->isOwner($this->owner->userId)) {
-                throw new ProjectOwnerOwnsProjectTaskException();
-            }
-        }
-        $this->owner = $owner;
-
-        $this->registerEvent(new ProjectOwnerWasChangedEvent(
-            $this->getId()->value,
-            $this->owner->userId->value
-        ));
     }
 
     public function changeInformation(

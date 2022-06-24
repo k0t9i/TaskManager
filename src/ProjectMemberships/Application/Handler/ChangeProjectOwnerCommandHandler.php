@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\Handler;
+namespace App\ProjectMemberships\Application\Handler;
 
-use App\Projects\Application\CQ\ChangeProjectOwnerCommand;
-use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Domain\ValueObject\ProjectId;
-use App\Projects\Domain\ValueObject\ProjectOwner;
+use App\ProjectMemberships\Application\CQ\ChangeProjectOwnerCommand;
+use App\ProjectMemberships\Domain\Repository\MembershipRepositoryInterface;
+use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\UserId;
@@ -15,7 +14,7 @@ use App\Users\Domain\Repository\UserRepositoryInterface;
 final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly ProjectRepositoryInterface $projectRepository,
+        private readonly MembershipRepositoryInterface $membershipRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly EventBusInterface $eventBus,
     ) {
@@ -23,15 +22,15 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
 
     public function __invoke(ChangeProjectOwnerCommand $command): void
     {
-        $project = $this->projectRepository->getById(new ProjectId($command->projectId));
+        $project = $this->membershipRepository->findById(new MembershipId($command->membershipId));
         $user = $this->userRepository->getById(new UserId($command->ownerId));
 
         $project->changeOwner(
-            new ProjectOwner($user->getId()),
+            $user->getId(),
             new UserId($command->currentUserId)
         );
 
-        $this->projectRepository->update($project);
+        $this->membershipRepository->update($project);
         $this->eventBus->dispatch(...$project->releaseEvents());
     }
 }

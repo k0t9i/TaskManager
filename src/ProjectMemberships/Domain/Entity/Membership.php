@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace App\ProjectMemberships\Domain\Entity;
 
+use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
+use App\ProjectMemberships\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
 use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
+use App\Projects\Domain\Exception\UserIsAlreadyOwnerException;
+use App\Projects\Domain\Exception\UserIsNotOwnerException;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
@@ -47,6 +51,28 @@ final class Membership extends AggregateRoot
         ));
     }
 
+    public function changeOwner(UserId $ownerId, UserId $currentUserId): void
+    {
+        $this->getStatus()->ensureAllowsModification();
+        $this->ensureIsOwner($currentUserId);
+
+        if ($this->isOwner($ownerId)) {
+            throw new UserIsAlreadyOwnerException();
+        }
+        /** @var UserId $taskOwnerId */
+        foreach ($this->taskOwnerIds as $taskOwnerId) {
+            if ($taskOwnerId->isEqual($this->ownerId)) {
+                throw new ProjectOwnerOwnsProjectTaskException();
+            }
+        }
+        $this->ownerId = $ownerId;
+
+        $this->registerEvent(new ProjectOwnerWasChangedEvent(
+            $this->getId()->value,
+            $this->ownerId->value
+        ));
+    }
+
     public function getId(): MembershipId
     {
         return $this->id;
@@ -80,6 +106,13 @@ final class Membership extends AggregateRoot
     private function isParticipant(UserId $userId): bool
     {
         return $this->participantIds->hashExists($userId->getHash());
+    }
+
+    private function ensureIsOwner(UserId $userId): void
+    {
+        if (!$this->isOwner($userId)) {
+            throw new UserIsNotOwnerException();
+        }
     }
 
     private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
