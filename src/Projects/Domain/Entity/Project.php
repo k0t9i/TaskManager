@@ -10,7 +10,6 @@ use App\Projects\Domain\Factory\ProjectStatusFactory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectDescription;
-use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
@@ -19,6 +18,7 @@ use App\ProjectTasks\Domain\Collection\TaskCollection;
 use App\ProjectTasks\Domain\Entity\Task;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Project extends AggregateRoot
@@ -32,7 +32,7 @@ final class Project extends AggregateRoot
         private ProjectId $id,
         private ProjectName $name,
         private ProjectDescription $description,
-        private ProjectFinishDate $finishDate,
+        private DateTime $finishDate,
         private ProjectStatus $status,
         private ProjectOwner $owner
     ) {
@@ -63,10 +63,7 @@ final class Project extends AggregateRoot
         return $this->description;
     }
 
-    /**
-     * @return ProjectFinishDate
-     */
-    public function getFinishDate(): ProjectFinishDate
+    public function getFinishDate(): DateTime
     {
         return $this->finishDate;
     }
@@ -93,7 +90,7 @@ final class Project extends AggregateRoot
         ProjectId $id,
         ProjectName $name,
         ProjectDescription $description,
-        ProjectFinishDate $finishDate,
+        DateTime $finishDate,
         ProjectOwner $owner
     ): self {
         $status = new ActiveProjectStatus();
@@ -126,7 +123,7 @@ final class Project extends AggregateRoot
     public function changeInformation(
         ProjectName $name,
         ProjectDescription $description,
-        ProjectFinishDate $finishDate,
+        DateTime $finishDate,
         UserId $currentUserId
     ): void {
         $this->getStatus()->ensureAllowsModification();

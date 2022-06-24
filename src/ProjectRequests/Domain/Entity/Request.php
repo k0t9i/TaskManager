@@ -5,10 +5,10 @@ namespace App\ProjectRequests\Domain\Entity;
 
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
-use App\ProjectRequests\Domain\ValueObject\RequestChangeDate;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Request implements Hashable
@@ -17,14 +17,14 @@ final class Request implements Hashable
         private RequestId $id,
         private UserId $userId,
         private RequestStatus $status,
-        private RequestChangeDate $changeDate
+        private DateTime $changeDate
     ) {
     }
 
     public static function create(RequestId $id, UserId $requestUserId): self
     {
         $status = new PendingRequestStatus();
-        $changeDate = new RequestChangeDate(date('c'));
+        $changeDate = new DateTime(date('c'));
         return new Request($id, $requestUserId, $status, $changeDate);
     }
 
@@ -50,7 +50,7 @@ final class Request implements Hashable
         return $this->status;
     }
 
-    public function getChangeDate(): RequestChangeDate
+    public function getChangeDate(): DateTime
     {
         return $this->changeDate;
     }

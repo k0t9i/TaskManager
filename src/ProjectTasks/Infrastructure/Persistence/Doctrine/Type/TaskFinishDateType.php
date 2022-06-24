@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\ProjectTasks\Infrastructure\Persistence\Doctrine\Type;
 
-use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
+use App\Shared\Domain\ValueObject\DateTime;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\DateImmutableType;
 use InvalidArgumentException;
@@ -18,16 +18,16 @@ class TaskFinishDateType extends DateImmutableType
         return self::NAME;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): TaskFinishDate
+    public function convertToPHPValue($value, AbstractPlatform $platform): DateTime
     {
         $value = parent::convertToPHPValue($value, $platform);
 
-        return TaskFinishDate::createFromPhpDate($value);
+        return DateTime::createFromPhpDate($value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
-        if (!$value instanceof TaskFinishDate) {
+        if (!$value instanceof DateTime) {
             throw new InvalidArgumentException(sprintf('Invalid task finish date type %s', gettype($value)));
         }
         return parent::convertToDatabaseValue($value->getPhpDate(), $platform);

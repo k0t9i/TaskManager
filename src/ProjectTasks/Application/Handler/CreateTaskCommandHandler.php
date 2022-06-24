@@ -8,14 +8,13 @@ use App\ProjectTasks\Domain\Repository\ProjectTaskRepositoryInterface;
 use App\ProjectTasks\Domain\ValueObject\ProjectTaskId;
 use App\ProjectTasks\Domain\ValueObject\TaskBrief;
 use App\ProjectTasks\Domain\ValueObject\TaskDescription;
-use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
 use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskName;
-use App\ProjectTasks\Domain\ValueObject\TaskStartDate;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 
@@ -40,8 +39,8 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new TaskName($command->name),
                 new TaskBrief($command->brief),
                 new TaskDescription($command->description),
-                new TaskStartDate($command->startDate),
-                new TaskFinishDate($command->finishDate)
+                new DateTime($command->startDate),
+                new DateTime($command->finishDate)
             ),
             $taskOwner->getId(),
             new UserId($command->currentUserId)

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\ProjectTasks\Domain\Entity;
 
-use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\ProjectTasks\Domain\Collection\TaskCollection;
 use App\ProjectTasks\Domain\Event\TaskInformationWasChangedEvent;
@@ -22,6 +21,7 @@ use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectTask extends AggregateRoot
@@ -30,7 +30,7 @@ final class ProjectTask extends AggregateRoot
         private ProjectTaskId $id,
         private ProjectStatus $status,
         private UserId $ownerId,
-        private ProjectFinishDate $finishDate,
+        private DateTime $finishDate,
         private UserIdCollection $participantIds,
         private TaskCollection $tasks
     ) {
@@ -159,7 +159,7 @@ final class ProjectTask extends AggregateRoot
         return $this->ownerId;
     }
 
-    public function getFinishDate(): ProjectFinishDate
+    public function getFinishDate(): DateTime
     {
         return $this->finishDate;
     }

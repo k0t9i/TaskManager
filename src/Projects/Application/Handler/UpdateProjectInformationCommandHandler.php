@@ -6,11 +6,11 @@ namespace App\Projects\Application\Handler;
 use App\Projects\Application\CQ\UpdateProjectInformationCommand;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;
-use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class UpdateProjectInformationCommandHandler implements CommandHandlerInterface
@@ -28,7 +28,7 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
         $project->changeInformation(
             new ProjectName($command->name),
             new ProjectDescription($command->description),
-            new ProjectFinishDate($command->finishDate),
+            new DateTime($command->finishDate),
             new UserId($command->currentUserId)
         );
 

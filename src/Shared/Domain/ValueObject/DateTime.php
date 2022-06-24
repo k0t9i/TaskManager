@@ -8,7 +8,7 @@ use Exception;
 use InvalidArgumentException;
 use Stringable;
 
-abstract class DateTime implements Stringable
+class DateTime implements Stringable
 {
     private const DEFAULT_FORMAT = 'c';
 

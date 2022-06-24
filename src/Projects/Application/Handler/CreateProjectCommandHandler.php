@@ -7,13 +7,13 @@ use App\Projects\Application\CQ\CreateProjectCommand;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;
-use App\Projects\Domain\ValueObject\ProjectFinishDate;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 
@@ -35,7 +35,7 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
             new ProjectId($this->uuidGenerator->generate()),
             new ProjectName($command->name),
             new ProjectDescription($command->description),
-            new ProjectFinishDate($command->finishDate),
+            new DateTime($command->finishDate),
             new ProjectOwner($user->getId())
         );
 

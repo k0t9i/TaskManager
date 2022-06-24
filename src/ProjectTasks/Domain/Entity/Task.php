@@ -13,13 +13,12 @@ use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\ClosedTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\TaskBrief;
 use App\ProjectTasks\Domain\ValueObject\TaskDescription;
-use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
 use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskName;
-use App\ProjectTasks\Domain\ValueObject\TaskStartDate;
 use App\ProjectTasks\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Entity\User;
 
@@ -30,8 +29,8 @@ class Task implements Hashable
         private TaskName $name,
         private TaskBrief $brief,
         private TaskDescription $description,
-        private TaskStartDate $startDate,
-        private TaskFinishDate $finishDate,
+        private DateTime $startDate,
+        private DateTime $finishDate,
         private UserId $ownerId,
         private TaskStatus $status
     ) {
@@ -70,18 +69,12 @@ class Task implements Hashable
         return $this->description;
     }
 
-    /**
-     * @return TaskStartDate
-     */
-    public function getStartDate(): TaskStartDate
+    public function getStartDate(): DateTime
     {
         return $this->startDate;
     }
 
-    /**
-     * @return TaskFinishDate
-     */
-    public function getFinishDate(): TaskFinishDate
+    public function getFinishDate(): DateTime
     {
         return $this->finishDate;
     }
@@ -115,14 +108,14 @@ class Task implements Hashable
     public function limitDatesByProjectFinishDate(Project $project): void
     {
         if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
-            $this->startDate = new TaskStartDate($project->getFinishDate()->getValue());
+            $this->startDate = new DateTime($project->getFinishDate()->getValue());
             $project->registerEvent(new TaskStartDateWasChangedEvent(
                 $this->getId()->value,
                 $this->getStartDate()->getValue()
             ));
         }
         if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
-            $this->finishDate = new TaskFinishDate($project->getFinishDate()->getValue());
+            $this->finishDate = new DateTime($project->getFinishDate()->getValue());
             $project->registerEvent(new TaskFinishDateWasChangedEvent(
                 $this->getId()->value,
                 $this->getFinishDate()->getValue()
