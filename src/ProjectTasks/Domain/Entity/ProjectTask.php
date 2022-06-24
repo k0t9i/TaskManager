@@ -17,12 +17,8 @@ use App\ProjectTasks\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDate
 use App\ProjectTasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\ProjectTaskId;
-use App\ProjectTasks\Domain\ValueObject\TaskBrief;
-use App\ProjectTasks\Domain\ValueObject\TaskDescription;
-use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
-use App\ProjectTasks\Domain\ValueObject\TaskName;
-use App\ProjectTasks\Domain\ValueObject\TaskStartDate;
+use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
@@ -42,21 +38,17 @@ final class ProjectTask extends AggregateRoot
 
     public function createTask(
         TaskId $id,
-        TaskName $name,
-        TaskBrief $brief,
-        TaskDescription $description,
-        TaskStartDate $startDate,
-        TaskFinishDate $finishDate,
+        TaskInformation $information,
         UserId $ownerId,
         UserId $currentUserId
     ): void {
         $this->getStatus()->ensureAllowsModification();
         $this->ensureCanChangeTask($ownerId, $currentUserId);
 
-        if ($startDate->isGreaterThan($this->finishDate)) {
+        if ($information->startDate->isGreaterThan($this->finishDate)) {
             throw new TaskStartDateGreaterThanProjectFinishDateException();
         }
-        if ($finishDate->isGreaterThan($this->finishDate)) {
+        if ($information->finishDate->isGreaterThan($this->finishDate)) {
             throw new TaskFinishDateGreaterThanProjectFinishDateException();
         }
         if (!$this->isUserInProject($ownerId)) {
@@ -64,16 +56,25 @@ final class ProjectTask extends AggregateRoot
         }
 
         $status = new ActiveTaskStatus();
-        $task = new Task($id, $name, $brief, $description, $startDate, $finishDate, $ownerId, $status);
+        $task = new Task(
+            $id,
+            $information->name,
+            $information->brief,
+            $information->description,
+            $information->startDate,
+            $information->finishDate,
+            $ownerId,
+            $status
+        );
         $this->tasks->add($task);
 
         $this->registerEvent(new TaskWasCreatedEvent(
             $id->value,
-            $name->value,
-            $brief->value,
-            $description->value,
-            $startDate->getValue(),
-            $finishDate->getValue(),
+            $information->name->value,
+            $information->brief->value,
+            $information->description->value,
+            $information->startDate->getValue(),
+            $information->finishDate->getValue(),
             $ownerId->value,
             $status->getScalar(),
             $this->id->value,
@@ -82,19 +83,15 @@ final class ProjectTask extends AggregateRoot
 
     public function changeTaskInformation(
         TaskId $id,
-        TaskName $name,
-        TaskBrief $brief,
-        TaskDescription $description,
-        TaskStartDate $startDate,
-        TaskFinishDate $finishDate,
+        TaskInformation $information,
         UserId $currentUserId
     ): void {
         $this->getStatus()->ensureAllowsModification();
 
-        if ($startDate->isGreaterThan($this->getFinishDate())) {
+        if ($information->startDate->isGreaterThan($this->getFinishDate())) {
             throw new TaskStartDateGreaterThanProjectFinishDateException();
         }
-        if ($finishDate->isGreaterThan($this->getFinishDate())) {
+        if ($information->finishDate->isGreaterThan($this->getFinishDate())) {
             throw new TaskFinishDateGreaterThanProjectFinishDateException();
         }
         $this->ensureProjectTaskExits($id);
@@ -102,15 +99,15 @@ final class ProjectTask extends AggregateRoot
         $task = $this->tasks->get($id->getHash());
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
 
-        $task->changeInformation($name, $brief, $description, $startDate, $finishDate);
+        $task->changeInformation($information);
 
         $this->registerEvent(new TaskInformationWasChangedEvent(
             $id->value,
-            $name->value,
-            $brief->value,
-            $description->value,
-            $startDate->getValue(),
-            $finishDate->getValue(),
+            $information->name->value,
+            $information->brief->value,
+            $information->description->value,
+            $information->startDate->getValue(),
+            $information->finishDate->getValue(),
             $this->id->value,
         ));
     }

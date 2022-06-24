@@ -9,6 +9,7 @@ use App\ProjectTasks\Domain\ValueObject\TaskBrief;
 use App\ProjectTasks\Domain\ValueObject\TaskDescription;
 use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
+use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskName;
 use App\ProjectTasks\Domain\ValueObject\TaskStartDate;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -30,11 +31,13 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
 
         $project->changeTaskInformation(
             $taskId,
-            new TaskName($command->name),
-            new TaskBrief($command->brief),
-            new TaskDescription($command->description),
-            new TaskStartDate($command->startDate),
-            new TaskFinishDate($command->finishDate),
+            new TaskInformation(
+                new TaskName($command->name),
+                new TaskBrief($command->brief),
+                new TaskDescription($command->description),
+                new TaskStartDate($command->startDate),
+                new TaskFinishDate($command->finishDate)
+            ),
             new UserId($command->currentUserId),
         );
 

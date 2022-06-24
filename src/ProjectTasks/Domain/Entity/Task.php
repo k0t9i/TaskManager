@@ -15,6 +15,7 @@ use App\ProjectTasks\Domain\ValueObject\TaskBrief;
 use App\ProjectTasks\Domain\ValueObject\TaskDescription;
 use App\ProjectTasks\Domain\ValueObject\TaskFinishDate;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
+use App\ProjectTasks\Domain\ValueObject\TaskInformation;
 use App\ProjectTasks\Domain\ValueObject\TaskName;
 use App\ProjectTasks\Domain\ValueObject\TaskStartDate;
 use App\ProjectTasks\Domain\ValueObject\TaskStatus;
@@ -101,54 +102,6 @@ class Task implements Hashable
         return $this->status;
     }
 
-    /**
-     * @param TaskName $name
-     */
-    private function setName(TaskName $name): void
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @param TaskBrief $brief
-     */
-    private function setBrief(TaskBrief $brief): void
-    {
-        $this->brief = $brief;
-    }
-
-    /**
-     * @param TaskDescription $description
-     */
-    private function setDescription(TaskDescription $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @param TaskStartDate $startDate
-     */
-    private function setStartDate(TaskStartDate $startDate): void
-    {
-        $this->startDate = $startDate;
-    }
-
-    /**
-     * @param TaskFinishDate $finishDate
-     */
-    private function setFinishDate(TaskFinishDate $finishDate): void
-    {
-        $this->finishDate = $finishDate;
-    }
-
-    /**
-     * @param TaskStatus $status
-     */
-    private function setStatus(TaskStatus $status): void
-    {
-        $this->status = $status;
-    }
-
     public function isOwner(UserId $userId): bool
     {
         return $this->ownerId->isEqual($userId);
@@ -157,14 +110,14 @@ class Task implements Hashable
     public function limitDatesByProjectFinishDate(Project $project): void
     {
         if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
-            $this->setStartDate(new TaskStartDate($project->getFinishDate()->getValue()));
+            $this->startDate = new TaskStartDate($project->getFinishDate()->getValue());
             $project->registerEvent(new TaskStartDateWasChangedEvent(
                 $this->getId()->value,
                 $this->getStartDate()->getValue()
             ));
         }
         if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
-            $this->setFinishDate(new TaskFinishDate($project->getFinishDate()->getValue()));
+            $this->finishDate = new TaskFinishDate($project->getFinishDate()->getValue());
             $project->registerEvent(new TaskFinishDateWasChangedEvent(
                 $this->getId()->value,
                 $this->getFinishDate()->getValue()
@@ -172,25 +125,20 @@ class Task implements Hashable
         }
     }
 
-    public function changeInformation(
-        TaskName $name,
-        TaskBrief $brief,
-        TaskDescription $description,
-        TaskStartDate $startDate,
-        TaskFinishDate $finishDate,
-    ): void {
+    public function changeInformation(TaskInformation $information): void {
         $this->getStatus()->ensureAllowsModification();
-        $this->setName($name);
-        $this->setBrief($brief);
-        $this->setDescription($description);
-        $this->setStartDate($startDate);
-        $this->setFinishDate($finishDate);
+        $this->name = $information->name;
+        $this->brief = $information->brief;
+        $this->description = $information->description;
+        $this->startDate = $information->startDate;
+        $this->finishDate = $information->finishDate;
+        $this->ensureFinishDateGreaterThanStart();
     }
 
     public function closeTaskIfProjectWasClosed(Project $project): void
     {
         if ($this->getStatus() instanceof ActiveTaskStatus) {
-            $this->setStatus(new ClosedTaskStatus());
+            $this->status = new ClosedTaskStatus();
             $project->registerEvent(new TaskStatusWasChangedEvent(
                 $this->getId()->value,
                 TaskStatusFactory::scalarFromObject($this->getStatus())
@@ -201,7 +149,7 @@ class Task implements Hashable
     public function changeStatus(TaskStatus $status): void
     {
         $this->getStatus()->ensureCanBeChangedTo($status);
-        $this->setStatus($status);
+        $this->status = $status;
     }
 
     private function ensureFinishDateGreaterThanStart()
