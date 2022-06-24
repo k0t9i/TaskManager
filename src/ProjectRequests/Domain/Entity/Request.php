@@ -64,4 +64,14 @@ final class Request implements Hashable
     {
         return $this->status instanceof ConfirmedRequestStatus;
     }
+
+    public function isPending(): bool
+    {
+        return $this->status instanceof PendingRequestStatus;
+    }
+
+    public function isNonRejected(): bool
+    {
+        return $this->isConfirmed() || $this->isPending();
+    }
 }

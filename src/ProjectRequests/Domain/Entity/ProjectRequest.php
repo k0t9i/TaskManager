@@ -8,7 +8,7 @@ use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
-use App\ProjectRequests\Domain\Exception\UserAlreadyHasProjectRequestException;
+use App\ProjectRequests\Domain\Exception\UserAlreadyHasNonRejectedProjectRequestException;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
@@ -81,7 +81,7 @@ final class ProjectRequest extends AggregateRoot
     {
         $this->getStatus()->ensureAllowsModification();
         $this->ensureIsUserAlreadyInProject($request->getUserId());
-        $this->ensureDoesUserAlreadyHaveRequest($request->getUserId());
+        $this->ensureDoesUserAlreadyHaveNonRejectedRequest($request->getUserId());
         $this->getRequests()->add($request);
     }
 
@@ -122,12 +122,12 @@ final class ProjectRequest extends AggregateRoot
         $this->getParticipantIds()->add($participantId);
     }
 
-    private function ensureDoesUserAlreadyHaveRequest(UserId $userId): void
+    private function ensureDoesUserAlreadyHaveNonRejectedRequest(UserId $userId): void
     {
         /** @var Request $request */
         foreach ($this->getRequests() as $request) {
-            if ($request->getUserId()->isEqual($userId)) {
-                throw new UserAlreadyHasProjectRequestException();
+            if ($request->isNonRejected() && $request->getUserId()->isEqual($userId)) {
+                throw new UserAlreadyHasNonRejectedProjectRequestException();
             }
         }
     }
