@@ -3,15 +3,12 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
 
-use App\Projects\Domain\Collection\ProjectParticipantCollection;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
-use App\Projects\Domain\ValueObject\ProjectParticipant;
-use App\Shared\Domain\ValueObject\UserId;
-use App\Tasks\Domain\Entity\Task;
-use App\Tasks\Domain\TaskCollection;
+use App\ProjectTasks\Domain\Collection\TaskCollection;
+use App\ProjectTasks\Domain\Entity\Task;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -32,21 +29,6 @@ class ProjectRepository implements ProjectRepositoryInterface
         /** @var Project $project */
         $project = $this->repository()->find($id);
         if ($project !== null) {
-            $rawParticipants = $this->entityManager->getConnection()->createQueryBuilder()
-                ->select('*')
-                ->from('project_participant', 'p')
-                ->where('p.project_id = :id')
-                ->setParameter('id', $project->getId()->value)
-                ->executeQuery()
-                ->fetchAllAssociative();
-            $participants = [];
-            foreach ($rawParticipants as $participant) {
-                $participants[] = new ProjectParticipant(
-                    new UserId($participant['user_id'])
-                );
-            }
-            $project->setParticipants(new ProjectParticipantCollection($participants));
-
             /** @var Task[] $rawTasks */
             $rawTasks = $this->entityManager->getRepository(Task::class)->findBy([
                 'project' => $project
@@ -93,37 +75,6 @@ class ProjectRepository implements ProjectRepositoryInterface
      */
     public function update(Project $project): void
     {
-        $participants = $project->getParticipants();
-        if ($participants->isDirty()) {
-            /** @var ProjectParticipant $item */
-            foreach ($participants->getAdded() as $item) {
-                $this->entityManager->getConnection()->createQueryBuilder()
-                    ->insert('project_participant')
-                    ->values([
-                        'project_id' => '?',
-                        'user_id' => '?',
-                    ])
-                    ->setParameters([
-                        $project->getId()->value,
-                        $item->userId->value
-                    ])
-                    ->executeStatement();
-            }
-            /** @var ProjectParticipant $item */
-            foreach ($participants->getDeleted() as $item) {
-                $this->entityManager->getConnection()->createQueryBuilder()
-                    ->delete('project_participant')
-                    ->where('project_id = ?')
-                    ->andWhere('user_id = ?')
-                    ->setParameters([
-                        $project->getId()->value,
-                        $item->userId->value
-                    ])
-                    ->executeStatement();
-            }
-            $participants->flush();
-        }
-
         $tasks = $project->getTasks();
         foreach ($tasks as $task) {
             $this->entityManager->persist($task);
@@ -139,18 +90,6 @@ class ProjectRepository implements ProjectRepositoryInterface
 
     public function delete(Project $project): void
     {
-        $participants = $project->getParticipants();
-        foreach ($participants as $participant) {
-            $this->entityManager->getConnection()->createQueryBuilder()
-                ->delete('project_participant')
-                ->where('project_id = ?')
-                ->andWhere('user_id = ?')
-                ->setParameters([
-                    $project->getId()->value,
-                    $participant->userId->value
-                ])
-                ->executeStatement();
-        }
         foreach ($project->getTasks() as $task) {
             $this->entityManager->remove($task);
         }

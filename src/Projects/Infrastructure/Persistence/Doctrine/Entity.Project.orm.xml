@@ -10,7 +10,7 @@
         <field name="finishDate" type="projectFinishDate" />
         <field name="status" type="projectStatus" />
         <embedded name="owner" class="App\Projects\Domain\ValueObject\ProjectOwner" use-column-prefix="false" />
-        <!--one-to-many field="tasks" target-entity="App\Tasks\Domain\Entity\Task" mapped-by="project" orphan-removal="true">
+        <!--one-to-many field="tasks" target-entity="App\ProjectTasks\Domain\Entity\Task" mapped-by="project" orphan-removal="true">
             <cascade>
                 <cascade-persist />
                 <cascade-remove />
