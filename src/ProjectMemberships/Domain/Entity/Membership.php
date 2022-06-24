@@ -37,13 +37,13 @@ final class Membership extends AggregateRoot
             throw new ProjectParticipantNotExistException();
         }
         /** @var UserId $taskOwnerId */
-        foreach ($this->taskOwnerIds as $taskOwnerId) {
+        foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
             if ($taskOwnerId->isEqual($participantId)) {
                 throw new UserHasProjectTaskException();
             }
         }
 
-        $this->participantIds->remove($participantId);
+        $this->getParticipantIds()->remove($participantId);
 
         $this->registerEvent(new ProjectParticipantWasRemovedEvent(
             $this->getId()->value,
@@ -60,7 +60,7 @@ final class Membership extends AggregateRoot
             throw new UserIsAlreadyOwnerException();
         }
         /** @var UserId $taskOwnerId */
-        foreach ($this->taskOwnerIds as $taskOwnerId) {
+        foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
             if ($taskOwnerId->isEqual($this->ownerId)) {
                 throw new ProjectOwnerOwnsProjectTaskException();
             }
@@ -98,14 +98,14 @@ final class Membership extends AggregateRoot
         return $this->taskOwnerIds;
     }
 
-    public function isOwner(UserId $userId): bool
+    private function isOwner(UserId $userId): bool
     {
-        return $this->ownerId->isEqual($userId);
+        return $this->getOwnerId()->isEqual($userId);
     }
 
     private function isParticipant(UserId $userId): bool
     {
-        return $this->participantIds->hashExists($userId->getHash());
+        return $this->getParticipantIds()->hashExists($userId->getHash());
     }
 
     private function ensureIsOwner(UserId $userId): void
@@ -117,7 +117,7 @@ final class Membership extends AggregateRoot
 
     private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
     {
-        if (!$this->isOwner($currentUserId) && $participantId->value !== $currentUserId->value) {
+        if (!$this->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
             throw new InsufficientPermissionsToChangeProjectParticipantException();
         }
     }
