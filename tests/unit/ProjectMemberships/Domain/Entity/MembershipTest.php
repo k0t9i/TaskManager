@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Tests\unit\ProjectMemberships\Domain\Entity;
 
 use App\ProjectMemberships\Domain\Entity\Membership;
+use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
+use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
-use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Exception\ModificationDeniedException;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
@@ -79,6 +80,7 @@ class MembershipTest extends TestCase
 
     public function testChangeOwner(): void
     {
+        /** @var ProjectOwnerWasChangedEvent $expectedEvent */
         [$ownerId, $currentUserId, $expectedEvent, $membership] = $this->mother->changeOwnerByOwner();
 
         $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
@@ -87,8 +89,11 @@ class MembershipTest extends TestCase
         $events = $membership->releaseEvents();
         self::assertCount(1, $events);
         self::assertTrue(isset($events[0]));
+        /** @var ProjectOwnerWasChangedEvent $event */
         $event = $events[0];
-        self::assertEquals($expectedEvent, $event);
+        self::assertInstanceOf(ProjectOwnerWasChangedEvent::class, $event);
+        self::assertEquals($expectedEvent->aggregateId, $event->aggregateId);
+        self::assertEquals($expectedEvent->ownerId, $event->ownerId);
     }
 
     public function testChangeOwnerInCloseProject(): void
@@ -131,14 +136,19 @@ class MembershipTest extends TestCase
         $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
     }
 
-    private function removeParticipantPositiveAssertions(Membership $membership, DomainEvent $expectedEvent): void
-    {
+    private function removeParticipantPositiveAssertions(
+        Membership $membership,
+        ProjectParticipantWasRemovedEvent$expectedEvent
+    ): void {
         self::assertCount(0, $membership->getParticipantIds());
         $events = $membership->releaseEvents();
         self::assertCount(1, $events);
         self::assertTrue(isset($events[0]));
+        /** @var ProjectParticipantWasRemovedEvent $event */
         $event = $events[0];
-        self::assertEquals($expectedEvent, $event);
+        self::assertInstanceOf(ProjectParticipantWasRemovedEvent::class, $event);
+        self::assertEquals($expectedEvent->aggregateId, $event->aggregateId);
+        self::assertEquals($expectedEvent->participantId, $event->participantId);
     }
 }
 
