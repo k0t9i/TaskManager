@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace App\Projects\Domain\Entity;
 
 //TODO think about using of ProjectTasks namespace
-use App\ProjectTasks\Domain\Event\TaskFinishDateWasChangedEvent;
-use App\ProjectTasks\Domain\Event\TaskStartDateWasChangedEvent;
+use App\Projects\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
+use App\Projects\Domain\Event\ProjectTaskStartDateWasChangedEvent;
+use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
+use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\ClosedTaskStatus;
-use App\ProjectTasks\Domain\ValueObject\TaskId;
 use App\ProjectTasks\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
@@ -16,7 +17,7 @@ use App\Shared\Domain\ValueObject\DateTime;
 final class ProjectTask implements Hashable
 {
     public function __construct(
-        private TaskId $id,
+        private ProjectTaskId $id,
         private TaskStatus $status,
         private DateTime $startDate,
         private DateTime $finishDate
@@ -27,8 +28,7 @@ final class ProjectTask implements Hashable
     {
         if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
             $this->startDate = new DateTime($project->getFinishDate()->getValue());
-            //TODO move event under project namespace
-            $project->registerEvent(new TaskStartDateWasChangedEvent(
+            $project->registerEvent(new ProjectTaskStartDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
                 $this->getStartDate()->getValue()
@@ -36,8 +36,7 @@ final class ProjectTask implements Hashable
         }
         if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
             $this->finishDate = new DateTime($project->getFinishDate()->getValue());
-            //TODO move event under project namespace
-            $project->registerEvent(new TaskFinishDateWasChangedEvent(
+            $project->registerEvent(new ProjectTaskFinishDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
                 $this->getFinishDate()->getValue()
@@ -49,16 +48,15 @@ final class ProjectTask implements Hashable
     {
         if ($this->getStatus() instanceof ActiveTaskStatus) {
             $this->status = new ClosedTaskStatus();
-            //TODO create own event for project
-            /*$project->registerEvent(new TaskStatusWasChangedEvent(
+            $project->registerEvent(new ProjectTaskStatusWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
                 (string) $this->getStatus()->getScalar()
-            ));*/
+            ));
         }
     }
 
-    public function getId(): TaskId
+    public function getId(): ProjectTaskId
     {
         return $this->id;
     }
