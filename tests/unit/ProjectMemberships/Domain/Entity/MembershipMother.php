@@ -196,6 +196,20 @@ final class MembershipMother
         return [$newOwnerId, $currentUserId, $membership];
     }
 
+    public function changeOwnerExistingParticipant(): array
+    {
+        $membershipId = $this->faker->uuid();
+        $ownerId = $this->faker->uuid();
+        $participantId = $this->faker->uuid();
+        $taskOwnerId = $this->faker->uuid();
+        $currentUserId = $ownerId;
+        $newOwnerId = $participantId;
+
+        $membership = $this->createMembership($membershipId, $ownerId, $participantId, $taskOwnerId);
+
+        return [$newOwnerId, $currentUserId, $membership];
+    }
+
     private function createMembership(
         string $membershipId,
         string $ownerId,

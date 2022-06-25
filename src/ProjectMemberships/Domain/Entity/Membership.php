@@ -6,7 +6,6 @@ namespace App\ProjectMemberships\Domain\Entity;
 use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
-use App\ProjectMemberships\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
 use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
@@ -14,6 +13,7 @@ use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
+use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 
@@ -36,12 +36,7 @@ final class Membership extends AggregateRoot
         if (!$this->isParticipant($participantId)) {
             throw new ProjectParticipantNotExistException();
         }
-        /** @var UserId $taskOwnerId */
-        foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
-            if ($taskOwnerId->isEqual($participantId)) {
-                throw new UserHasProjectTaskException();
-            }
-        }
+        $this->ensureDoesUserHaveTask($participantId);
 
         $this->getParticipantIds()->remove($participantId);
 
@@ -59,12 +54,11 @@ final class Membership extends AggregateRoot
         if ($this->isOwner($ownerId)) {
             throw new UserIsAlreadyOwnerException();
         }
-        /** @var UserId $taskOwnerId */
-        foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
-            if ($taskOwnerId->isEqual($this->ownerId)) {
-                throw new ProjectOwnerOwnsProjectTaskException();
-            }
+        if ($this->isParticipant($ownerId)) {
+            throw new UserIsAlreadyParticipantException();
         }
+        $this->ensureDoesUserHaveTask($this->getOwnerId());
+
         $this->ownerId = $ownerId;
 
         $this->registerEvent(new ProjectOwnerWasChangedEvent(
@@ -119,6 +113,16 @@ final class Membership extends AggregateRoot
     {
         if (!$this->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
             throw new InsufficientPermissionsToChangeProjectParticipantException();
+        }
+    }
+
+    private function ensureDoesUserHaveTask(UserId $userId): void
+    {
+        /** @var UserId $taskOwnerId */
+        foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
+            if ($taskOwnerId->isEqual($userId)) {
+                throw new UserHasProjectTaskException();
+            }
         }
     }
 }

@@ -5,12 +5,12 @@ namespace App\Tests\unit\ProjectMemberships\Domain\Entity;
 
 use App\ProjectMemberships\Domain\Entity\Membership;
 use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
-use App\ProjectMemberships\Domain\Exception\ProjectOwnerOwnsProjectTaskException;
 use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Exception\ModificationDeniedException;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
+use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 use DG\BypassFinals;
@@ -119,7 +119,15 @@ class MembershipTest extends TestCase
     {
         [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerWithTask();
 
-        self::expectException(ProjectOwnerOwnsProjectTaskException::class);
+        self::expectException(UserHasProjectTaskException::class);
+        $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
+    }
+
+    public function testChangeOwnerToExistingParticipant(): void
+    {
+        [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerExistingParticipant();
+
+        self::expectException(UserIsAlreadyParticipantException::class);
         $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
     }
 
