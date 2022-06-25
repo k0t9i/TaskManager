@@ -24,7 +24,7 @@ final class Request implements Hashable
     public static function create(RequestId $id, UserId $requestUserId): self
     {
         $status = new PendingRequestStatus();
-        $changeDate = new DateTime(date('c'));
+        $changeDate = new DateTime();
         return new Request($id, $requestUserId, $status, $changeDate);
     }
 

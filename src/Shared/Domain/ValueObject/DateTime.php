@@ -4,19 +4,21 @@ declare(strict_types=1);
 namespace App\Shared\Domain\ValueObject;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
 use Stringable;
 
 class DateTime implements Stringable
 {
-    private const DEFAULT_FORMAT = 'c';
+    private const DEFAULT_FORMAT = DateTimeInterface::ATOM;
 
     private DateTimeImmutable $dateTime;
 
-    public function __construct(string $value)
+    public function __construct(string $value = null)
     {
         try {
+            $value = $value ?: 'now';
             $this->dateTime = new DateTimeImmutable($value);
         } catch (Exception $e) {
             throw new InvalidArgumentException(sprintf('Invalid datetime value %s', $value), 0, $e);
