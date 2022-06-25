@@ -8,9 +8,29 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 final class RequestWasCreatedEvent extends DomainEvent
 {
     public function __construct(
-        public readonly string $id,
-        public readonly string $projectId,
-        public readonly string $userId
+        string $id,
+        public readonly string $requestId,
+        public readonly string $userId,
+        string $occurredOn = null
     ) {
+        parent::__construct($id, $occurredOn);
+    }
+
+    public static function getEventName(): string
+    {
+        return 'projectRequest.requestCreated';
+    }
+
+    public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
+    {
+        return new self($aggregateId, $body['requestId'], $body['userId'], $occurredOn);
+    }
+
+    public function toPrimitives(): array
+    {
+        return [
+            'requestId' => $this->requestId,
+            'userId' => $this->userId,
+        ];
     }
 }

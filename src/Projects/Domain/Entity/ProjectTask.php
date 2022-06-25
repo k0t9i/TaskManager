@@ -6,7 +6,6 @@ namespace App\Projects\Domain\Entity;
 //TODO think about using of ProjectTasks namespace
 use App\ProjectTasks\Domain\Event\TaskFinishDateWasChangedEvent;
 use App\ProjectTasks\Domain\Event\TaskStartDateWasChangedEvent;
-use App\ProjectTasks\Domain\Event\TaskStatusWasChangedEvent;
 use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\ClosedTaskStatus;
 use App\ProjectTasks\Domain\ValueObject\TaskId;
@@ -28,14 +27,18 @@ final class ProjectTask implements Hashable
     {
         if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
             $this->startDate = new DateTime($project->getFinishDate()->getValue());
+            //TODO move event under project namespace
             $project->registerEvent(new TaskStartDateWasChangedEvent(
+                $project->getId()->value,
                 $this->getId()->value,
                 $this->getStartDate()->getValue()
             ));
         }
         if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
             $this->finishDate = new DateTime($project->getFinishDate()->getValue());
+            //TODO move event under project namespace
             $project->registerEvent(new TaskFinishDateWasChangedEvent(
+                $project->getId()->value,
                 $this->getId()->value,
                 $this->getFinishDate()->getValue()
             ));
@@ -46,10 +49,12 @@ final class ProjectTask implements Hashable
     {
         if ($this->getStatus() instanceof ActiveTaskStatus) {
             $this->status = new ClosedTaskStatus();
-            $project->registerEvent(new TaskStatusWasChangedEvent(
+            //TODO create own event for project
+            /*$project->registerEvent(new TaskStatusWasChangedEvent(
+                $project->getId()->value,
                 $this->getId()->value,
-                $this->getStatus()->getScalar()
-            ));
+                (string) $this->getStatus()->getScalar()
+            ));*/
         }
     }
 

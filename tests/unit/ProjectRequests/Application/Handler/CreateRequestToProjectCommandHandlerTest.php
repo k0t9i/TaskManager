@@ -58,7 +58,7 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
                 self::equalTo(new UserId($userId))
             );
         $releaseEventsResult = [
-            new DomainEvent()
+            $this->getMockForAbstractClass(DomainEvent::class, callOriginalConstructor: false)
         ];
         $project->expects(self::once())
             ->method('releaseEvents')

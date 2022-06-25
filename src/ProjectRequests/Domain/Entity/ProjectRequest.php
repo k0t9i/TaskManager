@@ -38,8 +38,8 @@ final class ProjectRequest extends AggregateRoot
         $this->addRequest($request);
 
         $this->registerEvent(new RequestWasCreatedEvent(
-            $id->value,
             $this->getId()->value,
+            $id->value,
             $requestUserId->value,
         ));
 
@@ -73,7 +73,7 @@ final class ProjectRequest extends AggregateRoot
 
         $this->registerEvent(new RequestStatusWasChangedEvent(
             $this->getId()->value,
-            $request->getStatus()->getScalar()
+            (string) $request->getStatus()->getScalar()
         ));
     }
 

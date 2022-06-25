@@ -13,7 +13,7 @@ final class RequestStatusFactory
 {
     private const STATUS_PENDING = 0;
     private const STATUS_CONFIRMED = 1;
-    private const STATUS_REJECTED = 1;
+    private const STATUS_REJECTED = 2;
 
     public static function scalarFromObject(mixed $status): int
     {

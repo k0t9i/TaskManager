@@ -12,9 +12,9 @@ class AggregateRootTest extends TestCase
     public function testReleaseEvents(): void
     {
         $values = [
-            new DomainEvent(),
-            new DomainEvent(),
-            new DomainEvent(),
+            $this->getMockForAbstractClass(DomainEvent::class, callOriginalConstructor: false),
+            $this->getMockForAbstractClass(DomainEvent::class, callOriginalConstructor: false),
+            $this->getMockForAbstractClass(DomainEvent::class, callOriginalConstructor: false),
         ];
 
         $root = self::getMockForAbstractClass(AggregateRoot::class);

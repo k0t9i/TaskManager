@@ -48,6 +48,7 @@ final class Relationship extends AggregateRoot
         $this->getLinks()->add($taskLink);
 
         $this->registerEvent(new TaskLinkWasAddedEvent(
+            $this->getId()->value,
             $fromTaskId->value,
             $toTaskId->value
         ));
@@ -71,6 +72,7 @@ final class Relationship extends AggregateRoot
         $this->getLinks()->remove($taskLink);
 
         $this->registerEvent(new TaskLinkWasDeletedEvent(
+            $this->getId()->value,
             $fromTaskId->value,
             $toTaskId->value
         ));

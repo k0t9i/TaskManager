@@ -70,6 +70,7 @@ final class ProjectTask extends AggregateRoot
         $this->tasks->add($task);
 
         $this->registerEvent(new TaskWasCreatedEvent(
+            $this->id->value,
             $id->value,
             $information->name->value,
             $information->brief->value,
@@ -77,8 +78,7 @@ final class ProjectTask extends AggregateRoot
             $information->startDate->getValue(),
             $information->finishDate->getValue(),
             $ownerId->value,
-            $status->getScalar(),
-            $this->id->value,
+            (string) $status->getScalar(),
         ));
     }
 
@@ -103,13 +103,13 @@ final class ProjectTask extends AggregateRoot
         $task->changeInformation($information);
 
         $this->registerEvent(new TaskInformationWasChangedEvent(
+            $this->id->value,
             $id->value,
             $information->name->value,
             $information->brief->value,
             $information->description->value,
             $information->startDate->getValue(),
             $information->finishDate->getValue(),
-            $this->id->value,
         ));
     }
 
@@ -125,6 +125,7 @@ final class ProjectTask extends AggregateRoot
         $this->tasks->remove($task);
 
         $this->registerEvent(new TaskWasDeletedEvent(
+            $this->getId()->value,
             $id->value
         ));
     }
@@ -140,8 +141,9 @@ final class ProjectTask extends AggregateRoot
         $task->changeStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
+            $this->getId()->value,
             $task->getId()->value,
-            $status->getScalar()
+            (string) $status->getScalar()
         ));
     }
 

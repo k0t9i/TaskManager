@@ -55,7 +55,7 @@ final class Project extends AggregateRoot
             $name->value,
             $description->value,
             $finishDate->getValue(),
-            $status->getScalar(),
+            (string) $status->getScalar(),
             $ownerId->value
         ));
 
@@ -106,7 +106,7 @@ final class Project extends AggregateRoot
 
         $this->registerEvent(new ProjectStatusWasChangedEvent(
             $this->getId()->value,
-            $status->getScalar()
+            (string) $status->getScalar()
         ));
     }
 
