@@ -20,7 +20,7 @@ use App\Shared\Domain\ValueObject\UserId;
 final class Membership extends AggregateRoot
 {
     public function __construct(
-        private MembershipId $id,
+        private MembershipId $id, //TODO same as ProjectId
         private ProjectStatus $status,
         private UserId $ownerId,
         private UserIdCollection $participantIds,

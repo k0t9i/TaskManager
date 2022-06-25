@@ -22,7 +22,7 @@ use App\Shared\Domain\ValueObject\UserId;
 final class Relationship extends AggregateRoot
 {
     public function __construct(
-        private RelationshipId $id,
+        private RelationshipId $id, //TODO same as ProjectId
         private ProjectStatus $status,
         private UserId $ownerId,
         private RelationshipTaskCollection $tasks,

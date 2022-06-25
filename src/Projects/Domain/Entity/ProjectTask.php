@@ -8,16 +8,16 @@ use App\Projects\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
 use App\Projects\Domain\Event\ProjectTaskStartDateWasChangedEvent;
 use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
-use App\ProjectTasks\Domain\ValueObject\ActiveTaskStatus;
-use App\ProjectTasks\Domain\ValueObject\ClosedTaskStatus;
-use App\ProjectTasks\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
+use App\TaskManagers\Domain\ValueObject\ClosedTaskStatus;
+use App\TaskManagers\Domain\ValueObject\TaskStatus;
 
 final class ProjectTask implements Hashable
 {
     public function __construct(
-        private ProjectTaskId $id,
+        private ProjectTaskId $id, //TODO same as TaskId
         private TaskStatus $status,
         private DateTime $startDate,
         private DateTime $finishDate

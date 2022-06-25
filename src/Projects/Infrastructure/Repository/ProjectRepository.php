@@ -7,7 +7,6 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
-use App\ProjectTasks\Domain\Entity\Task;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -26,19 +25,7 @@ class ProjectRepository implements ProjectRepositoryInterface
     public function findById(ProjectId $id): ?Project
     {
         /** @var Project $project */
-        $project = $this->repository()->find($id);
-        if ($project !== null) {
-            /** @var Task[] $rawTasks */
-            $rawTasks = $this->entityManager->getRepository(Task::class)->findBy([
-                'project' => $project
-            ]);
-            $tasks = [];
-            foreach ($rawTasks as $task) {
-                $tasks[$task->getId()->value] = $task;
-            }
-        }
-
-        return $project;
+        return $this->repository()->find($id);
     }
 
     /**

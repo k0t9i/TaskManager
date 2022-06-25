@@ -23,7 +23,7 @@ use App\Shared\Domain\ValueObject\UserId;
 final class ProjectRequest extends AggregateRoot
 {
     public function __construct(
-        private ProjectRequestId $id,
+        private ProjectRequestId $id, //TODO same as ProjectId
         private ProjectStatus $status,
         private string $name,
         private UserId $ownerId,

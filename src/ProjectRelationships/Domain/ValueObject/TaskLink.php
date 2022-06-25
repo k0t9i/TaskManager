@@ -9,8 +9,8 @@ use App\Shared\Domain\Collection\Hashable;
 final class TaskLink implements Hashable
 {
     public function __construct(
-        public readonly RelationshipTaskId $fromTaskId,
-        public readonly RelationshipTaskId $toTaskId,
+        public readonly RelationshipTaskId $fromTaskId, //TODO same as ProjectId
+        public readonly RelationshipTaskId $toTaskId //TODO same as ProjectId
     ) {
         $this->ensureIsDifferentTasks();
     }

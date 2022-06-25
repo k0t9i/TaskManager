@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\UserId;
 final class RelationshipTask implements Hashable
 {
     public function __construct(
-        private RelationshipTaskId $id,
+        private RelationshipTaskId $id, //TODO same as TaskId
         private UserId $ownerId
     ) {
     }
