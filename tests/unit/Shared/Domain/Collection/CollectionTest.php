@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Collection;
 
-use InvalidArgumentException;
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class CollectionTest extends TestCase

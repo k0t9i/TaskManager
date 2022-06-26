@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Type;
 
 use App\Projects\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
-use InvalidArgumentException;
 
 class ProjectIdType extends StringType
 {

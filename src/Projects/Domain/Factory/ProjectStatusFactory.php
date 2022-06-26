@@ -6,7 +6,7 @@ namespace App\Projects\Domain\Factory;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectStatus;
-use InvalidArgumentException;
+use App\Shared\Domain\Exception\InvalidArgumentException;
 
 class ProjectStatusFactory
 {

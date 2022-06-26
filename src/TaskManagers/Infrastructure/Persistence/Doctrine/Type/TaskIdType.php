@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\TaskManagers\Infrastructure\Persistence\Doctrine\Type;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\TaskManagers\Domain\ValueObject\TaskId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
-use InvalidArgumentException;
 
 class TaskIdType extends StringType
 {

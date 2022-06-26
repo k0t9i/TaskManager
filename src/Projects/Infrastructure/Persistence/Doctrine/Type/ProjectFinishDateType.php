@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Type;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\DateTime;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\DateImmutableType;
-use InvalidArgumentException;
 
 class ProjectFinishDateType extends DateImmutableType
 {

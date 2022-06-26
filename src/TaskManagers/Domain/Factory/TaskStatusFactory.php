@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\TaskManagers\Domain\Factory;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
 use App\TaskManagers\Domain\ValueObject\ClosedTaskStatus;
 use App\TaskManagers\Domain\ValueObject\TaskStatus;
-use InvalidArgumentException;
 
 final class TaskStatusFactory
 {

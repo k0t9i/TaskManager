@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\ValueObject;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\DateTime;
 use DateTimeImmutable;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeTest extends TestCase

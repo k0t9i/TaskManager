@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Persistence\Doctrine\Type;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\UserId;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
-use InvalidArgumentException;
 
 class UserIdType extends StringType
 {

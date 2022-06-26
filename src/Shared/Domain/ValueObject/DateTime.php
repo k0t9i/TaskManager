@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use InvalidArgumentException;
 use Stringable;
 
 class DateTime implements Stringable

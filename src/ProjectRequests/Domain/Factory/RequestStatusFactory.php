@@ -7,7 +7,7 @@ use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RejectedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
-use InvalidArgumentException;
+use App\Shared\Domain\Exception\InvalidArgumentException;
 
 final class RequestStatusFactory
 {

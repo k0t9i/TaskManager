@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Collection;
 
+use App\Shared\Domain\Exception\InvalidArgumentException;
 use ArrayIterator;
-use InvalidArgumentException;
 use Traversable;
 
 abstract class Collection implements CollectionInterface
