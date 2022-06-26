@@ -13,7 +13,6 @@ use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\ProjectRelationships\Domain\ValueObject\TaskLink;
 use App\Shared\Domain\Exception\ModificationDeniedException;
 use App\Shared\Domain\ValueObject\UserId;
-use DG\BypassFinals;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +24,6 @@ class RelationshipTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
-        BypassFinals::enable();
         $this->mother = new RelationshipMother();
         $this->faker = Factory::create();
     }

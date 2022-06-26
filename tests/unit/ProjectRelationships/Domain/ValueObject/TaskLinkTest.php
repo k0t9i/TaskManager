@@ -6,7 +6,6 @@ namespace App\Tests\unit\ProjectRelationships\Domain\ValueObject;
 use App\ProjectRelationships\Domain\Exception\TasksOfProjectRelationshipTaskLinkAreEqualException;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\ProjectRelationships\Domain\ValueObject\TaskLink;
-use DG\BypassFinals;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -17,8 +16,6 @@ class TaskLinkTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/ProjectRelationships/*']);
-        BypassFinals::enable();
         $this->faker = Factory::create();
     }
 

@@ -5,7 +5,6 @@ namespace App\Tests\unit\TaskManagers\Domain\ValueObject;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
-use DG\BypassFinals;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +15,6 @@ class TaskDescriptionTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
-        BypassFinals::enable();
         $this->faker = Factory::create();
     }
 

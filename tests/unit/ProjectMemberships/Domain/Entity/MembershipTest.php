@@ -14,7 +14,6 @@ use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
-use DG\BypassFinals;
 use PHPUnit\Framework\TestCase;
 
 class MembershipTest extends TestCase
@@ -23,8 +22,6 @@ class MembershipTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
-        BypassFinals::enable();
         $this->mother = new MembershipMother();
     }
 

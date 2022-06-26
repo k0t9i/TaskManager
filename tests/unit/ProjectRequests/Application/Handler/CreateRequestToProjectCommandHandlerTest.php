@@ -26,7 +26,7 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
+        BypassFinals::setWhitelist(['*/src/ProjectRequests/*']);
         BypassFinals::enable();
         $this->faker = Factory::create();
     }

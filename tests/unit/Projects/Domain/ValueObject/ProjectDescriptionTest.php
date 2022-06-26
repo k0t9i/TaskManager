@@ -5,7 +5,6 @@ namespace App\Tests\unit\Projects\Domain\ValueObject;
 
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Shared\Domain\Exception\InvalidArgumentException;
-use DG\BypassFinals;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +15,6 @@ class ProjectDescriptionTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
-        BypassFinals::enable();
         $this->faker = Factory::create();
     }
 

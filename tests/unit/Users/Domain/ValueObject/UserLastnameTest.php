@@ -5,7 +5,6 @@ namespace App\Tests\unit\Users\Domain\ValueObject;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Users\Domain\ValueObject\UserLastname;
-use DG\BypassFinals;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +15,6 @@ class UserLastnameTest extends TestCase
 
     protected function setUp(): void
     {
-        BypassFinals::setWhitelist(['*/src/*']);
-        BypassFinals::enable();
         $this->faker = Factory::create();
     }
 
