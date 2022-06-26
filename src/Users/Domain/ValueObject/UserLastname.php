@@ -3,9 +3,16 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\ValueObject;
 
-class UserLastname
+use App\Shared\Domain\ValueObject\StringValueObject;
+
+final class UserLastname extends StringValueObject
 {
-    public function __construct(public readonly string $value)
+    private const MAX_LENGTH = 255;
+
+    protected function ensureIsValid(): void
     {
+        $attributeName = 'User lastname';
+        $this->ensureNotEmpty($attributeName);
+        $this->ensureValidMaxLength($attributeName, self::MAX_LENGTH);
     }
 }

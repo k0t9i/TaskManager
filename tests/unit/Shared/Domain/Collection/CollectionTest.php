@@ -60,7 +60,7 @@ class CollectionTest extends TestCase
     {
         $this->collection->add(new CollectionItem('9'));
         $this->collection->remove(new CollectionItem('1'));
-        $this->collection->flush();;
+        $this->collection->flush();
         self::assertFalse($this->collection->isDirty());
     }
 

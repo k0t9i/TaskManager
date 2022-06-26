@@ -3,9 +3,14 @@ declare(strict_types=1);
 
 namespace App\TaskManagers\Domain\ValueObject;
 
-class TaskBrief
+use App\Shared\Domain\ValueObject\StringValueObject;
+
+final class TaskBrief extends StringValueObject
 {
-    public function __construct(public readonly string $value)
+    private const MAX_LENGTH = 2000;
+
+    protected function ensureIsValid(): void
     {
+        $this->ensureValidMaxLength('Task brief', self::MAX_LENGTH);
     }
 }

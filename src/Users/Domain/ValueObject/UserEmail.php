@@ -3,9 +3,14 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\ValueObject;
 
-final class UserEmail
+use App\Shared\Domain\ValueObject\Email;
+
+final class UserEmail extends Email
 {
-    public function __construct(public readonly string $value)
+    protected function ensureIsValid(): void
     {
+        $attributeName = 'User email';
+        $this->ensureNotEmpty($attributeName);
+        $this->ensureValidEmail($attributeName);
     }
 }
