@@ -5,6 +5,7 @@ namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\CQ\ConfirmRequestCommand;
 use App\ProjectRequests\Application\Handler\ConfirmRequestCommandHandler;
+use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use DG\BypassFinals;
 use Faker\Factory;
@@ -24,17 +25,30 @@ class ConfirmRequestCommandHandlerTest extends TestCase
         $this->faker = Factory::create();
     }
 
-    public function testInvoke()
+    public function testPositive()
     {
         $requestId = $this->faker->uuid();
         $userId = $this->faker->uuid();
         $command = new ConfirmRequestCommand($requestId, $userId);
 
-        $handler = new ConfirmRequestCommandHandler(...$this->setUpHandlerParams(
+        $handler = new ConfirmRequestCommandHandler(...$this->setUpHandlerForPositiveScenario(
             ConfirmedRequestStatus::class,
             $requestId,
             $userId
         ));
+        $handler->__invoke($command);
+    }
+
+    public function testNonExistingProjectRequest()
+    {
+        $requestId = $this->faker->uuid();
+        $userId = $this->faker->uuid();
+        $command = new ConfirmRequestCommand($requestId, $userId);
+
+        $handler = new ConfirmRequestCommandHandler(...$this->setUpHandlerForNonExistingProjectRequest(
+            $requestId,
+        ));
+        self::expectException(ProjectRequestNotExistsException::class);
         $handler->__invoke($command);
     }
 }

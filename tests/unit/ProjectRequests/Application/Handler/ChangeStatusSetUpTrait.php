@@ -12,7 +12,7 @@ use App\Shared\Domain\ValueObject\UserId;
 
 trait ChangeStatusSetUpTrait
 {
-    private function setUpHandlerParams(string $statusClass, string $requestId, string $userId): array
+    private function setUpHandlerForPositiveScenario(string $statusClass, string $requestId, string $userId): array
     {
         $project = $this->getMockBuilder(ProjectRequest::class)
             ->disableOriginalConstructor()
@@ -51,6 +51,24 @@ trait ChangeStatusSetUpTrait
         $eventBus->expects(self::once())
             ->method('dispatch')
             ->with(...$releaseEventsResult);
+
+        return [$projectRepository, $eventBus];
+    }
+
+    private function setUpHandlerForNonExistingProjectRequest(string $requestId): array
+    {
+        $projectRepository = $this->getMockForAbstractClass(
+            ProjectRequestRepositoryInterface::class,
+            mockedMethods: ['findByRequestId']
+        );
+        $projectRepository->expects(self::once())
+            ->method('findByRequestId')
+            ->with(new RequestId($requestId))
+            ->willReturn(null);
+
+        $eventBus = $this->getMockForAbstractClass(
+            EventBusInterface::class
+        );
 
         return [$projectRepository, $eventBus];
     }

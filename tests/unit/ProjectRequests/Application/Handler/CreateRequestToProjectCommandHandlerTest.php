@@ -6,11 +6,13 @@ namespace App\Tests\unit\ProjectRequests\Application\Handler;
 use App\ProjectRequests\Application\CQ\CreateRequestToProjectCommand;
 use App\ProjectRequests\Application\Handler\CreateRequestToProjectCommandHandler;
 use App\ProjectRequests\Domain\Entity\ProjectRequest;
+use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Entity\User;
@@ -31,7 +33,7 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
         $this->faker = Factory::create();
     }
 
-    public function testInvoke()
+    public function testPositive()
     {
         $projectId = $this->faker->uuid();
         $userId = $this->faker->uuid();
@@ -111,6 +113,92 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
         );
 
         $command = new CreateRequestToProjectCommand($projectId, $userId);
+        $handler->__invoke($command);
+    }
+
+    public function testNonExistingUser()
+    {
+        $projectId = $this->faker->uuid();
+        $userId = $this->faker->uuid();
+
+        $project = $this->getMockBuilder(ProjectRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $uuidGenerator = $this->getMockForAbstractClass(
+            UuidGeneratorInterface::class
+        );
+
+        $userRepository = $this->getMockForAbstractClass(
+            UserRepositoryInterface::class,
+            mockedMethods: ['findById']
+        );
+        $userRepository->expects(self::once())
+            ->method('findById')
+            ->with(new UserId($userId))
+            ->willReturn(null);
+
+        $projectRepository = $this->getMockForAbstractClass(
+            ProjectRequestRepositoryInterface::class
+        );
+        $projectRepository->expects(self::once())
+            ->method('findById')
+            ->with(new ProjectRequestId($projectId))
+            ->willReturn($project);
+
+        $eventBus = $this->getMockForAbstractClass(
+            EventBusInterface::class
+        );
+
+        $handler = new CreateRequestToProjectCommandHandler(
+            $projectRepository,
+            $userRepository,
+            $uuidGenerator,
+            $eventBus
+        );
+
+        $command = new CreateRequestToProjectCommand($projectId, $userId);
+
+        self::expectException(UserNotExistException::class);
+        $handler->__invoke($command);
+    }
+
+    public function testNonExistingProjectRequest()
+    {
+        $projectId = $this->faker->uuid();
+        $userId = $this->faker->uuid();
+
+        $uuidGenerator = $this->getMockForAbstractClass(
+            UuidGeneratorInterface::class
+        );
+
+        $userRepository = $this->getMockForAbstractClass(
+            UserRepositoryInterface::class
+        );
+
+        $projectRepository = $this->getMockForAbstractClass(
+            ProjectRequestRepositoryInterface::class,
+            mockedMethods: ['findById']
+        );
+        $projectRepository->expects(self::once())
+            ->method('findById')
+            ->with(new ProjectRequestId($projectId))
+            ->willReturn(null);
+
+        $eventBus = $this->getMockForAbstractClass(
+            EventBusInterface::class
+        );
+
+        $handler = new CreateRequestToProjectCommandHandler(
+            $projectRepository,
+            $userRepository,
+            $uuidGenerator,
+            $eventBus
+        );
+
+        $command = new CreateRequestToProjectCommand($projectId, $userId);
+
+        self::expectException(ProjectRequestNotExistsException::class);
         $handler->__invoke($command);
     }
 }
