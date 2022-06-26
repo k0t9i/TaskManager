@@ -7,16 +7,15 @@ use App\ProjectRelationships\Domain\Collection\RelationshipTaskCollection;
 use App\ProjectRelationships\Domain\Collection\TaskLinkCollection;
 use App\ProjectRelationships\Domain\Event\TaskLinkWasAddedEvent;
 use App\ProjectRelationships\Domain\Event\TaskLinkWasDeletedEvent;
+use App\ProjectRelationships\Domain\Exception\InsufficientPermissionsToChangeProjectRelationshipTaskLinkException;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskLinkAlreadyExistsException;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskLinkNotExistException;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskNotExistException;
-use App\ProjectRelationships\Domain\Exception\UserIsNotProjectRelationshipOwnerException;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipId;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\ProjectRelationships\Domain\ValueObject\TaskLink;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Relationship extends AggregateRoot
@@ -121,11 +120,8 @@ final class Relationship extends AggregateRoot
 
     private function ensureCanChangeTaskLink(RelationshipTask $task, UserId $userId): void
     {
-        if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException();
-        }
-        if (!$this->isTaskOwner($task, $userId)) {
-            throw new UserIsNotProjectRelationshipOwnerException();
+        if (!$this->isOwner($userId) && !$this->isTaskOwner($task, $userId)) {
+            throw new InsufficientPermissionsToChangeProjectRelationshipTaskLinkException();
         }
     }
 

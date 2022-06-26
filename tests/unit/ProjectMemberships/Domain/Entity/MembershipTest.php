@@ -30,25 +30,25 @@ class MembershipTest extends TestCase
 
     public function testParticipantCanRemoveItself(): void
     {
-        [$participantId, $currentUserId, $expectedEvent, $membership] = $this->mother->byParticipantItself();
+        [$participantId, $currentUserId, $membership] = $this->mother->byParticipantItself();
 
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
 
-        $this->removeParticipantPositiveAssertions($membership, $expectedEvent);
+        $this->removeParticipantPositiveAssertions($membership, $participantId);
     }
 
     public function testOwnerCanRemoveOtherParticipant(): void
     {
-        [$participantId, $currentUserId, $expectedEvent, $membership] = $this->mother->removeParticipantByOwner();
+        [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantByOwner();
 
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
 
-        $this->removeParticipantPositiveAssertions($membership, $expectedEvent);
+        $this->removeParticipantPositiveAssertions($membership, $participantId);
     }
 
-    public function testRemoveParticipantInCloseProject(): void
+    public function testRemoveParticipantInClosedMembership(): void
     {
-        [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantInCloseProject();
+        [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantInClosedMembership();
 
         self::expectException(ModificationDeniedException::class);
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
@@ -80,8 +80,8 @@ class MembershipTest extends TestCase
 
     public function testChangeOwner(): void
     {
-        /** @var ProjectOwnerWasChangedEvent $expectedEvent */
-        [$ownerId, $currentUserId, $expectedEvent, $membership] = $this->mother->changeOwnerByOwner();
+        /** @var Membership $membership */
+        [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerByOwner();
 
         $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
 
@@ -92,13 +92,13 @@ class MembershipTest extends TestCase
         /** @var ProjectOwnerWasChangedEvent $event */
         $event = $events[0];
         self::assertInstanceOf(ProjectOwnerWasChangedEvent::class, $event);
-        self::assertEquals($expectedEvent->aggregateId, $event->aggregateId);
-        self::assertEquals($expectedEvent->ownerId, $event->ownerId);
+        self::assertEquals($membership->getId()->value, $event->aggregateId);
+        self::assertEquals($ownerId, $event->ownerId);
     }
 
-    public function testChangeOwnerInCloseProject(): void
+    public function testChangeOwnerInClosedMembership(): void
     {
-        [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerInCloseProject();
+        [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerInClosedMembership();
 
         self::expectException(ModificationDeniedException::class);
         $membership->removeParticipant(new UserId($ownerId), new UserId($currentUserId));
@@ -138,7 +138,7 @@ class MembershipTest extends TestCase
 
     private function removeParticipantPositiveAssertions(
         Membership $membership,
-        ProjectParticipantWasRemovedEvent$expectedEvent
+        string $participantId
     ): void {
         self::assertCount(0, $membership->getParticipantIds());
         $events = $membership->releaseEvents();
@@ -147,8 +147,8 @@ class MembershipTest extends TestCase
         /** @var ProjectParticipantWasRemovedEvent $event */
         $event = $events[0];
         self::assertInstanceOf(ProjectParticipantWasRemovedEvent::class, $event);
-        self::assertEquals($expectedEvent->aggregateId, $event->aggregateId);
-        self::assertEquals($expectedEvent->participantId, $event->participantId);
+        self::assertEquals($membership->getId()->value, $event->aggregateId);
+        self::assertEquals($participantId, $event->participantId);
     }
 }
 

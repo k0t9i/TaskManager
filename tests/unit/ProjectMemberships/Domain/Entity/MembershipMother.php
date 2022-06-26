@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Tests\unit\ProjectMemberships\Domain\Entity;
 
 use App\ProjectMemberships\Domain\Entity\Membership;
-use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ClosedProjectStatus;
@@ -31,14 +29,10 @@ final class MembershipMother
         $taskOwnerId = $this->faker->uuid();
         $participantId = $this->faker->uuid();
         $currentUserId = $participantId;
-        $expectedEvent = new ProjectParticipantWasRemovedEvent(
-            $membershipId,
-            $participantId
-        );
 
         $membership = $this->createMembership($membershipId, $ownerId, $participantId, $taskOwnerId);
 
-        return [$participantId, $currentUserId, $expectedEvent, $membership];
+        return [$participantId, $currentUserId, $membership];
     }
 
     public function removeParticipantByOwner(): array
@@ -48,17 +42,13 @@ final class MembershipMother
         $taskOwnerId = $this->faker->uuid();
         $participantId = $this->faker->uuid();
         $currentUserId = $ownerId;
-        $expectedEvent = new ProjectParticipantWasRemovedEvent(
-            $membershipId,
-            $participantId
-        );
 
         $membership = $this->createMembership($membershipId, $ownerId, $participantId, $taskOwnerId);
 
-        return [$participantId, $currentUserId, $expectedEvent, $membership];
+        return [$participantId, $currentUserId, $membership];
     }
 
-    public function removeParticipantInCloseProject(): array
+    public function removeParticipantInClosedMembership(): array
     {
         $membershipId = $this->faker->uuid();
         $ownerId = $this->faker->uuid();
@@ -125,17 +115,13 @@ final class MembershipMother
         $participantId = $this->faker->uuid();
         $currentUserId = $ownerId;
         $newOwnerId = $this->faker->uuid();
-        $expectedEvent = new ProjectOwnerWasChangedEvent(
-            $membershipId,
-            $newOwnerId
-        );
 
         $membership = $this->createMembership($membershipId, $ownerId, $participantId, $taskOwnerId);
 
-        return [$newOwnerId, $currentUserId, $expectedEvent, $membership];
+        return [$newOwnerId, $currentUserId, $membership];
     }
 
-    public function changeOwnerInCloseProject(): array
+    public function changeOwnerInClosedMembership(): array
     {
         $membershipId = $this->faker->uuid();
         $ownerId = $this->faker->uuid();

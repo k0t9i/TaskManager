@@ -5,7 +5,7 @@ namespace App\ProjectRelationships\Domain\Exception;
 
 use App\Shared\Domain\Exception\DomainException;
 
-final class UserIsNotProjectRelationshipOwnerException extends DomainException
+final class InsufficientPermissionsToChangeProjectRelationshipTaskLinkException extends DomainException
 {
 
 }
