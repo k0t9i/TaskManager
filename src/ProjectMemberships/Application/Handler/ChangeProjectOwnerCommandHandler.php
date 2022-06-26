@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\ProjectMemberships\Application\Handler;
 
 use App\ProjectMemberships\Application\CQ\ChangeProjectOwnerCommand;
-use App\ProjectMemberships\Domain\Exception\MembershipNotExistException;
+use App\ProjectMemberships\Domain\Exception\ProjectMembershipNotExistException;
 use App\ProjectMemberships\Domain\Repository\MembershipRepositoryInterface;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -26,7 +26,7 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
     {
         $membership = $this->membershipRepository->findById(new MembershipId($command->membershipId));
         if ($membership === null) {
-            throw new MembershipNotExistException();
+            throw new ProjectMembershipNotExistException();
         }
         $user = $this->userRepository->findById(new UserId($command->ownerId));
         if ($user === null) {

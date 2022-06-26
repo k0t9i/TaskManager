@@ -5,7 +5,7 @@ namespace App\ProjectMemberships\Domain\Exception;
 
 use DomainException;
 
-class MembershipNotExistException extends DomainException
+final class InsufficientPermissionsToChangeProjectMembershipParticipantException extends DomainException
 {
 
 }

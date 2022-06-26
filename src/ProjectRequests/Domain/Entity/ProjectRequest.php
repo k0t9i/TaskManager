@@ -8,7 +8,7 @@ use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
 use App\ProjectRequests\Domain\Exception\ProjectRequestRequestNotExistsException;
-use App\ProjectRequests\Domain\Exception\UserAlreadyHasNonRejectedProjectRequestException;
+use App\ProjectRequests\Domain\Exception\UserAlreadyHasNonRejectedProjectRequestRequestException;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestStatus;
@@ -127,7 +127,7 @@ final class ProjectRequest extends AggregateRoot
         /** @var Request $request */
         foreach ($this->getRequests() as $request) {
             if ($request->isNonRejected() && $request->getUserId()->isEqual($userId)) {
-                throw new UserAlreadyHasNonRejectedProjectRequestException();
+                throw new UserAlreadyHasNonRejectedProjectRequestRequestException();
             }
         }
     }

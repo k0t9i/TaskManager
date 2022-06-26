@@ -5,7 +5,7 @@ namespace App\TaskManagers\Domain\Exception;
 
 use DomainException;
 
-final class InsufficientPermissionsToChangeTaskException extends DomainException
+final class TaskFinishDateGreaterThanTaskManagerFinishDateException extends DomainException
 {
 
 }

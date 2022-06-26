@@ -5,7 +5,7 @@ namespace App\ProjectRelationships\Domain\Exception;
 
 use DomainException;
 
-class RelationshipNotExistException extends DomainException
+class ProjectRelationshipNotExistException extends DomainException
 {
 
 }

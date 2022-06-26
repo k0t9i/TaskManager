@@ -6,7 +6,7 @@ namespace App\TaskManagers\Domain\Entity;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
-use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
+use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanTaskManagerFinishDateException;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
 use App\TaskManagers\Domain\ValueObject\TaskId;
@@ -88,7 +88,7 @@ class Task implements Hashable
     private function ensureFinishDateGreaterThanStart()
     {
         if ($this->startDate->isGreaterThan($this->finishDate)) {
-            throw new TaskStartDateGreaterThanFinishDateException();
+            throw new TaskStartDateGreaterThanTaskManagerFinishDateException();
         }
     }
 

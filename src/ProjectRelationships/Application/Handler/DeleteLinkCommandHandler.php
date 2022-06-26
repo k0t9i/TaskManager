@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\ProjectRelationships\Application\Handler;
 
 use App\ProjectRelationships\Application\CQ\DeleteLinkCommand;
-use App\ProjectRelationships\Domain\Exception\RelationshipNotExistException;
+use App\ProjectRelationships\Domain\Exception\ProjectRelationshipNotExistException;
 use App\ProjectRelationships\Domain\Repository\RelationshipRepositoryInterface;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -24,7 +24,7 @@ class DeleteLinkCommandHandler implements CommandHandlerInterface
         $fromTaskId = new RelationshipTaskId($command->fromTaskId);
         $relationship = $this->relationshipRepository->findByTaskId($fromTaskId);
         if ($relationship === null) {
-            throw new RelationshipNotExistException();
+            throw new ProjectRelationshipNotExistException();
         }
 
         $relationship->deleteLink(

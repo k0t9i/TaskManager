@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\ProjectMemberships\Application\Handler;
 
 use App\ProjectMemberships\Application\CQ\LeaveProjectCommand;
-use App\ProjectMemberships\Domain\Exception\MembershipNotExistException;
+use App\ProjectMemberships\Domain\Exception\ProjectMembershipNotExistException;
 use App\ProjectMemberships\Domain\Repository\MembershipRepositoryInterface;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -23,7 +23,7 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
     {
         $membership = $this->membershipRepository->findById(new MembershipId($command->membershipId));
         if ($membership === null) {
-            throw new MembershipNotExistException();
+            throw new ProjectMembershipNotExistException();
         }
 
         $currentUserId = new UserId($command->currentUserId);

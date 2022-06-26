@@ -5,7 +5,7 @@ namespace App\ProjectRequests\Domain\Exception;
 
 use DomainException;
 
-final class UserAlreadyHasNonRejectedProjectRequestException extends DomainException
+final class UserAlreadyHasNonRejectedProjectRequestRequestException extends DomainException
 {
 
 }

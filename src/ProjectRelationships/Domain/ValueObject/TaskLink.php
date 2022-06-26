@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\ProjectRelationships\Domain\ValueObject;
 
-use App\ProjectRelationships\Domain\Exception\TasksOfTaskLinkAreEqualException;
+use App\ProjectRelationships\Domain\Exception\TasksOfProjectRelationshipTaskLinkAreEqualException;
 use App\Shared\Domain\Collection\Hashable;
 
 final class TaskLink implements Hashable
@@ -27,7 +27,7 @@ final class TaskLink implements Hashable
     private function ensureIsDifferentTasks()
     {
         if ($this->fromTaskId->isEqual($this->toTaskId)) {
-            throw new TasksOfTaskLinkAreEqualException();
+            throw new TasksOfProjectRelationshipTaskLinkAreEqualException();
         }
     }
 }

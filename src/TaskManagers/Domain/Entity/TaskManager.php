@@ -13,11 +13,11 @@ use App\TaskManagers\Domain\Event\TaskInformationWasChangedEvent;
 use App\TaskManagers\Domain\Event\TaskStatusWasChangedEvent;
 use App\TaskManagers\Domain\Event\TaskWasCreatedEvent;
 use App\TaskManagers\Domain\Event\TaskWasDeletedEvent;
-use App\TaskManagers\Domain\Exception\InsufficientPermissionsToChangeTaskException;
-use App\TaskManagers\Domain\Exception\ProjectUserNotExistException;
-use App\TaskManagers\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDateException;
-use App\TaskManagers\Domain\Exception\TaskNotExistException;
-use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
+use App\TaskManagers\Domain\Exception\InsufficientPermissionsToChangeTaskManagerTaskException;
+use App\TaskManagers\Domain\Exception\TaskFinishDateGreaterThanTaskManagerFinishDateException;
+use App\TaskManagers\Domain\Exception\TaskManagerTaskNotExistException;
+use App\TaskManagers\Domain\Exception\TaskManagerUserNotExistException;
+use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanTaskManagerFinishDateException;
 use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
 use App\TaskManagers\Domain\ValueObject\TaskId;
 use App\TaskManagers\Domain\ValueObject\TaskInformation;
@@ -46,13 +46,13 @@ final class TaskManager extends AggregateRoot
         $this->ensureCanChangeTask($ownerId, $currentUserId);
 
         if ($information->startDate->isGreaterThan($this->finishDate)) {
-            throw new TaskStartDateGreaterThanProjectFinishDateException();
+            throw new TaskStartDateGreaterThanTaskManagerFinishDateException();
         }
         if ($information->finishDate->isGreaterThan($this->finishDate)) {
-            throw new TaskFinishDateGreaterThanProjectFinishDateException();
+            throw new TaskFinishDateGreaterThanTaskManagerFinishDateException();
         }
         if (!$this->isUserInProject($ownerId)) {
-            throw new ProjectUserNotExistException();
+            throw new TaskManagerUserNotExistException();
         }
 
         $status = new ActiveTaskStatus();
@@ -89,10 +89,10 @@ final class TaskManager extends AggregateRoot
         $this->getStatus()->ensureAllowsModification();
 
         if ($information->startDate->isGreaterThan($this->getFinishDate())) {
-            throw new TaskStartDateGreaterThanProjectFinishDateException();
+            throw new TaskStartDateGreaterThanTaskManagerFinishDateException();
         }
         if ($information->finishDate->isGreaterThan($this->getFinishDate())) {
-            throw new TaskFinishDateGreaterThanProjectFinishDateException();
+            throw new TaskFinishDateGreaterThanTaskManagerFinishDateException();
         }
         $this->ensureProjectTaskExits($id);
         /** @var Task $task */
@@ -179,7 +179,7 @@ final class TaskManager extends AggregateRoot
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
     {
         if (!$this->isOwner($currentUserId) && $taskOwnerId->value !== $currentUserId->value) {
-            throw new InsufficientPermissionsToChangeTaskException();
+            throw new InsufficientPermissionsToChangeTaskManagerTaskException();
         }
     }
 
@@ -201,7 +201,7 @@ final class TaskManager extends AggregateRoot
     private function ensureProjectTaskExits(TaskId $taskId): void
     {
         if ($this->tasks->hashExists($taskId->getHash())) {
-            throw new TaskNotExistException();
+            throw new TaskManagerTaskNotExistException();
         }
     }
 }

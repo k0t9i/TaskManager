@@ -5,7 +5,7 @@ namespace App\TaskManagers\Domain\Exception;
 
 use DomainException;
 
-final class ProjectUserNotExistException extends DomainException
+final class TaskStartDateGreaterThanTaskManagerFinishDateException extends DomainException
 {
 
 }

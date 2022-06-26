@@ -6,9 +6,9 @@ namespace App\Tests\unit\ProjectMemberships\Domain\Entity;
 use App\ProjectMemberships\Domain\Entity\Membership;
 use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
-use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
-use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
+use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectMembershipParticipantException;
+use App\ProjectMemberships\Domain\Exception\ProjectMembershipParticipantNotExistException;
+use App\ProjectMemberships\Domain\Exception\UserHasProjectMembershipTaskException;
 use App\Shared\Domain\Exception\ModificationDeniedException;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
@@ -58,7 +58,7 @@ class MembershipTest extends TestCase
     {
         [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantByNonOwnerAndNonParticipant();
 
-        self::expectException(InsufficientPermissionsToChangeProjectParticipantException::class);
+        self::expectException(InsufficientPermissionsToChangeProjectMembershipParticipantException::class);
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
     }
 
@@ -66,7 +66,7 @@ class MembershipTest extends TestCase
     {
         [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantNonExistingParticipant();
 
-        self::expectException(ProjectParticipantNotExistException::class);
+        self::expectException(ProjectMembershipParticipantNotExistException::class);
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
     }
 
@@ -74,7 +74,7 @@ class MembershipTest extends TestCase
     {
         [$participantId, $currentUserId, $membership] = $this->mother->removeParticipantWithTask();
 
-        self::expectException(UserHasProjectTaskException::class);
+        self::expectException(UserHasProjectMembershipTaskException::class);
         $membership->removeParticipant(new UserId($participantId), new UserId($currentUserId));
     }
 
@@ -124,7 +124,7 @@ class MembershipTest extends TestCase
     {
         [$ownerId, $currentUserId, $membership] = $this->mother->changeOwnerWithTask();
 
-        self::expectException(UserHasProjectTaskException::class);
+        self::expectException(UserHasProjectMembershipTaskException::class);
         $membership->changeOwner(new UserId($ownerId), new UserId($currentUserId));
     }
 

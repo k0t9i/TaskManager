@@ -7,10 +7,10 @@ use App\ProjectRelationships\Domain\Collection\RelationshipTaskCollection;
 use App\ProjectRelationships\Domain\Collection\TaskLinkCollection;
 use App\ProjectRelationships\Domain\Event\TaskLinkWasAddedEvent;
 use App\ProjectRelationships\Domain\Event\TaskLinkWasDeletedEvent;
-use App\ProjectRelationships\Domain\Exception\RelationshipTaskNotExistException;
-use App\ProjectRelationships\Domain\Exception\TaskLinkAlreadyExistsException;
-use App\ProjectRelationships\Domain\Exception\TaskLinkNotExistException;
-use App\ProjectRelationships\Domain\Exception\UserIsNotRelationshipOwnerException;
+use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskLinkAlreadyExistsException;
+use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskLinkNotExistException;
+use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskNotExistException;
+use App\ProjectRelationships\Domain\Exception\UserIsNotProjectRelationshipOwnerException;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipId;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\ProjectRelationships\Domain\ValueObject\TaskLink;
@@ -125,28 +125,28 @@ final class Relationship extends AggregateRoot
             throw new UserIsNotOwnerException();
         }
         if (!$this->isTaskOwner($task, $userId)) {
-            throw new UserIsNotRelationshipOwnerException();
+            throw new UserIsNotProjectRelationshipOwnerException();
         }
     }
 
     private function ensureTaskExists(RelationshipTaskId $taskId): void
     {
         if (!$this->getTasks()->hashExists($taskId->getHash())) {
-            throw new RelationshipTaskNotExistException();
+            throw new ProjectRelationshipTaskNotExistException();
         }
     }
 
     private function ensureLinkDoesNotExist(TaskLink $link): void
     {
         if ($this->getLinks()->exists($link)) {
-            throw new TaskLinkAlreadyExistsException();
+            throw new ProjectRelationshipTaskLinkAlreadyExistsException();
         }
     }
 
     private function ensureLinkExists(TaskLink $link): void
     {
         if (!$this->getLinks()->exists($link)) {
-            throw new TaskLinkNotExistException();
+            throw new ProjectRelationshipTaskLinkNotExistException();
         }
     }
 }

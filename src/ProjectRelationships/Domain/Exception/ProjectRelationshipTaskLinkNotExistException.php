@@ -5,7 +5,7 @@ namespace App\ProjectRelationships\Domain\Exception;
 
 use DomainException;
 
-final class TaskLinkAlreadyExistsException extends DomainException
+final class ProjectRelationshipTaskLinkNotExistException extends DomainException
 {
 
 }

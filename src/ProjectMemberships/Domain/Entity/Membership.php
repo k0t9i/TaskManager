@@ -5,9 +5,9 @@ namespace App\ProjectMemberships\Domain\Entity;
 
 use App\ProjectMemberships\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\ProjectMemberships\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
-use App\ProjectMemberships\Domain\Exception\ProjectParticipantNotExistException;
-use App\ProjectMemberships\Domain\Exception\UserHasProjectTaskException;
+use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProjectMembershipParticipantException;
+use App\ProjectMemberships\Domain\Exception\ProjectMembershipParticipantNotExistException;
+use App\ProjectMemberships\Domain\Exception\UserHasProjectMembershipTaskException;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
@@ -34,7 +34,7 @@ final class Membership extends AggregateRoot
         $this->ensureCanChangeProjectParticipant($participantId, $currentUserId);
 
         if (!$this->isParticipant($participantId)) {
-            throw new ProjectParticipantNotExistException();
+            throw new ProjectMembershipParticipantNotExistException();
         }
         $this->ensureDoesUserHaveTask($participantId);
 
@@ -112,7 +112,7 @@ final class Membership extends AggregateRoot
     private function ensureCanChangeProjectParticipant(UserId $participantId, UserId $currentUserId): void
     {
         if (!$this->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
-            throw new InsufficientPermissionsToChangeProjectParticipantException();
+            throw new InsufficientPermissionsToChangeProjectMembershipParticipantException();
         }
     }
 
@@ -121,7 +121,7 @@ final class Membership extends AggregateRoot
         /** @var UserId $taskOwnerId */
         foreach ($this->getTaskOwnerIds() as $taskOwnerId) {
             if ($taskOwnerId->isEqual($userId)) {
-                throw new UserHasProjectTaskException();
+                throw new UserHasProjectMembershipTaskException();
             }
         }
     }

@@ -5,7 +5,7 @@ namespace App\ProjectMemberships\Domain\Exception;
 
 use DomainException;
 
-final class ProjectParticipantNotExistException extends DomainException
+final class UserHasProjectMembershipTaskException extends DomainException
 {
 
 }
