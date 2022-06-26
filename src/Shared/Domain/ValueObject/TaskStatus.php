@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\TaskManagers\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
-use App\Shared\Domain\ValueObject\Status;
-use App\TaskManagers\Domain\Factory\TaskStatusFactory;
+use App\Shared\Domain\Factory\TaskStatusFactory;
 
 abstract class TaskStatus extends Status
 {

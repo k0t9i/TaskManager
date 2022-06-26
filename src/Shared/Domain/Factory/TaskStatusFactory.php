@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\TaskManagers\Domain\Factory;
+namespace App\Shared\Domain\Factory;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
-use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
-use App\TaskManagers\Domain\ValueObject\ClosedTaskStatus;
-use App\TaskManagers\Domain\ValueObject\TaskStatus;
+use App\Shared\Domain\ValueObject\ActiveTaskStatus;
+use App\Shared\Domain\ValueObject\ClosedTaskStatus;
+use App\Shared\Domain\ValueObject\TaskStatus;
 
 final class TaskStatusFactory
 {

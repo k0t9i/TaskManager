@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\TaskManagers\Infrastructure\Persistence\Doctrine\Type;
 
-use App\TaskManagers\Domain\Factory\TaskStatusFactory;
-use App\TaskManagers\Domain\ValueObject\TaskStatus;
+use App\Shared\Domain\Factory\TaskStatusFactory;
+use App\Shared\Domain\ValueObject\TaskStatus;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\IntegerType;
 

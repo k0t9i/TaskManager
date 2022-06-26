@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\TaskManagers\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
 final class ActiveTaskStatus extends TaskStatus
 {

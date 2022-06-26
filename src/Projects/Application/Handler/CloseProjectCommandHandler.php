@@ -6,10 +6,10 @@ namespace App\Projects\Application\Handler;
 use App\Projects\Application\CQ\CloseProjectCommand;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Domain\ValueObject\ClosedProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class CloseProjectCommandHandler implements CommandHandlerInterface

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Type;
 
-use App\Projects\Domain\Factory\ProjectStatusFactory;
-use App\Projects\Domain\ValueObject\ProjectStatus;
+use App\Shared\Domain\Factory\ProjectStatusFactory;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\IntegerType;
 

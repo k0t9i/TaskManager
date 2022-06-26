@@ -9,12 +9,12 @@ use App\ProjectMemberships\Domain\Exception\InsufficientPermissionsToChangeProje
 use App\ProjectMemberships\Domain\Exception\ProjectMembershipParticipantNotExistException;
 use App\ProjectMemberships\Domain\Exception\UserHasProjectMembershipTaskException;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Membership extends AggregateRoot

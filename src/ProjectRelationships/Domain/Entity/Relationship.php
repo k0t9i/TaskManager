@@ -14,8 +14,8 @@ use App\ProjectRelationships\Domain\Exception\ProjectRelationshipTaskNotExistExc
 use App\ProjectRelationships\Domain\ValueObject\RelationshipId;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\ProjectRelationships\Domain\ValueObject\TaskLink;
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Relationship extends AggregateRoot

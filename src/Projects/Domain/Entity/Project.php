@@ -7,15 +7,15 @@ use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\ValueObject\ActiveProjectStatus;
-use App\Projects\Domain\ValueObject\ClosedProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\ValueObject\ActiveProjectStatus;
+use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Project extends AggregateRoot

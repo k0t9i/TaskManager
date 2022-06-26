@@ -5,10 +5,10 @@ namespace App\Tests\unit\ProjectMemberships\Domain\Entity;
 
 use App\ProjectMemberships\Domain\Entity\Membership;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
-use App\Projects\Domain\ValueObject\ActiveProjectStatus;
-use App\Projects\Domain\ValueObject\ClosedProjectStatus;
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\ValueObject\ActiveProjectStatus;
+use App\Shared\Domain\ValueObject\ClosedProjectStatus;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use Faker\Factory;
 use Faker\Generator;

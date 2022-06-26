@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\Factory;
+namespace App\Shared\Domain\Factory;
 
-use App\Projects\Domain\ValueObject\ActiveProjectStatus;
-use App\Projects\Domain\ValueObject\ClosedProjectStatus;
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\ValueObject\ActiveProjectStatus;
+use App\Shared\Domain\ValueObject\ClosedProjectStatus;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 
-class ProjectStatusFactory
+final class ProjectStatusFactory
 {
     private const STATUS_CLOSED = 0;
     private const STATUS_ACTIVE = 1;

@@ -9,10 +9,10 @@ use App\Projects\Domain\Event\ProjectTaskStartDateWasChangedEvent;
 use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\ActiveTaskStatus;
+use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
-use App\TaskManagers\Domain\ValueObject\ClosedTaskStatus;
-use App\TaskManagers\Domain\ValueObject\TaskStatus;
+use App\Shared\Domain\ValueObject\TaskStatus;
 
 final class ProjectTask implements Hashable
 {

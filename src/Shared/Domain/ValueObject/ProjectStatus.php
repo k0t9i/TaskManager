@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
-use App\Projects\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\ValueObject\Status;
+use App\Shared\Domain\Factory\ProjectStatusFactory;
 
 abstract class ProjectStatus extends Status
 {

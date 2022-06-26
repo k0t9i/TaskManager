@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\TaskManagers\Domain\Entity;
 
-use App\Projects\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\ProjectStatus;
+use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Domain\Collection\TaskCollection;
 use App\TaskManagers\Domain\Event\TaskInformationWasChangedEvent;
@@ -18,11 +20,9 @@ use App\TaskManagers\Domain\Exception\TaskFinishDateGreaterThanTaskManagerFinish
 use App\TaskManagers\Domain\Exception\TaskManagerTaskNotExistException;
 use App\TaskManagers\Domain\Exception\TaskManagerUserNotExistException;
 use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanTaskManagerFinishDateException;
-use App\TaskManagers\Domain\ValueObject\ActiveTaskStatus;
 use App\TaskManagers\Domain\ValueObject\TaskId;
 use App\TaskManagers\Domain\ValueObject\TaskInformation;
 use App\TaskManagers\Domain\ValueObject\TaskManagerId;
-use App\TaskManagers\Domain\ValueObject\TaskStatus;
 
 final class TaskManager extends AggregateRoot
 {
