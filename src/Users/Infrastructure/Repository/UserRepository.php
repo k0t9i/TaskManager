@@ -5,7 +5,6 @@ namespace App\Users\Infrastructure\Repository;
 
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Entity\User;
-use App\Users\Domain\Exception\UserNotExistException;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -19,15 +18,6 @@ class UserRepository implements UserRepositoryInterface
     public function findById(UserId $id): ?User
     {
         return $this->repository()->find($id);
-    }
-
-    public function getById(UserId $id): User
-    {
-        $user = $this->findById($id);
-        if ($user === null) {
-            throw new UserNotExistException();
-        }
-        return $user;
     }
 
     /**

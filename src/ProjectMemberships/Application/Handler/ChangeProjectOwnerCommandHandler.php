@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace App\ProjectMemberships\Application\Handler;
 
 use App\ProjectMemberships\Application\CQ\ChangeProjectOwnerCommand;
+use App\ProjectMemberships\Domain\Exception\MembershipNotExistException;
 use App\ProjectMemberships\Domain\Repository\MembershipRepositoryInterface;
 use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 
@@ -22,15 +24,21 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
 
     public function __invoke(ChangeProjectOwnerCommand $command): void
     {
-        $project = $this->membershipRepository->findById(new MembershipId($command->membershipId));
-        $user = $this->userRepository->getById(new UserId($command->ownerId));
+        $membership = $this->membershipRepository->findById(new MembershipId($command->membershipId));
+        if ($membership === null) {
+            throw new MembershipNotExistException();
+        }
+        $user = $this->userRepository->findById(new UserId($command->ownerId));
+        if ($user === null) {
+            throw new UserNotExistException();
+        }
 
-        $project->changeOwner(
+        $membership->changeOwner(
             $user->getId(),
             new UserId($command->currentUserId)
         );
 
-        $this->membershipRepository->update($project);
-        $this->eventBus->dispatch(...$project->releaseEvents());
+        $this->membershipRepository->update($membership);
+        $this->eventBus->dispatch(...$membership->releaseEvents());
     }
 }

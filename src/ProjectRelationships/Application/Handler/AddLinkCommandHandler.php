@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\ProjectRelationships\Application\Handler;
 
 use App\ProjectRelationships\Application\CQ\AddLinkCommand;
+use App\ProjectRelationships\Domain\Exception\RelationshipNotExistException;
 use App\ProjectRelationships\Domain\Repository\RelationshipRepositoryInterface;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -22,6 +23,9 @@ class AddLinkCommandHandler implements CommandHandlerInterface
     {
         $fromTaskId = new RelationshipTaskId($command->fromTaskId);
         $relationship = $this->relationshipRepository->findByTaskId($fromTaskId);
+        if ($relationship === null) {
+            throw new RelationshipNotExistException();
+        }
 
         $relationship->createLink(
             $fromTaskId,

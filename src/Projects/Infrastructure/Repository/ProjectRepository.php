@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Repository;
 
 use App\Projects\Domain\Entity\Project;
-use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;
 use Doctrine\DBAL\Exception;
@@ -26,20 +25,6 @@ class ProjectRepository implements ProjectRepositoryInterface
     {
         /** @var Project $project */
         return $this->repository()->find($id);
-    }
-
-    /**
-     * @param ProjectId $id
-     * @return Project
-     * @throws Exception
-     */
-    public function getById(ProjectId $id): Project
-    {
-        $project = $this->findById($id);
-        if ($project === null) {
-            throw new ProjectNotExistException();
-        }
-        return $project;
     }
 
     public function findByOwnerId(string $ownerId): ?Project

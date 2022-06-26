@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\CQ\ActivateProjectCommand;
+use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ActiveProjectStatus;
 use App\Projects\Domain\ValueObject\ProjectId;
@@ -21,7 +22,10 @@ final class ActivateProjectCommandHandler implements CommandHandlerInterface
 
     public function __invoke(ActivateProjectCommand $command): void
     {
-        $project = $this->projectRepository->getById(new ProjectId($command->projectId));
+        $project = $this->projectRepository->findById(new ProjectId($command->projectId));
+        if ($project === null) {
+            throw new ProjectNotExistException();
+        }
 
         $project->changeStatus(
             new ActiveProjectStatus(),

@@ -7,7 +7,7 @@ use App\ProjectRequests\Domain\Collection\RequestCollection;
 use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
-use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
+use App\ProjectRequests\Domain\Exception\ProjectRequestRequestNotExistsException;
 use App\ProjectRequests\Domain\Exception\UserAlreadyHasNonRejectedProjectRequestException;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
@@ -56,7 +56,7 @@ final class ProjectRequest extends AggregateRoot
             throw new UserIsNotOwnerException();
         }
         if (!$this->getRequests()->exists($requestId)) {
-            throw new ProjectRequestNotExistsException();
+            throw new ProjectRequestRequestNotExistsException();
         }
 
         /** @var Request $request */

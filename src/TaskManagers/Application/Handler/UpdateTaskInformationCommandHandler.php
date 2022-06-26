@@ -8,6 +8,7 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Application\CQ\UpdateTaskInformationCommand;
+use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
@@ -27,6 +28,9 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
     {
         $taskId = new TaskId($command->id);
         $manager = $this->managerRepository->findByTaskId($taskId);
+        if ($manager === null) {
+            throw new TaskManagerNotExistException();
+        }
 
         $manager->changeTaskInformation(
             $taskId,

@@ -75,19 +75,19 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
 
         $userRepository = $this->getMockForAbstractClass(
             UserRepositoryInterface::class,
-            mockedMethods: ['getById']
+            mockedMethods: ['findById']
         );
         $userRepository->expects(self::once())
-            ->method('getById')
+            ->method('findById')
             ->with(new UserId($userId))
             ->willReturn($user);
 
         $projectRepository = $this->getMockForAbstractClass(
             ProjectRequestRepositoryInterface::class,
-            mockedMethods: ['findByRequestId', 'update']
+            mockedMethods: ['findById', 'update']
         );
         $projectRepository->expects(self::once())
-            ->method('getById')
+            ->method('findById')
             ->with(new ProjectRequestId($projectId))
             ->willReturn($project);
         $projectRepository->expects(self::once())

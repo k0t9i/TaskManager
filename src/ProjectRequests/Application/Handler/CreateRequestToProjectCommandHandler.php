@@ -4,11 +4,13 @@ declare(strict_types=1);
 namespace App\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\CQ\CreateRequestToProjectCommand;
+use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
@@ -25,8 +27,14 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
 
     public function __invoke(CreateRequestToProjectCommand $command): void
     {
-        $project = $this->projectRequestRepository->getById(new ProjectRequestId($command->projectId));
-        $user = $this->userRepository->getById(new UserId($command->userId));
+        $project = $this->projectRequestRepository->findById(new ProjectRequestId($command->projectId));
+        if ($project === null) {
+            throw new ProjectRequestNotExistsException();
+        }
+        $user = $this->userRepository->findById(new UserId($command->userId));
+        if ($user === null) {
+            throw new UserNotExistException();
+        }
 
         $project->createRequest(
             new RequestId($this->uuidGenerator->generate()),

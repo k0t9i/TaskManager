@@ -9,7 +9,6 @@ use App\Users\Domain\Entity\User;
 interface UserRepositoryInterface
 {
     public function findById(UserId $id): ?User;
-    public function getById(UserId $id): User;
 
     /**
      * @return User[]

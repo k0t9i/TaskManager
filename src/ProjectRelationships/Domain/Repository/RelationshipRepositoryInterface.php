@@ -9,7 +9,7 @@ use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;
 
 interface RelationshipRepositoryInterface
 {
-    public function findById(RelationshipId $id): Relationship;
-    public function findByTaskId(RelationshipTaskId $taskId): Relationship;
+    public function findById(RelationshipId $id): ?Relationship;
+    public function findByTaskId(RelationshipTaskId $taskId): ?Relationship;
     public function update(Relationship $relationship): void;
 }

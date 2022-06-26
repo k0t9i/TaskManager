@@ -5,10 +5,12 @@ namespace App\TaskManagers\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Application\CQ\CreateTaskCommand;
+use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
@@ -31,7 +33,13 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
     public function __invoke(CreateTaskCommand $command): void
     {
         $manager = $this->managerRepository->findById(new TaskManagerId($command->projectId));
-        $taskOwner = $this->userRepository->getById(new UserId($command->ownerId));
+        if ($manager === null) {
+            throw new TaskManagerNotExistException();
+        }
+        $taskOwner = $this->userRepository->findById(new UserId($command->ownerId));
+        if ($taskOwner === null) {
+            throw new UserNotExistException();
+        }
 
         $manager->createTask(
             new TaskId($this->uuidGenerator->generate()),

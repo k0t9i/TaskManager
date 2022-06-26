@@ -7,6 +7,7 @@ use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Application\CQ\DeleteTaskCommand;
+use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskId;
 
@@ -22,6 +23,9 @@ class DeleteTaskCommandHandler implements CommandHandlerInterface
     {
         $taskId = new TaskId($command->id);
         $manager = $this->managerRepository->findByTaskId($taskId);
+        if ($manager === null) {
+            throw new TaskManagerNotExistException();
+        }
 
         $manager->deleteTask(
             $taskId,

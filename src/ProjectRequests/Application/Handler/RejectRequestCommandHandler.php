@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\CQ\RejectRequestCommand;
+use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\RejectedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
@@ -23,6 +24,9 @@ final class RejectRequestCommandHandler implements CommandHandlerInterface
     {
         $requestId = new RequestId($command->id);
         $project = $this->projectRequestRepository->findByRequestId($requestId);
+        if ($project === null) {
+            throw new ProjectRequestNotExistsException();
+        }
 
         $project->changeStatus(
             $requestId,

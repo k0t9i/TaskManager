@@ -11,6 +11,7 @@ use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
@@ -28,7 +29,10 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
 
     public function __invoke(CreateProjectCommand $command): void
     {
-        $user = $this->userRepository->getById(new UserId($command->ownerId));
+        $user = $this->userRepository->findById(new UserId($command->ownerId));
+        if ($user === null) {
+            throw new UserNotExistException();
+        }
 
         $project = Project::create(
             new ProjectId($this->uuidGenerator->generate()),

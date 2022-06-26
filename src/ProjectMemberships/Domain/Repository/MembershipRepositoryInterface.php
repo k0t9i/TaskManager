@@ -8,6 +8,6 @@ use App\ProjectMemberships\Domain\ValueObject\MembershipId;
 
 interface MembershipRepositoryInterface
 {
-    public function findById(MembershipId $id): Membership;
+    public function findById(MembershipId $id): ?Membership;
     public function update(Membership $membership): void;
 }

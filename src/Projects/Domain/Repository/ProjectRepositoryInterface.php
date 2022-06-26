@@ -9,7 +9,6 @@ use App\Projects\Domain\ValueObject\ProjectId;
 interface ProjectRepositoryInterface
 {
     public function findById(ProjectId $id): ?Project;
-    public function getById(ProjectId $id): Project;
     public function findByOwnerId(string $ownerId): ?Project;
     public function create(Project $project): void;
     public function update(Project $project): void;
