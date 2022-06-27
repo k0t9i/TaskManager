@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
-//TODO think about using of ProjectTasks namespace
 use App\Projects\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
 use App\Projects\Domain\Event\ProjectTaskStartDateWasChangedEvent;
 use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
@@ -44,9 +43,9 @@ final class ProjectTask implements Hashable
         }
     }
 
-    public function closeTaskIfProjectWasClosed(Project $project): void
+    public function closeIfProjectWasClosed(Project $project): void
     {
-        if ($this->getStatus() instanceof ActiveTaskStatus) {
+        if ($project->isClosed() && $this->getStatus() instanceof ActiveTaskStatus) {
             $this->status = new ClosedTaskStatus();
             $project->registerEvent(new ProjectTaskStatusWasChangedEvent(
                 $project->getId()->value,

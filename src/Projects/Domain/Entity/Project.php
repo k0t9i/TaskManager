@@ -96,11 +96,9 @@ final class Project extends AggregateRoot
         $this->getStatus()->ensureCanBeChangedTo($status);
         $this->ensureIsOwner($currentUserId);
 
-        if ($status instanceof ClosedProjectStatus) {
-            /** @var ProjectTask $task */
-            foreach ($this->tasks as $task) {
-                $task->closeTaskIfProjectWasClosed($this);
-            }
+        /** @var ProjectTask $task */
+        foreach ($this->tasks as $task) {
+            $task->closeIfProjectWasClosed($this);
         }
         $this->status = $status;
 
@@ -153,6 +151,11 @@ final class Project extends AggregateRoot
         if (!$this->isOwner($userId)) {
             throw new UserIsNotOwnerException();
         }
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->getStatus() instanceof ClosedProjectStatus;
     }
 
     private function isOwner(UserId $userId): bool
