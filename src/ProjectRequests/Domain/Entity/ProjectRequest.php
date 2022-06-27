@@ -46,7 +46,7 @@ final class ProjectRequest extends AggregateRoot
         return $request;
     }
 
-    public function changeStatus(
+    public function changeRequestStatus(
         RequestId $requestId,
         RequestStatus $status,
         UserId $currentUserId
@@ -55,7 +55,7 @@ final class ProjectRequest extends AggregateRoot
         if (!$this->isOwner($currentUserId)) {
             throw new UserIsNotOwnerException();
         }
-        if (!$this->getRequests()->exists($requestId)) {
+        if (!$this->getRequests()->hashExists($requestId->getHash())) {
             throw new ProjectRequestRequestNotExistsException();
         }
 
@@ -75,14 +75,6 @@ final class ProjectRequest extends AggregateRoot
             $this->getId()->value,
             (string) $request->getStatus()->getScalar()
         ));
-    }
-
-    public function addRequest(Request $request): void
-    {
-        $this->getStatus()->ensureAllowsModification();
-        $this->ensureIsUserAlreadyInProject($request->getUserId());
-        $this->ensureDoesUserAlreadyHaveNonRejectedRequest($request->getUserId());
-        $this->getRequests()->add($request);
     }
 
     public function getId(): ProjectRequestId
@@ -115,9 +107,16 @@ final class ProjectRequest extends AggregateRoot
         return $this->requests;
     }
 
-    private function addParticipantFromRequest(UserId $participantId): void
+    private function addRequest(Request $request): void
     {
         $this->getStatus()->ensureAllowsModification();
+        $this->ensureIsUserAlreadyInProject($request->getUserId());
+        $this->ensureDoesUserAlreadyHaveNonRejectedRequest($request->getUserId());
+        $this->getRequests()->add($request);
+    }
+
+    private function addParticipantFromRequest(UserId $participantId): void
+    {
         $this->ensureIsUserAlreadyInProject($participantId);
         $this->getParticipantIds()->add($participantId);
     }

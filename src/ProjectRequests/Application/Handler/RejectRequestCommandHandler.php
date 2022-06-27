@@ -28,7 +28,7 @@ final class RejectRequestCommandHandler implements CommandHandlerInterface
             throw new ProjectRequestNotExistsException();
         }
 
-        $project->changeStatus(
+        $project->changeRequestStatus(
             $requestId,
             new RejectedRequestStatus(),
             new UserId($command->currentUserId)

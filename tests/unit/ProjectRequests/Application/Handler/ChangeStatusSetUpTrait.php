@@ -16,10 +16,10 @@ trait ChangeStatusSetUpTrait
     {
         $project = $this->getMockBuilder(ProjectRequest::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['changeStatus', 'releaseEvents'])
+            ->onlyMethods(['changeRequestStatus', 'releaseEvents'])
             ->getMock();
         $project->expects(self::once())
-            ->method('changeStatus')
+            ->method('changeRequestStatus')
             ->with(
                 self::equalTo(new RequestId($requestId)),
                 self::isInstanceOf($statusClass),

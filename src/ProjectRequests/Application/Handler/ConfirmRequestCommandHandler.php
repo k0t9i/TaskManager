@@ -28,7 +28,7 @@ final class ConfirmRequestCommandHandler implements CommandHandlerInterface
             throw new ProjectRequestNotExistsException();
         }
 
-        $project->changeStatus(
+        $project->changeRequestStatus(
             $requestId,
             new ConfirmedRequestStatus(),
             new UserId($command->currentUserId)
