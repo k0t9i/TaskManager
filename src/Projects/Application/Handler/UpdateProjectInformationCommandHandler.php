@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
-use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;
-use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class UpdateProjectInformationCommandHandler implements CommandHandlerInterface

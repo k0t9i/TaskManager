@@ -308,7 +308,6 @@ class ProjectRequestMother
         return new ProjectRequest(
             new ProjectRequestId($projectRequestId),
             $projectRequestStatus,
-            'Project Name',
             new UserId($ownerId),
             new UserIdCollection([
                 new UserId($participantId)

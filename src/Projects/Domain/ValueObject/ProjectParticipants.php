@@ -40,4 +40,9 @@ final class ProjectParticipants
     {
         $this->participants->remove($userId);
     }
+
+    public function copyInnerCollection(): UserIdCollection
+    {
+        return clone $this->participants;
+    }
 }

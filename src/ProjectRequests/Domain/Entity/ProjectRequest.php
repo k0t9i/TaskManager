@@ -22,10 +22,13 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectRequest extends AggregateRoot
 {
+    //TODO change project status
+    //TODO change project owner
+    //TODO add project participant status
+    //TODO remove project participant status
     public function __construct(
         private ProjectRequestId $id, //TODO same as ProjectId
         private ProjectStatus $status,
-        private string $name,
         private UserId $ownerId,
         private UserIdCollection $participantIds,
         private RequestCollection $requests
@@ -85,11 +88,6 @@ final class ProjectRequest extends AggregateRoot
     public function getStatus(): ProjectStatus
     {
         return $this->status;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getOwnerId(): UserId

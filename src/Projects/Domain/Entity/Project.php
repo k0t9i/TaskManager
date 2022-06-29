@@ -9,7 +9,6 @@ use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
-use App\Projects\Domain\ValueObject\ProjectId;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipants;
@@ -17,6 +16,7 @@ use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
+use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use Exception;
@@ -160,5 +160,10 @@ final class Project extends AggregateRoot
     public function getOwner(): ProjectOwner
     {
         return $this->owner;
+    }
+
+    public function getParticipants(): ProjectParticipants
+    {
+        return $this->participants;
     }
 }

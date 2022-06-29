@@ -5,7 +5,7 @@ namespace App\Projects\Infrastructure\Persistence\Repository;
 
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\ProjectId;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

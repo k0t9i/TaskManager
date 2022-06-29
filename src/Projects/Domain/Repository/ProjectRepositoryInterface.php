@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Domain\Repository;
 
 use App\Projects\Domain\Entity\Project;
-use App\Projects\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\ProjectId;
 
 interface ProjectRepositoryInterface
 {
