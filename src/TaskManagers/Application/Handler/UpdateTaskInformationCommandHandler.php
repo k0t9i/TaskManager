@@ -6,13 +6,13 @@ namespace App\TaskManagers\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Application\CQ\UpdateTaskInformationCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
-use App\TaskManagers\Domain\ValueObject\TaskId;
 use App\TaskManagers\Domain\ValueObject\TaskInformation;
 use App\TaskManagers\Domain\ValueObject\TaskName;
 

@@ -8,7 +8,9 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectId;
+use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
+use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
@@ -36,10 +38,12 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
 
         $project = Project::create(
             new ProjectId($this->uuidGenerator->generate()),
-            new ProjectName($command->name),
-            new ProjectDescription($command->description),
-            new DateTime($command->finishDate),
-            $user->getId()
+            new ProjectInformation(
+                new ProjectName($command->name),
+                new ProjectDescription($command->description),
+                new DateTime($command->finishDate)
+            ),
+            new ProjectOwner($user->getId())
         );
 
         $this->projectRepository->create($project);

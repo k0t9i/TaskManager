@@ -5,12 +5,12 @@ namespace App\TaskManagers\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Domain\Exception\TaskStartDateGreaterThanTaskManagerFinishDateException;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;
 use App\TaskManagers\Domain\ValueObject\TaskDescription;
-use App\TaskManagers\Domain\ValueObject\TaskId;
 use App\TaskManagers\Domain\ValueObject\TaskInformation;
 use App\TaskManagers\Domain\ValueObject\TaskName;
 

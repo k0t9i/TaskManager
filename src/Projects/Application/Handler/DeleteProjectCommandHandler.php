@@ -27,7 +27,7 @@ final class DeleteProjectCommandHandler implements CommandHandlerInterface
             throw new ProjectNotExistException();
         }
 
-        $project->ensureIsOwner(new UserId($command->currentUserId));
+        $project->getOwner()->ensureIsOwner(new UserId($command->currentUserId));
         $this->projectRepository->delete($project);
         $project->registerEvent(new ProjectWasDeletedEvent($project->getId()->value));
 

@@ -11,13 +11,17 @@ use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectTask implements Hashable
 {
     public function __construct(
-        private ProjectTaskId $id, //TODO same as TaskId
+        private ProjectTaskId $id,
+        private TaskId $taskId,
         private TaskStatus $status,
+        private UserId $ownerId,
         private DateTime $startDate,
         private DateTime $finishDate
     ) {
@@ -25,16 +29,17 @@ final class ProjectTask implements Hashable
 
     public function limitDatesByProjectFinishDate(Project $project): void
     {
-        if ($this->getStartDate()->isGreaterThan($project->getFinishDate())) {
-            $this->startDate = new DateTime($project->getFinishDate()->getValue());
+        $information = $project->getInformation();
+        if ($this->getStartDate()->isGreaterThan($information->finishDate)) {
+            $this->startDate = new DateTime($information->finishDate->getValue());
             $project->registerEvent(new ProjectTaskStartDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
                 $this->getStartDate()->getValue()
             ));
         }
-        if ($this->getFinishDate()->isGreaterThan($project->getFinishDate())) {
-            $this->finishDate = new DateTime($project->getFinishDate()->getValue());
+        if ($this->getFinishDate()->isGreaterThan($information->finishDate)) {
+            $this->finishDate = new DateTime($information->finishDate->getValue());
             $project->registerEvent(new ProjectTaskFinishDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
@@ -43,9 +48,9 @@ final class ProjectTask implements Hashable
         }
     }
 
-    public function closeIfProjectWasClosed(Project $project): void
+    public function closeIfActive(Project $project): void
     {
-        if ($project->isClosed() && $this->getStatus() instanceof ActiveTaskStatus) {
+        if ($this->getStatus() instanceof ActiveTaskStatus) {
             $this->status = new ClosedTaskStatus();
             $project->registerEvent(new ProjectTaskStatusWasChangedEvent(
                 $project->getId()->value,
@@ -60,9 +65,19 @@ final class ProjectTask implements Hashable
         return $this->id;
     }
 
+    public function getTaskId(): TaskId
+    {
+        return $this->taskId;
+    }
+
     public function getStatus(): TaskStatus
     {
         return $this->status;
+    }
+
+    public function getOwnerId(): UserId
+    {
+        return $this->ownerId;
     }
 
     public function getStartDate(): DateTime

@@ -6,11 +6,11 @@ namespace App\TaskManagers\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\TaskManagers\Application\CQ\ActivateTaskCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
-use App\TaskManagers\Domain\ValueObject\TaskId;
 
 class ActivateTaskCommandHandler implements CommandHandlerInterface
 {

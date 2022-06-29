@@ -3,88 +3,79 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
-use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
+use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
+use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
-use App\Projects\Domain\ValueObject\ProjectDescription;
+use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectId;
-use App\Projects\Domain\ValueObject\ProjectName;
+use App\Projects\Domain\ValueObject\ProjectInformation;
+use App\Projects\Domain\ValueObject\ProjectOwner;
+use App\Projects\Domain\ValueObject\ProjectParticipants;
+use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
-use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
+use Exception;
 
 final class Project extends AggregateRoot
 {
-
     public function __construct(
         private ProjectId $id,
-        private ProjectName $name,
-        private ProjectDescription $description,
-        private DateTime $finishDate,
+        private ProjectInformation $information,
         private ProjectStatus $status,
-        private UserId $ownerId,
-        private ProjectTaskCollection $tasks
+        private ProjectOwner $owner,
+        private ProjectParticipants $participants,
+        private ProjectTasks $tasks
     ) {
     }
 
     public static function create(
         ProjectId $id,
-        ProjectName $name,
-        ProjectDescription $description,
-        DateTime $finishDate,
-        UserId $ownerId
+        ProjectInformation $information,
+        ProjectOwner $owner
     ): self {
         $status = new ActiveProjectStatus();
         $project = new self(
             $id,
-            $name,
-            $description,
-            $finishDate,
+            $information,
             $status,
-            $ownerId,
-            new ProjectTaskCollection()
+            $owner,
+            new ProjectParticipants(),
+            new ProjectTasks()
         );
 
         $project->registerEvent(new ProjectWasCreatedEvent(
             $id->value,
-            $name->value,
-            $description->value,
-            $finishDate->getValue(),
+            $information->name->value,
+            $information->description->value,
+            $information->finishDate->getValue(),
             (string) $status->getScalar(),
-            $ownerId->value
+            $owner->userId->value
         ));
 
         return $project;
     }
 
     public function changeInformation(
-        ProjectName $name,
-        ProjectDescription $description,
-        DateTime $finishDate,
+        ProjectInformation $information,
         UserId $currentUserId
     ): void {
-        $this->getStatus()->ensureAllowsModification();
-        $this->ensureIsOwner($currentUserId);
+        $this->status->ensureAllowsModification();
+        $this->owner->ensureIsOwner($currentUserId);
 
-        $this->name = $name;
-        $this->description = $description;
-        $this->finishDate = $finishDate;
+        $this->information = $information;
 
-        /** @var ProjectTask $task */
-        foreach ($this->tasks as $task) {
-            $task->limitDatesByProjectFinishDate($this);
-        }
+        $this->tasks->limitDatesOfAllTasksByProjectFinishDate($this);
 
         $this->registerEvent(new ProjectInformationWasChangedEvent(
-            $this->getId()->value,
-            $this->name->value,
-            $this->description->value,
-            $this->finishDate->getValue()
+            $this->id->value,
+            $information->name->value,
+            $information->description->value,
+            $information->finishDate->getValue()
         ));
     }
 
@@ -93,18 +84,61 @@ final class Project extends AggregateRoot
      */
     public function changeStatus(ProjectStatus $status, UserId $currentUserId): void
     {
-        $this->getStatus()->ensureCanBeChangedTo($status);
-        $this->ensureIsOwner($currentUserId);
+        $this->status->ensureCanBeChangedTo($status);
+        $this->owner->ensureIsOwner($currentUserId);
 
-        /** @var ProjectTask $task */
-        foreach ($this->tasks as $task) {
-            $task->closeIfProjectWasClosed($this);
-        }
         $this->status = $status;
+        if ($this->status instanceof ClosedProjectStatus) {
+            $this->tasks->closeAllTasksIfActive($this);
+        }
 
         $this->registerEvent(new ProjectStatusWasChangedEvent(
-            $this->getId()->value,
+            $this->id->value,
             (string) $status->getScalar()
+        ));
+    }
+
+    /**
+     * @param UserId $participantId
+     * @param UserId $currentUserId
+     * @throws Exception
+     */
+    public function removeParticipant(UserId $participantId, UserId $currentUserId): void
+    {
+        $this->status->ensureAllowsModification();
+        if (!$this->owner->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
+            throw new InsufficientPermissionsToChangeProjectParticipantException();
+        }
+        $this->participants->ensureIsParticipant($participantId);
+        $this->tasks->ensureDoesUserHaveTask($participantId);
+
+        $this->participants->remove($participantId);
+
+        $this->registerEvent(new ProjectParticipantWasRemovedEvent(
+            $this->id->value,
+            $participantId->value
+        ));
+    }
+
+    /**
+     * @param UserId $ownerId
+     * @param UserId $currentUserId
+     * @throws Exception
+     */
+    public function changeOwner(UserId $ownerId, UserId $currentUserId): void
+    {
+        $this->status->ensureAllowsModification();
+        $this->owner->ensureIsOwner($currentUserId);
+
+        $this->owner->ensureIsNotOwner($ownerId);
+        $this->participants->ensureIsNotParticipant($ownerId);
+        $this->tasks->ensureDoesUserHaveTask($this->owner->userId);
+
+        $this->owner = new ProjectOwner($ownerId);
+
+        $this->registerEvent(new ProjectOwnerWasChangedEvent(
+            $this->id->value,
+            $this->owner->userId->value
         ));
     }
 
@@ -113,19 +147,9 @@ final class Project extends AggregateRoot
         return $this->id;
     }
 
-    public function getName(): ProjectName
+    public function getInformation(): ProjectInformation
     {
-        return $this->name;
-    }
-
-    public function getDescription(): ProjectDescription
-    {
-        return $this->description;
-    }
-
-    public function getFinishDate(): DateTime
-    {
-        return $this->finishDate;
+        return $this->information;
     }
 
     public function getStatus(): ProjectStatus
@@ -133,33 +157,8 @@ final class Project extends AggregateRoot
         return $this->status;
     }
 
-    public function getOwnerId(): UserId
+    public function getOwner(): ProjectOwner
     {
-        return $this->ownerId;
-    }
-
-    /**
-     * @return ProjectTaskCollection|ProjectTask[]
-     */
-    public function getTasks(): ProjectTaskCollection
-    {
-        return $this->tasks;
-    }
-
-    public function ensureIsOwner(UserId $userId): void
-    {
-        if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException();
-        }
-    }
-
-    public function isClosed(): bool
-    {
-        return $this->getStatus() instanceof ClosedProjectStatus;
-    }
-
-    private function isOwner(UserId $userId): bool
-    {
-        return $this->ownerId->isEqual($userId);
+        return $this->owner;
     }
 }

@@ -3,19 +3,16 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
 
-use App\Projects\Application\CQ\UpdateProjectInformationCommand;
+use App\Projects\Application\CQ\LeaveProjectCommand;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectId;
-use App\Projects\Domain\ValueObject\ProjectInformation;
-use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\UserId;
+use Exception;
 
-final class UpdateProjectInformationCommandHandler implements CommandHandlerInterface
+final class LeaveProjectCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly ProjectRepositoryInterface $projectRepository,
@@ -23,20 +20,21 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
     ) {
     }
 
-    public function __invoke(UpdateProjectInformationCommand $command): void
+    /**
+     * @param LeaveProjectCommand $command
+     * @throws Exception
+     */
+    public function __invoke(LeaveProjectCommand $command): void
     {
         $project = $this->projectRepository->findById(new ProjectId($command->projectId));
         if ($project === null) {
             throw new ProjectNotExistException();
         }
 
-        $project->changeInformation(
-            new ProjectInformation(
-                new ProjectName($command->name),
-                new ProjectDescription($command->description),
-                new DateTime($command->finishDate)
-            ),
-            new UserId($command->currentUserId)
+        $currentUserId = new UserId($command->currentUserId);
+        $project->removeParticipant(
+            $currentUserId,
+            $currentUserId
         );
 
         $this->projectRepository->update($project);

@@ -45,25 +45,12 @@ class ProjectRepository implements ProjectRepositoryInterface
      */
     public function update(Project $project): void
     {
-        $tasks = $project->getTasks();
-        foreach ($tasks as $task) {
-            $this->entityManager->persist($task);
-        }
-        foreach ($tasks->getDeleted() as $deletedTask) {
-            $this->entityManager->remove($deletedTask);
-        }
-        $tasks->flush();
-
         $this->entityManager->persist($project);
         $this->entityManager->flush();
     }
 
     public function delete(Project $project): void
     {
-        foreach ($project->getTasks() as $task) {
-            $this->entityManager->remove($task);
-        }
-
         $this->entityManager->remove($project);
         $this->entityManager->flush();
     }

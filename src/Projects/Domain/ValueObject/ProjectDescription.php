@@ -5,7 +5,7 @@ namespace App\Projects\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\StringValueObject;
 
-class ProjectDescription extends StringValueObject
+final class ProjectDescription extends StringValueObject
 {
     private const MAX_LENGTH = 4000;
 
