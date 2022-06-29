@@ -10,7 +10,7 @@ use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\TaskManagers\Application\CQ\CreateTaskCommand;
+use App\TaskManagers\Application\Command\CreateTaskCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;

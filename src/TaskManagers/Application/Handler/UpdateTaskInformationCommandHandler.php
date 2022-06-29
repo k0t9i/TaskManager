@@ -8,7 +8,7 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\TaskManagers\Application\CQ\UpdateTaskInformationCommand;
+use App\TaskManagers\Application\Command\UpdateTaskInformationCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 use App\TaskManagers\Domain\ValueObject\TaskBrief;

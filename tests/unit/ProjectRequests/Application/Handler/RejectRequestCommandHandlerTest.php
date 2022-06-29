@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
-use App\ProjectRequests\Application\CQ\RejectRequestCommand;
+use App\ProjectRequests\Application\Command\RejectRequestCommand;
 use App\ProjectRequests\Application\Handler\RejectRequestCommandHandler;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\ValueObject\RejectedRequestStatus;

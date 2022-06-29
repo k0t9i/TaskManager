@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\ProjectRelationships\Application\Handler;
 
-use App\ProjectRelationships\Application\CQ\AddLinkCommand;
+use App\ProjectRelationships\Application\Command\AddLinkCommand;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipNotExistException;
 use App\ProjectRelationships\Domain\Repository\RelationshipRepositoryInterface;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;

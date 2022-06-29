@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
-use App\ProjectRequests\Application\CQ\ConfirmRequestCommand;
+use App\ProjectRequests\Application\Command\ConfirmRequestCommand;
 use App\ProjectRequests\Application\Handler\ConfirmRequestCommandHandler;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;

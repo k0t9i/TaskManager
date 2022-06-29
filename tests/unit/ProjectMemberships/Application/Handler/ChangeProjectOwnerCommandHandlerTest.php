@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectMemberships\Application\Handler;
 
-use App\ProjectMemberships\Application\CQ\ChangeProjectOwnerCommand;
+use App\ProjectMemberships\Application\Command\ChangeProjectOwnerCommand;
 use App\ProjectMemberships\Application\Handler\ChangeProjectOwnerCommandHandler;
 use App\ProjectMemberships\Domain\Entity\Membership;
 use App\ProjectMemberships\Domain\Exception\ProjectMembershipNotExistException;

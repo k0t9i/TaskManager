@@ -8,7 +8,7 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\TaskManagers\Application\CQ\CloseTaskCommand;
+use App\TaskManagers\Application\Command\CloseTaskCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 

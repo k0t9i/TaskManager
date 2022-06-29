@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectMemberships\Application\Handler;
 
-use App\ProjectMemberships\Application\CQ\RemoveProjectParticipantCommand;
+use App\ProjectMemberships\Application\Command\RemoveProjectParticipantCommand;
 use App\ProjectMemberships\Application\Handler\RemoveProjectParticipantCommandHandler;
 use App\ProjectMemberships\Domain\Entity\Membership;
 use App\ProjectMemberships\Domain\Exception\ProjectMembershipNotExistException;

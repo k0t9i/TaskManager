@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
 
-use App\Projects\Application\CQ\DeleteProjectCommand;
+use App\Projects\Application\Command\DeleteProjectCommand;
 use App\Projects\Domain\Event\ProjectWasDeletedEvent;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;

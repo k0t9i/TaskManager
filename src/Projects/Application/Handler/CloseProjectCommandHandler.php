@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
 
-use App\Projects\Application\CQ\CloseProjectCommand;
+use App\Projects\Application\Command\CloseProjectCommand;
 use App\Projects\Domain\Exception\ProjectNotExistException;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectId;

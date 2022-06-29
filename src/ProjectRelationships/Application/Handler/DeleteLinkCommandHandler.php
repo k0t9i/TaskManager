@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\ProjectRelationships\Application\Handler;
 
-use App\ProjectRelationships\Application\CQ\DeleteLinkCommand;
+use App\ProjectRelationships\Application\Command\DeleteLinkCommand;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipNotExistException;
 use App\ProjectRelationships\Domain\Repository\RelationshipRepositoryInterface;
 use App\ProjectRelationships\Domain\ValueObject\RelationshipTaskId;

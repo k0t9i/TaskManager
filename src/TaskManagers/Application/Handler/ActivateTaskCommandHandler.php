@@ -8,7 +8,7 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\TaskManagers\Application\CQ\ActivateTaskCommand;
+use App\TaskManagers\Application\Command\ActivateTaskCommand;
 use App\TaskManagers\Domain\Exception\TaskManagerNotExistException;
 use App\TaskManagers\Domain\Repository\TaskManagerRepositoryInterface;
 

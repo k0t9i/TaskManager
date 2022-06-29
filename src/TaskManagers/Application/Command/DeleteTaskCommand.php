@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\TaskManagers\Application\CQ;
+namespace App\TaskManagers\Application\Command;
 
 use App\Shared\Domain\Bus\Command\CommandInterface;
 

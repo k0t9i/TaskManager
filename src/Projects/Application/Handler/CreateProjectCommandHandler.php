@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
 
-use App\Projects\Application\CQ\CreateProjectCommand;
+use App\Projects\Application\Command\CreateProjectCommand;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;

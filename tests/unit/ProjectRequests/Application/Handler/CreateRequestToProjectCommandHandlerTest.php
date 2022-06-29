@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
-use App\ProjectRequests\Application\CQ\CreateRequestToProjectCommand;
+use App\ProjectRequests\Application\Command\CreateRequestToProjectCommand;
 use App\ProjectRequests\Application\Handler\CreateRequestToProjectCommandHandler;
 use App\ProjectRequests\Domain\Entity\ProjectRequest;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;

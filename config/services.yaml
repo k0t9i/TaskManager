@@ -17,8 +17,9 @@ services:
     App\:
         resource: '../src/'
         exclude:
-            - '../src/**/Application/CQ/*'
-            - '../src/**/Application/DTO/*'
+            - '../src/**/Application/Command/*'
+            - '../src/**/Application/Query/*'
+            - '../src/**/Application/Listener/*'
             - '../src/**/Domain/Entity/*'
             - '../src/**/Domain/Exception/*'
             - '../src/**/Domain/ValueObject/*'

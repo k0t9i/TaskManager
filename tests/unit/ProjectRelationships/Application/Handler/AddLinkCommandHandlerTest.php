@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRelationships\Application\Handler;
 
-use App\ProjectRelationships\Application\CQ\AddLinkCommand;
+use App\ProjectRelationships\Application\Command\AddLinkCommand;
 use App\ProjectRelationships\Application\Handler\AddLinkCommandHandler;
 use App\ProjectRelationships\Domain\Entity\Relationship;
 use App\ProjectRelationships\Domain\Exception\ProjectRelationshipNotExistException;
