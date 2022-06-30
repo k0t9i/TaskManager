@@ -18,7 +18,7 @@ final class RequestWasCreatedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'requestManager.requestCreated';
+        return 'request.created';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static

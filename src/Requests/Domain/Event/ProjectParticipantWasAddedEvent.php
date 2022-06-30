@@ -18,7 +18,7 @@ final class ProjectParticipantWasAddedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'requestManager.participantAdded';
+        return 'request.participantAdded';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static

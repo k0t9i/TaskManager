@@ -8,13 +8,13 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\AddLinkCommand;
-use App\Tasks\Domain\Exception\TaskNotExistException;
-use App\Tasks\Domain\Repository\TaskRepositoryInterface;
+use App\Tasks\Domain\Exception\TaskManagerNotExistException;
+use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
 class AddLinkCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly TaskRepositoryInterface $taskRepository,
+        private readonly TaskManagerRepositoryInterface $managerRepository,
         private readonly EventBusInterface $eventBus,
     ) {
     }
@@ -22,17 +22,18 @@ class AddLinkCommandHandler implements CommandHandlerInterface
     public function __invoke(AddLinkCommand $command): void
     {
         $fromTaskId = new TaskId($command->fromTaskId);
-        $task = $this->taskRepository->findById($fromTaskId);
-        if ($task === null) {
-            throw new TaskNotExistException();
+        $manager = $this->managerRepository->findByTaskId($fromTaskId);
+        if ($manager === null) {
+            throw new TaskManagerNotExistException();
         }
 
-        $task->createLink(
+        $manager->createTaskLink(
+            $fromTaskId,
             new TaskId($command->toTaskId),
             new UserId($command->currentUserId)
         );
 
-        $this->taskRepository->save($task);
-        $this->eventBus->dispatch(...$task->releaseEvents());
+        $this->managerRepository->save($manager);
+        $this->eventBus->dispatch(...$manager->releaseEvents());
     }
 }

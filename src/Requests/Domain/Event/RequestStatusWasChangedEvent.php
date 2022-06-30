@@ -18,7 +18,7 @@ final class RequestStatusWasChangedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'requestManager.requestStatusChanged';
+        return 'request.statusChanged';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static

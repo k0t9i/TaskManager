@@ -9,6 +9,7 @@ class TaskInformationWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
+        public readonly string $taskId,
         public readonly string $name,
         public readonly string $brief,
         public readonly string $description,
@@ -28,6 +29,7 @@ class TaskInformationWasChangedEvent extends DomainEvent
     {
         return new self(
             $aggregateId,
+            $body['taskId'],
             $body['name'],
             $body['brief'],
             $body['description'],
@@ -40,6 +42,7 @@ class TaskInformationWasChangedEvent extends DomainEvent
     public function toPrimitives(): array
     {
         return [
+            'taskId' => $this->taskId,
             'name' => $this->name,
             'brief' => $this->brief,
             'description' => $this->description,

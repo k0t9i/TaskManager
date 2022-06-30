@@ -9,8 +9,8 @@ use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
-use App\Tasks\Domain\Exception\TaskNotExistException;
-use App\Tasks\Domain\Repository\TaskRepositoryInterface;
+use App\Tasks\Domain\Exception\TaskManagerNotExistException;
+use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
@@ -19,7 +19,7 @@ use App\Tasks\Domain\ValueObject\TaskName;
 class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly TaskRepositoryInterface $taskRepository,
+        private readonly TaskManagerRepositoryInterface $managerRepository,
         private readonly EventBusInterface $eventBus,
     ) {
     }
@@ -27,12 +27,13 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
     public function __invoke(UpdateTaskInformationCommand $command): void
     {
         $taskId = new TaskId($command->id);
-        $task = $this->taskRepository->findById($taskId);
-        if ($task === null) {
-            throw new TaskNotExistException();
+        $manager = $this->managerRepository->findByTaskId($taskId);
+        if ($manager === null) {
+            throw new TaskManagerNotExistException();
         }
 
-        $task->changeInformation(
+        $manager->changeTaskInformation(
+            $taskId,
             new TaskInformation(
                 new TaskName($command->name),
                 new TaskBrief($command->brief),
@@ -43,7 +44,7 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
             new UserId($command->currentUserId),
         );
 
-        $this->taskRepository->save($task);
-        $this->eventBus->dispatch(...$task->releaseEvents());
+        $this->managerRepository->save($manager);
+        $this->eventBus->dispatch(...$manager->releaseEvents());
     }
 }

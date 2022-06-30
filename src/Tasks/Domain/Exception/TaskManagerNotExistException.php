@@ -5,7 +5,7 @@ namespace App\Tasks\Domain\Exception;
 
 use App\Shared\Domain\Exception\DomainException;
 
-final class SameProjectTaskNotExistException extends DomainException
+class TaskManagerNotExistException extends DomainException
 {
 
 }

@@ -5,7 +5,7 @@ namespace App\Tasks\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\Uuid;
 
-final class TaskProjectId extends Uuid
+final class TaskManagerId extends Uuid
 {
 
 }
