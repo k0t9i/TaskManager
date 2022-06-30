@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Tests\unit\ProjectRequests\Domain\Entity;
 
 use App\ProjectRequests\Domain\Collection\RequestCollection;
-use App\ProjectRequests\Domain\Entity\ProjectRequest;
 use App\ProjectRequests\Domain\Entity\Request;
+use App\ProjectRequests\Domain\Entity\RequestProject;
 use App\ProjectRequests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\PendingRequestStatus;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
@@ -280,7 +280,7 @@ class ProjectRequestMother
      * @param string $participantId
      * @param RequestDTO[] $rawRequests
      * @param ProjectStatus|null $projectRequestStatus
-     * @return ProjectRequest
+     * @return RequestProject
      */
     private function createProjectRequest(
         string $projectRequestId,
@@ -289,7 +289,7 @@ class ProjectRequestMother
         string $requestId,
         array $rawRequests = [],
         ProjectStatus $projectRequestStatus = null,
-    ): ProjectRequest {
+    ): RequestProject {
         if ($projectRequestStatus === null) {
             $projectRequestStatus = new ActiveProjectStatus();
         }
@@ -305,7 +305,7 @@ class ProjectRequestMother
         }
         $requests->flush();
 
-        return new ProjectRequest(
+        return new RequestProject(
             new ProjectRequestId($projectRequestId),
             $projectRequestStatus,
             new UserId($ownerId),

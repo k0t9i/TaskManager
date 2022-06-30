@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
-use App\ProjectRequests\Domain\Entity\ProjectRequest;
+use App\ProjectRequests\Domain\Entity\RequestProject;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Event\DomainEvent;
@@ -14,7 +14,7 @@ trait ChangeStatusSetUpTrait
 {
     private function setUpHandlerForPositiveScenario(string $statusClass, string $requestId, string $userId): array
     {
-        $project = $this->getMockBuilder(ProjectRequest::class)
+        $project = $this->getMockBuilder(RequestProject::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['changeRequestStatus', 'releaseEvents'])
             ->getMock();

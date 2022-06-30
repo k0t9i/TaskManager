@@ -46,7 +46,7 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
             new ProjectOwner($user->getId())
         );
 
-        $this->projectRepository->create($project);
+        $this->projectRepository->save($project);
         $this->eventBus->dispatch(...$project->releaseEvents());
     }
 }

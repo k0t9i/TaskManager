@@ -9,8 +9,5 @@ use App\Shared\Domain\ValueObject\ProjectId;
 interface ProjectRepositoryInterface
 {
     public function findById(ProjectId $id): ?Project;
-    public function findByOwnerId(string $ownerId): ?Project;
-    public function create(Project $project): void;
-    public function update(Project $project): void;
-    public function delete(Project $project): void;
+    public function save(Project $project): void;
 }

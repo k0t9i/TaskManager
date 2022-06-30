@@ -5,7 +5,7 @@ namespace App\Tests\unit\ProjectRequests\Application\Handler;
 
 use App\ProjectRequests\Application\Command\CreateRequestToProjectCommand;
 use App\ProjectRequests\Application\Handler\CreateRequestToProjectCommandHandler;
-use App\ProjectRequests\Domain\Entity\ProjectRequest;
+use App\ProjectRequests\Domain\Entity\RequestProject;
 use App\ProjectRequests\Domain\Exception\ProjectRequestNotExistsException;
 use App\ProjectRequests\Domain\Repository\ProjectRequestRepositoryInterface;
 use App\ProjectRequests\Domain\ValueObject\ProjectRequestId;
@@ -49,7 +49,7 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
                 new UserId($userId)
             );
 
-        $project = $this->getMockBuilder(ProjectRequest::class)
+        $project = $this->getMockBuilder(RequestProject::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['createRequest', 'releaseEvents'])
             ->getMock();
@@ -121,7 +121,7 @@ class CreateRequestToProjectCommandHandlerTest extends TestCase
         $projectId = $this->faker->uuid();
         $userId = $this->faker->uuid();
 
-        $project = $this->getMockBuilder(ProjectRequest::class)
+        $project = $this->getMockBuilder(RequestProject::class)
             ->disableOriginalConstructor()
             ->getMock();
 

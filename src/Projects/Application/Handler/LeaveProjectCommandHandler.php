@@ -37,7 +37,7 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
             $currentUserId
         );
 
-        $this->projectRepository->update($project);
+        $this->projectRepository->save($project);
         $this->eventBus->dispatch(...$project->releaseEvents());
     }
 }

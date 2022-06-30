@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\ProjectRequests\Domain\Entity;
 
-use App\ProjectRequests\Domain\Entity\ProjectRequest;
 use App\ProjectRequests\Domain\Entity\Request;
+use App\ProjectRequests\Domain\Entity\RequestProject;
 use App\ProjectRequests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\ProjectRequests\Domain\Event\RequestStatusWasChangedEvent;
 use App\ProjectRequests\Domain\Event\RequestWasCreatedEvent;
@@ -36,7 +36,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByNonMember()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestByNonMember();
 
         $projectRequest->createRequest(
@@ -49,7 +49,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByUserWithRejectedRequest()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest] = $this->mother->createRequestByUserWithRejectedRequest();
         $requestId = $this->faker->uuid();
 
@@ -63,7 +63,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestInClosedProjectRequest()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestInClosedProjectRequest();
 
         self::expectException(ModificationDeniedException::class);
@@ -75,7 +75,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByParticipant()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestByParticipant();
 
         self::expectException(UserIsAlreadyParticipantException::class);
@@ -87,7 +87,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByOwner()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestByOwner();
 
         self::expectException(UserIsAlreadyOwnerException::class);
@@ -99,7 +99,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByUserWithPendingRequest()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestByUserWithPendingRequest();
 
         self::expectException(UserAlreadyHasNonRejectedProjectRequestRequestException::class);
@@ -111,7 +111,7 @@ class ProjectRequestTest extends TestCase
 
     public function testCreateRequestByUserWithConfirmedRequest()
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->createRequestByUserWithConfirmedRequest();
 
         self::expectException(UserAlreadyHasNonRejectedProjectRequestRequestException::class);
@@ -123,7 +123,7 @@ class ProjectRequestTest extends TestCase
 
     public function testRejectRequestByOwner(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->changeRequestStatusByOwner();
         $status = new RejectedRequestStatus();
 
@@ -149,7 +149,7 @@ class ProjectRequestTest extends TestCase
 
     public function testConfirmRequestByOwner(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId, $requestOwnerId] = $this->mother->changeRequestStatusByOwner();
         $status = new ConfirmedRequestStatus();
 
@@ -182,7 +182,7 @@ class ProjectRequestTest extends TestCase
 
     public function testConfirmRequestByNonOwner(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->changeRequestStatusByNonOwner();
         $status = new ConfirmedRequestStatus();
 
@@ -196,7 +196,7 @@ class ProjectRequestTest extends TestCase
 
     public function testConfirmNonExistingRequest(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest] = $this->mother->changeRequestStatusByOwner();
         $status = new ConfirmedRequestStatus();
 
@@ -210,7 +210,7 @@ class ProjectRequestTest extends TestCase
 
     public function testConfirmOwnerRequest(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->changeOwnerRequestStatus();
         $status = new ConfirmedRequestStatus();
 
@@ -224,7 +224,7 @@ class ProjectRequestTest extends TestCase
 
     public function testConfirmParticipantRequest(): void
     {
-        /** @var ProjectRequest $projectRequest */
+        /** @var RequestProject $projectRequest */
         [$currentUserId, $projectRequest, $requestId] = $this->mother->changeParticipantRequestStatus();
         $status = new ConfirmedRequestStatus();
 
@@ -237,10 +237,10 @@ class ProjectRequestTest extends TestCase
     }
 
     private function createRequestPositiveAssertions(
-        ProjectRequest $projectRequest,
-        string $requestId,
-        string $currentUserId,
-        int $requestCount
+        RequestProject $projectRequest,
+        string         $requestId,
+        string         $currentUserId,
+        int            $requestCount
     ): void {
         self::assertCount($requestCount, $projectRequest->getRequests());
         self::assertTrue($projectRequest->getRequests()->hashExists((new RequestId($requestId))->getHash()));

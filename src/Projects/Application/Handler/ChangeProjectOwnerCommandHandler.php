@@ -43,7 +43,7 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
             new UserId($command->currentUserId)
         );
 
-        $this->projectRepository->update($project);
+        $this->projectRepository->save($project);
         $this->eventBus->dispatch(...$project->releaseEvents());
     }
 }

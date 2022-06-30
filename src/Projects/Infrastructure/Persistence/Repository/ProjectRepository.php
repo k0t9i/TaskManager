@@ -27,12 +27,6 @@ class ProjectRepository implements ProjectRepositoryInterface
         return $this->repository()->find($id);
     }
 
-    public function findByOwnerId(string $ownerId): ?Project
-    {
-        // TODO: Implement findByOwnerId() method.
-        return null;
-    }
-
     public function create(Project $project): void
     {
         $this->entityManager->persist($project);
@@ -43,7 +37,7 @@ class ProjectRepository implements ProjectRepositoryInterface
      * @param Project $project
      * @throws Exception
      */
-    public function update(Project $project): void
+    public function save(Project $project): void
     {
         $this->entityManager->persist($project);
         $this->entityManager->flush();
