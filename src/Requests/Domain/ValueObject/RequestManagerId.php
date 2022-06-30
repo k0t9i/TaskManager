@@ -5,7 +5,7 @@ namespace App\Requests\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\Uuid;
 
-final class RequestProjectId extends Uuid
+final class RequestManagerId extends Uuid
 {
 
 }

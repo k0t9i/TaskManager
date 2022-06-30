@@ -9,6 +9,7 @@ final class RequestStatusWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
+        public readonly string $requestId,
         public readonly string $status,
         string $occurredOn = null
     ) {
@@ -17,17 +18,18 @@ final class RequestStatusWasChangedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'request.statusChanged';
+        return 'requestManager.requestStatusChanged';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
-        return new self($aggregateId, $body['status'], $occurredOn);
+        return new self($aggregateId, $body['requestId'], $body['status'], $occurredOn);
     }
 
     public function toPrimitives(): array
     {
         return [
+            'requestId' => $this->requestId,
             'status' => $this->status,
         ];
     }

@@ -9,6 +9,7 @@ final class RequestWasCreatedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
+        public readonly string $requestId,
         public readonly string $userId,
         string $occurredOn = null
     ) {
@@ -17,17 +18,18 @@ final class RequestWasCreatedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'request.created';
+        return 'requestManager.requestCreated';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
-        return new self($aggregateId, $body['userId'], $occurredOn);
+        return new self($aggregateId, $body['requestId'], $body['userId'], $occurredOn);
     }
 
     public function toPrimitives(): array
     {
         return [
+            'requestId' => $this->requestId,
             'userId' => $this->userId,
         ];
     }

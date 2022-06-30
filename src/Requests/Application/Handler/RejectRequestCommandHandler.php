@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Requests\Application\Handler;
 
 use App\Requests\Application\Command\RejectRequestCommand;
-use App\Requests\Domain\Exception\RequestNotExistsException;
-use App\Requests\Domain\Repository\RequestRepositoryInterface;
+use App\Requests\Domain\Exception\RequestManagerNotExistsException;
+use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RejectedRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
@@ -15,7 +15,7 @@ use App\Shared\Domain\ValueObject\UserId;
 final class RejectRequestCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly RequestRepositoryInterface $requestRepository,
+        private readonly RequestManagerRepositoryInterface $managerRepository,
         private readonly EventBusInterface $eventBus,
     ) {
     }
@@ -23,17 +23,18 @@ final class RejectRequestCommandHandler implements CommandHandlerInterface
     public function __invoke(RejectRequestCommand $command): void
     {
         $requestId = new RequestId($command->id);
-        $request = $this->requestRepository->findById($requestId);
-        if ($request === null) {
-            throw new RequestNotExistsException();
+        $manager = $this->managerRepository->findByRequestId($requestId);
+        if ($manager === null) {
+            throw new RequestManagerNotExistsException();
         }
 
-        $request->changeStatus(
+        $manager->changeRequestStatus(
+            $requestId,
             new RejectedRequestStatus(),
             new UserId($command->currentUserId)
         );
 
-        $this->requestRepository->save($request);
-        $this->eventBus->dispatch(...$request->releaseEvents());
+        $this->managerRepository->save($manager);
+        $this->eventBus->dispatch(...$manager->releaseEvents());
     }
 }
