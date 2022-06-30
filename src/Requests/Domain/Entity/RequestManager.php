@@ -25,10 +25,10 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManager extends AggregateRoot
 {
-    //TODO change project status
-    //TODO change project owner
-    //TODO add project participant status
-    //TODO remove project participant status
+    //TODO add project ProjectWasCreatedEvent
+    //TODO change project status ProjectStatusWasChangedEvent
+    //TODO change project owner ProjectOwnerWasChangedEvent
+    //TODO remove project participant ProjectParticipantWasRemovedEvent
     public function __construct(
         private RequestManagerId  $id,
         private ProjectId         $projectId,

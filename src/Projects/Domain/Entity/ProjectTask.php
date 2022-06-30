@@ -17,10 +17,6 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectTask implements Hashable
 {
-    // TODO add task
-    // TODO delete task
-    // TODO change task status
-    // TODO change task information
     public function __construct(
         private ProjectTaskId $id,
         private TaskId $taskId,

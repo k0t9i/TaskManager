@@ -28,14 +28,15 @@ use App\Tasks\Domain\ValueObject\TaskManagerId;
 
 final class TaskManager extends AggregateRoot
 {
-    //TODO change project status
-    //TODO change project owner
-    //TODO change project information
-    //TODO change project task start date
-    //TODO change project task finish date
-    //TODO change project task status
-    //TODO add project participant status
-    //TODO remove project participant status
+    //TODO add project ProjectWasCreatedEvent
+    //TODO change project status ProjectStatusWasChangedEvent
+    //TODO change project owner ProjectOwnerWasChangedEvent
+    //TODO change project information ProjectInformationWasChangedEvent
+    //TODO change project task start date ProjectTaskStartDateWasChangedEvent
+    //TODO change project task finish date ProjectTaskFinishDateWasChangedEvent
+    //TODO change project task status ProjectTaskStatusWasChangedEvent
+    //TODO add project participant ProjectParticipantWasAddedEvent
+    //TODO remove project participant ProjectParticipantWasRemovedEvent
     public function __construct(
         private TaskManagerId    $id,
         private ProjectStatus    $status,
