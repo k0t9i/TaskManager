@@ -6,8 +6,11 @@ namespace App\Tasks\Domain\Entity;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectStatus;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Tasks\Domain\Collection\SameProjectTaskCollection;
 use App\Tasks\Domain\Exception\InsufficientPermissionsToChangeTaskException;
+use App\Tasks\Domain\Exception\SameProjectTaskNotExistException;
 use App\Tasks\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDateException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 use App\Tasks\Domain\ValueObject\TaskProjectId;
@@ -27,7 +30,8 @@ final class TaskProject
         private ProjectStatus    $status,
         private UserId           $ownerId,
         private DateTime         $finishDate,
-        private UserIdCollection $participantIds
+        private UserIdCollection $participantIds,
+        private SameProjectTaskCollection $tasks
     ) {
     }
 
@@ -77,6 +81,13 @@ final class TaskProject
     public function isUserInProject(UserId $userId): bool
     {
         return $this->isOwner($userId) || $this->isParticipant($userId);
+    }
+
+    public function ensureTaskExists(TaskId $taskId): void
+    {
+        if (!$this->tasks->hashExists($taskId->getHash())) {
+            throw new SameProjectTaskNotExistException();
+        }
     }
 
     private function isOwner(UserId $userId): bool

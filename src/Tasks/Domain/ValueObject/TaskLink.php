@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\ProjectRelationships\Domain\ValueObject;
+namespace App\Tasks\Domain\ValueObject;
 
-use App\ProjectRelationships\Domain\Exception\TasksOfProjectRelationshipTaskLinkAreEqualException;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\TaskId;
+use App\Tasks\Domain\Exception\TasksOfTaskLinkAreEqualException;
 
 final class TaskLink implements Hashable
 {
     public function __construct(
-        public readonly RelationshipTaskId $fromTaskId, //TODO same as ProjectId
-        public readonly RelationshipTaskId $toTaskId //TODO same as ProjectId
+        public readonly TaskId $fromTaskId,
+        public readonly TaskId $toTaskId
     ) {
         $this->ensureIsDifferentTasks();
     }
@@ -27,7 +28,7 @@ final class TaskLink implements Hashable
     private function ensureIsDifferentTasks()
     {
         if ($this->fromTaskId->isEqual($this->toTaskId)) {
-            throw new TasksOfProjectRelationshipTaskLinkAreEqualException();
+            throw new TasksOfTaskLinkAreEqualException();
         }
     }
 }

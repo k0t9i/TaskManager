@@ -10,14 +10,20 @@ use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Event\TaskInformationWasChangedEvent;
+use App\Tasks\Domain\Event\TaskLinkWasAddedEvent;
+use App\Tasks\Domain\Event\TaskLinkWasDeletedEvent;
 use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
 use App\Tasks\Domain\Event\TaskWasCreatedEvent;
+use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
+use App\Tasks\Domain\Exception\TaskLinkNotExistException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
 use App\Tasks\Domain\ValueObject\TaskInformation;
+use App\Tasks\Domain\ValueObject\TaskLink;
 
-class Task extends AggregateRoot implements Hashable
+final class Task extends AggregateRoot implements Hashable
 {
     public function __construct(
         private TaskId $id,
@@ -25,7 +31,8 @@ class Task extends AggregateRoot implements Hashable
         private TaskInformation $information,
         private UserId $ownerId,
         private TaskStatus $status,
-        private TaskProject $taskProject
+        private TaskProject $taskProject,
+        private TaskLinkCollection $links
     ) {
         $this->ensureFinishDateGreaterThanStart();
     }
@@ -45,7 +52,8 @@ class Task extends AggregateRoot implements Hashable
             $information,
             $ownerId,
             $status,
-            $taskProject
+            $taskProject,
+            new TaskLinkCollection()
         );
 
         $task->taskProject->ensureCanChangeTask($ownerId, $currentUserId);
@@ -107,6 +115,47 @@ class Task extends AggregateRoot implements Hashable
         ));
     }
 
+    public function createLink(
+        TaskId $toTaskId,
+        UserId $currentUserId
+    ): void {
+        $this->taskProject->ensureCanChangeTask($this->ownerId, $currentUserId);
+        $this->taskProject->ensureTaskExists($toTaskId);
+
+        $taskLink = new TaskLink($this->id, $toTaskId);
+        $this->ensureLinkDoesNotExist($taskLink);
+
+        $this->links->add($taskLink);
+
+        $this->registerEvent(new TaskLinkWasAddedEvent(
+            $this->id->value,
+            $toTaskId->value
+        ));
+    }
+
+    public function deleteLink(
+        TaskId $toTaskId,
+        UserId             $currentUserId
+    ): void {
+        $this->taskProject->ensureCanChangeTask($this->ownerId, $currentUserId);
+        $this->taskProject->ensureTaskExists($toTaskId);
+
+        $taskLink = new TaskLink($this->id, $toTaskId);
+        $this->ensureLinkExists($taskLink);
+
+        $this->links->remove($taskLink);
+
+        $this->registerEvent(new TaskLinkWasDeletedEvent(
+            $this->id->value,
+            $toTaskId->value
+        ));
+    }
+
+    public function getHash(): string
+    {
+        return $this->id->getHash();
+    }
+
     private function ensureFinishDateGreaterThanStart()
     {
         if ($this->information->startDate->isGreaterThan($this->information->finishDate)) {
@@ -114,8 +163,17 @@ class Task extends AggregateRoot implements Hashable
         }
     }
 
-    public function getHash(): string
+    private function ensureLinkDoesNotExist(TaskLink $link): void
     {
-        return $this->id->getHash();
+        if ($this->links->exists($link)) {
+            throw new TaskLinkAlreadyExistsException();
+        }
+    }
+
+    private function ensureLinkExists(TaskLink $link): void
+    {
+        if (!$this->links->exists($link)) {
+            throw new TaskLinkNotExistException();
+        }
     }
 }
