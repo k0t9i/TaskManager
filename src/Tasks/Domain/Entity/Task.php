@@ -151,6 +151,22 @@ final class Task extends AggregateRoot implements Hashable
         ));
     }
 
+    /**
+     * @return TaskId
+     */
+    public function getId(): TaskId
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return TaskInformation
+     */
+    public function getInformation(): TaskInformation
+    {
+        return $this->information;
+    }
+
     public function getHash(): string
     {
         return $this->id->getHash();

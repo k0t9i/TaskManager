@@ -14,6 +14,8 @@ use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\CreateTaskCommand;
+use App\Tasks\Domain\Collection\SameProjectTaskCollection;
+use App\Tasks\Domain\Entity\SameProjectTask;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Entity\TaskProject;
 use App\Tasks\Domain\Repository\TaskRepositoryInterface;
@@ -45,6 +47,14 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         if ($owner === null) {
             throw new UserNotExistException();
         }
+        $tasks = $this->taskRepository->findAllByProjectId($project->getId());
+        $sameProjectTasks = new SameProjectTaskCollection();
+        foreach ($tasks as $task) {
+            $sameProjectTasks->add(new SameProjectTask(
+                $task->getId(),
+                $task->getInformation()->name
+            ));
+        }
 
         $task = Task::create(
             new TaskId($this->uuidGenerator->generate()),
@@ -62,7 +72,8 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 $project->getStatus(),
                 $project->getOwner()->userId,
                 $project->getInformation()->finishDate,
-                $project->getParticipants()->copyInnerCollection()
+                $project->getParticipants()->copyInnerCollection(),
+                $sameProjectTasks
             ),
             new UserId($command->currentUserId)
         );

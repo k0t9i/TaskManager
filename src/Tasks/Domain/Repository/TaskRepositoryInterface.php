@@ -10,6 +10,11 @@ use App\Tasks\Domain\Entity\Task;
 interface TaskRepositoryInterface
 {
     public function findById(TaskId $id): ?Task;
-    public function findByProjectId(ProjectId $projectId): ?Task;
     public function save(Task $task): void;
+
+    /**
+     * @param ProjectId $projectId
+     * @return array|Task[]
+     */
+    public function findAllByProjectId(ProjectId $projectId): array;
 }
