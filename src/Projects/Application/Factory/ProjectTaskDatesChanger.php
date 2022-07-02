@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace App\Projects\Application\Factory;
 
 use App\Projects\Domain\Entity\Project;
-use App\Projects\Domain\Entity\ProjectTask;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\TaskId;
 
 final class ProjectTaskDatesChanger
 {
     public function __construct(
         private readonly ProjectFactory $projectFactory,
+        private readonly ProjectTaskFactory $projectTaskFactory
     ) {
     }
 
@@ -22,14 +22,16 @@ final class ProjectTaskDatesChanger
         $tasks = $project->getTasks();
         // TODO add exception?
         if ($task !== null) {
-            $tasks = $tasks->add(new ProjectTask(
-                $task->getId(),
-                $task->getTaskId(),
-                $task->getStatus(),
-                $task->getOwnerId(),
-                new DateTime($startDate),
-                new DateTime($finishDate),
-            ));
+            $taskDto = new ProjectTaskDTO(
+                $task->getTaskId()->value,
+                TaskStatusFactory::scalarFromObject($task->getStatus()),
+                $task->getOwnerId()->value,
+                $startDate,
+                $finishDate,
+            );
+            $tasks = $tasks->add(
+                $this->projectTaskFactory->create($task->getId()->value, $taskDto)
+            );
         }
 
         $dto = new ProjectDTO(
