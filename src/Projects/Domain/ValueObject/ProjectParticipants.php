@@ -40,6 +40,13 @@ final class ProjectParticipants
         return $this->participants->exists($userId);
     }
 
+    public function add(UserId $userId): self
+    {
+        $result = new self();
+        $result->participants = $this->participants->add($userId);
+        return $result;
+    }
+
     public function remove(UserId $userId): self
     {
         $result = new self();

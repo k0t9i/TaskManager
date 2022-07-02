@@ -23,8 +23,6 @@ use Exception;
 
 final class Project extends AggregateRoot
 {
-    // TODO change task status TaskStatusWasChangedEvent
-    // TODO change task information TaskInformationWasChangedEvent
     // TODO add participant ProjectParticipantWasAddedEvent
     public function __construct(
         private ProjectId $id,

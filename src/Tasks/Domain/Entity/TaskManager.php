@@ -103,6 +103,7 @@ final class TaskManager extends AggregateRoot
 
         $this->registerEvent(new TaskInformationWasChangedEvent(
             $this->id->value,
+            $this->projectId->value,
             $task->getId()->value,
             $information->name->value,
             $information->brief->value,
@@ -123,6 +124,7 @@ final class TaskManager extends AggregateRoot
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
             $this->id->value,
+            $this->projectId->value,
             $task->getId()->value,
             (string) $status->getScalar()
         ));
