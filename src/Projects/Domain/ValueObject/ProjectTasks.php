@@ -14,9 +14,13 @@ final class ProjectTasks
 {
     private readonly ProjectTaskCollection $tasks;
 
-    public function __construct(array $items = [])
+    public function __construct(?ProjectTaskCollection $items = null)
     {
-        $this->tasks = new ProjectTaskCollection($items);
+        if ($items === null) {
+            $this->tasks = new ProjectTaskCollection();
+        } else {
+            $this->tasks = $items;
+        }
     }
 
     /**
@@ -50,13 +54,15 @@ final class ProjectTasks
         }
     }
 
-    public function copyInnerCollection(): ProjectTaskCollection
+    public function add(ProjectTask $task): self
     {
-        return clone $this->tasks;
+        $result = new self();
+        $result->tasks = $this->tasks->add($task);
+        return $result;
     }
 
-    public function add(ProjectTask $task): void
+    public function getInnerItems(): ProjectTaskCollection
     {
-        $this->tasks->add($task);
+        return $this->tasks;
     }
 }

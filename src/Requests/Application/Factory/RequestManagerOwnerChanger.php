@@ -19,8 +19,8 @@ final class RequestManagerOwnerChanger
             $requestManager->getProjectId()->value,
             RequestStatusFactory::scalarFromObject($requestManager->getStatus()),
             $ownerId,
-            $requestManager->getParticipantIds()->getItems(),
-            $requestManager->getRequests()->getItems()
+            $requestManager->getParticipantIds(),
+            $requestManager->getRequests()
         );
         return $this->managerFactory->create($dto);
     }

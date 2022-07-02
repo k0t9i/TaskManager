@@ -44,14 +44,14 @@ final class Task extends AggregateRoot implements Hashable
     {
         $taskLink = new TaskLink($this->id, $taskId);
         $this->ensureLinkDoesNotExist($taskLink);
-        $this->links->add($taskLink);
+        $this->links = $this->links->add($taskLink);
     }
 
     public function deleteLink(TaskId $taskId): void
     {
         $taskLink = new TaskLink($this->id, $taskId);
         $this->ensureLinkExists($taskLink);
-        $this->links->remove($taskLink);
+        $this->links = $this->links->remove($taskLink);
     }
 
     /**

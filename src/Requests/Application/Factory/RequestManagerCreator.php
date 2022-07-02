@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Factory;
 
+use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\Entity\RequestManager;
+use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\UuidGeneratorInterface;
 
 final class RequestManagerCreator
@@ -20,7 +22,9 @@ final class RequestManagerCreator
             $this->uuidGenerator->generate(),
             $projectId,
             $status,
-            $ownerId
+            $ownerId,
+            new UserIdCollection(),
+            new RequestCollection()
         );
         return $this->managerFactory->create($dto);
     }

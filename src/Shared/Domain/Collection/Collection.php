@@ -84,25 +84,31 @@ abstract class Collection implements CollectionInterface
         return $this->items[$key];
     }
 
-    public function add(Hashable $item): void
+    public function add(Hashable $item): static
     {
         $this->ensureIsValidType($item);
         $key = $item->getHash();
-        if (!isset($this->items[$key]) && !isset($this->deleted[$key])) {
-            $this->added[$key] = $item;
+        $collection = static::createFromOther($this);
+        if (!isset($collection->items[$key]) && !isset($collection->deleted[$key])) {
+            $collection->added[$key] = $item;
         }
-        $this->items[$key] = $item;
-        unset($this->deleted[$key]);
+        $collection->items[$key] = $item;
+        unset($collection->deleted[$key]);
+
+        return $collection;
     }
 
-    public function remove(Hashable $item): void
+    public function remove(Hashable $item): static
     {
         $key = $item->getHash();
-        if (isset($this->items[$key]) && !isset($this->added[$key])) {
-            $this->deleted[$key] = $this->items[$key];
+        $collection = static::createFromOther($this);
+        if (isset($collection->items[$key]) && !isset($collection->added[$key])) {
+            $collection->deleted[$key] = $collection->items[$key];
         }
-        unset($this->items[$key]);
-        unset($this->added[$key]);
+        unset($collection->items[$key]);
+        unset($collection->added[$key]);
+
+        return $collection;
     }
 
     public function exists(Hashable $item): bool
@@ -114,6 +120,15 @@ abstract class Collection implements CollectionInterface
     public function hashExists(string $hash): bool
     {
         return array_key_exists($hash, $this->items);
+    }
+
+    private static function createFromOther(self $other): static
+    {
+        $collection = new static();
+        $collection->items = $other->items;
+        $collection->added = $other->added;
+        $collection->deleted = $other->deleted;
+        return $collection;
     }
 
     private function ensureIsValidType(mixed $value): void

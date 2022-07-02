@@ -115,7 +115,7 @@ final class Project extends AggregateRoot
         $this->participants->ensureIsParticipant($participantId);
         $this->tasks->ensureDoesUserHaveTask($participantId);
 
-        $this->participants->remove($participantId);
+        $this->participants = $this->participants->remove($participantId);
 
         $this->registerEvent(new ProjectParticipantWasRemovedEvent(
             $this->id->value,

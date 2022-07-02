@@ -10,11 +10,15 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectParticipants
 {
-    private UserIdCollection $participants;
+    private readonly UserIdCollection $participants;
 
-    public function __construct(array $items = [])
+    public function __construct(?UserIdCollection $items = null)
     {
-        $this->participants = new UserIdCollection($items);
+        if ($items === null) {
+            $this->participants = new UserIdCollection();
+        } else {
+            $this->participants = $items;
+        }
     }
 
     public function ensureIsParticipant(UserId $userId): void
@@ -36,13 +40,15 @@ final class ProjectParticipants
         return $this->participants->exists($userId);
     }
 
-    public function remove(UserId $userId): void
+    public function remove(UserId $userId): self
     {
-        $this->participants->remove($userId);
+        $result = new self();
+        $result->participants = $this->participants->remove($userId);
+        return $result;
     }
 
-    public function copyInnerCollection(): UserIdCollection
+    public function getInnerItems(): UserIdCollection
     {
-        return clone $this->participants;
+        return $this->participants;
     }
 }

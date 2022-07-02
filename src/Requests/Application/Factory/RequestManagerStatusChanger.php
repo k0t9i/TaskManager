@@ -18,8 +18,8 @@ final class RequestManagerStatusChanger
             $requestManager->getProjectId()->value,
             $status,
             $requestManager->getOwnerId()->value,
-            $requestManager->getParticipantIds()->getItems(),
-            $requestManager->getRequests()->getItems()
+            $requestManager->getParticipantIds(),
+            $requestManager->getRequests()
         );
         return $this->managerFactory->create($dto);
     }

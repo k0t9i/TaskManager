@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Factory;
 
+use App\Requests\Domain\Collection\RequestCollection;
+use App\Shared\Domain\Collection\UserIdCollection;
+
 final class RequestManagerDTO
 {
     public function __construct(
@@ -10,8 +13,8 @@ final class RequestManagerDTO
         public readonly string $projectId,
         public readonly int $status,
         public readonly string $ownerId,
-        public readonly array $participantIds = [],
-        public readonly array $requests = []
+        public readonly UserIdCollection $participantIds,
+        public readonly RequestCollection $requests
     ) {
     }
 }

@@ -116,7 +116,7 @@ final class RequestManager extends AggregateRoot
     private function addParticipantFromRequest(UserId $participantId): void
     {
         $this->ensureIsUserAlreadyInProject($participantId);
-        $this->participantIds->add($participantId);
+        $this->participantIds = $this->participantIds->add($participantId);
     }
 
     private function ensureCanAddRequest(UserId $userId): void
