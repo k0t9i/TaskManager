@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Application\Factory;
+namespace App\Requests\Application\Service;
 
+use App\Requests\Application\Factory\RequestManagerDTO;
+use App\Requests\Application\Factory\RequestManagerFactory;
 use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Shared\Domain\Collection\UserIdCollection;

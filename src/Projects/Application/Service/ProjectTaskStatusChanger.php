@@ -1,8 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\Factory;
+namespace App\Projects\Application\Service;
 
+use App\Projects\Application\Factory\ProjectDTO;
+use App\Projects\Application\Factory\ProjectFactory;
+use App\Projects\Application\Factory\ProjectTaskDTO;
+use App\Projects\Application\Factory\ProjectTaskFactory;
 use App\Projects\Domain\Entity\Project;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\TaskId;

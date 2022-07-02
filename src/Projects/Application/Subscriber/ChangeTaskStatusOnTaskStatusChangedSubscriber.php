@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Subscriber;
 
-use App\Projects\Application\Factory\ProjectTaskStatusChanger;
+use App\Projects\Application\Service\ProjectTaskStatusChanger;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;

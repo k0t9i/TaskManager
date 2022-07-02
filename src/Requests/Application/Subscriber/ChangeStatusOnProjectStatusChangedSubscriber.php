@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Requests\Application\Subscriber;
 
 use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
-use App\Requests\Application\Factory\RequestManagerStatusChanger;
+use App\Requests\Application\Service\RequestManagerStatusChanger;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;

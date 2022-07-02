@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Requests\Application\Subscriber;
 
 use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Requests\Application\Factory\RequestManagerOwnerChanger;
+use App\Requests\Application\Service\RequestManagerOwnerChanger;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;

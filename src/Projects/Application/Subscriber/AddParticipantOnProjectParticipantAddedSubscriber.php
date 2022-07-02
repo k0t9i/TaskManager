@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Subscriber;
 
-use App\Projects\Application\Factory\ProjectParticipantAdder;
+use App\Projects\Application\Service\ProjectParticipantAdder;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Requests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
