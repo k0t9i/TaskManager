@@ -22,6 +22,6 @@ final class RequestManagerCreator
             $status,
             $ownerId
         );
-        return $this->managerFactory->createRequestManager($dto);
+        return $this->managerFactory->create($dto);
     }
 }

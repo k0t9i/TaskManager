@@ -7,6 +7,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
@@ -39,6 +40,7 @@ final class TaskManager extends AggregateRoot
     //TODO remove project participant ProjectParticipantWasRemovedEvent
     public function __construct(
         private TaskManagerId    $id,
+        private ProjectId         $projectId,
         private ProjectStatus    $status,
         private UserId           $ownerId,
         private DateTime         $finishDate,
@@ -70,7 +72,8 @@ final class TaskManager extends AggregateRoot
         }
 
         $task->registerEvent(new TaskWasCreatedEvent(
-            $id->value,
+            $this->id->value,
+            $this->projectId->value,
             $task->getId()->value,
             $information->name->value,
             $information->brief->value,

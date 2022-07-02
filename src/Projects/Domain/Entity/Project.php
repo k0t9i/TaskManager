@@ -23,7 +23,6 @@ use Exception;
 
 final class Project extends AggregateRoot
 {
-    // TODO add task TaskWasCreatedEvent
     // TODO change task status TaskStatusWasChangedEvent
     // TODO change task information TaskInformationWasChangedEvent
     // TODO add participant ProjectParticipantWasAddedEvent
@@ -169,5 +168,10 @@ final class Project extends AggregateRoot
     public function getParticipants(): ProjectParticipants
     {
         return $this->participants;
+    }
+
+    public function getTasks(): ProjectTasks
+    {
+        return $this->tasks;
     }
 }

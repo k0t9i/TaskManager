@@ -49,4 +49,14 @@ final class ProjectTasks
             $task->closeIfActive($project);
         }
     }
+
+    public function copyInnerCollection(): ProjectTaskCollection
+    {
+        return clone $this->tasks;
+    }
+
+    public function add(ProjectTask $task): void
+    {
+        $this->tasks->add($task);
+    }
 }

@@ -12,7 +12,7 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 
-final class RemoveParticipantOnProjectParticipantRemoved implements EventSubscriberInterface
+final class RemoveParticipantOnProjectParticipantRemovedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly RequestManagerRepositoryInterface $managerRepository,

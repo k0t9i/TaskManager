@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Subscriber;
 
-use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
-use App\Requests\Application\Factory\RequestManagerStatusChanger;
+use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
+use App\Requests\Application\Factory\RequestManagerOwnerChanger;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;
@@ -12,11 +12,11 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 
-final class ChangeStatusOnProjectStatusChanged implements EventSubscriberInterface
+final class ChangeOwnerOnProjectOwnerChangedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly RequestManagerRepositoryInterface $managerRepository,
-        private readonly RequestManagerStatusChanger $managerStatusChanger,
+        private readonly RequestManagerOwnerChanger $managerOwnerChanger,
         private readonly EventBusInterface $eventBus
     ) {
     }
@@ -26,17 +26,17 @@ final class ChangeStatusOnProjectStatusChanged implements EventSubscriberInterfa
      */
     public function subscribeTo(): array
     {
-        return [ProjectStatusWasChangedEvent::class];
+        return [ProjectOwnerWasChangedEvent::class];
     }
 
-    public function __invoke(ProjectStatusWasChangedEvent $event): void
+    public function __invoke(ProjectOwnerWasChangedEvent $event): void
     {
         $manager = $this->managerRepository->findByProjectId(new ProjectId($event->aggregateId));
         if ($manager === null) {
             throw new RequestManagerNotExistsException();
         }
 
-        $newManager = $this->managerStatusChanger->changeStatus($manager, (int) $event->status);
+        $newManager = $this->managerOwnerChanger->changeOwner($manager, $event->ownerId);
 
         $this->managerRepository->save($newManager);
         $this->eventBus->dispatch(...$newManager->releaseEvents());

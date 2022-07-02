@@ -10,7 +10,7 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 
-final class CreateOnProjectCreated implements EventSubscriberInterface
+final class CreateOnProjectCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly RequestManagerRepositoryInterface $managerRepository,

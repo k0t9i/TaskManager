@@ -13,7 +13,7 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManagerFactory
 {
-    public function createRequestManager(RequestManagerDTO $dto) : RequestManager {
+    public function create(RequestManagerDTO $dto) : RequestManager {
         return new RequestManager(
             new RequestManagerId($dto->id),
             new ProjectId($dto->projectId),

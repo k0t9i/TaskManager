@@ -22,6 +22,6 @@ final class RequestManagerOwnerChanger
             $requestManager->getParticipantIds()->getItems(),
             $requestManager->getRequests()->getItems()
         );
-        return $this->managerFactory->createRequestManager($dto);
+        return $this->managerFactory->create($dto);
     }
 }
