@@ -47,6 +47,11 @@ abstract class Collection implements CollectionInterface
         return $this->deleted;
     }
 
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
     public function flush(): void
     {
         $this->added = [];

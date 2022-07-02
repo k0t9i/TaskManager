@@ -19,7 +19,6 @@ services:
         exclude:
             - '../src/**/Application/Command/*'
             - '../src/**/Application/Query/*'
-            - '../src/**/Application/Listener/*'
             - '../src/**/Domain/Entity/*'
             - '../src/**/Domain/Exception/*'
             - '../src/**/Domain/ValueObject/*'
@@ -36,3 +35,6 @@ services:
         App\Shared\Domain\Bus\Query\QueryHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: query.bus }
+        App\Shared\Domain\Bus\Event\EventSubscriberInterface:
+            tags:
+                - { name: messenger.message_handler, bus: event.bus }

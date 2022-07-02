@@ -25,10 +25,6 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManager extends AggregateRoot
 {
-    //TODO add project ProjectWasCreatedEvent
-    //TODO change project status ProjectStatusWasChangedEvent
-    //TODO change project owner ProjectOwnerWasChangedEvent
-    //TODO remove project participant ProjectParticipantWasRemovedEvent
     public function __construct(
         private RequestManagerId  $id,
         private ProjectId         $projectId,
@@ -90,6 +86,11 @@ final class RequestManager extends AggregateRoot
     public function getId(): RequestManagerId
     {
         return $this->id;
+    }
+
+    public function getProjectId(): ProjectId
+    {
+        return $this->projectId;
     }
 
     public function getStatus(): ProjectStatus
@@ -155,7 +156,7 @@ final class RequestManager extends AggregateRoot
 
     private function isOwner(UserId $userId): bool
     {
-        return $this->getOwnerId()->isEqual($userId);
+        return $this->ownerId->isEqual($userId);
     }
 
     private function isParticipant(UserId $userId): bool

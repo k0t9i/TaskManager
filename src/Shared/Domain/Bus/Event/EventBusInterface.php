@@ -5,5 +5,5 @@ namespace App\Shared\Domain\Bus\Event;
 
 interface EventBusInterface
 {
-    public function dispatch(DomainEvent ...$event): void;
+    public function dispatch(DomainEvent ...$events): void;
 }
