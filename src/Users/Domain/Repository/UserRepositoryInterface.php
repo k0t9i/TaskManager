@@ -9,9 +9,4 @@ use App\Users\Domain\Entity\User;
 interface UserRepositoryInterface
 {
     public function findById(UserId $id): ?User;
-
-    /**
-     * @return User[]
-     */
-    public function findAll(): array;
 }
