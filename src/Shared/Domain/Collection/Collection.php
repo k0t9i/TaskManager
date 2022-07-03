@@ -27,7 +27,7 @@ abstract class Collection implements CollectionInterface
     /**
      * @var Hashable[]
      */
-    private array $updated = [];
+    private array $oldItems = [];
 
     /**
      * @param array|Hashable $items
@@ -37,6 +37,7 @@ abstract class Collection implements CollectionInterface
         foreach ($items as $item) {
             $this->ensureIsValidType($item);
             $this->items[$item->getHash()] = $item;
+            $this->oldItems[$item->getHash()] = $this->cloneItem($item);
         }
     }
 
@@ -59,14 +60,22 @@ abstract class Collection implements CollectionInterface
 
     public function getUpdated(): array
     {
-        return $this->updated;
+        $result = [];
+        foreach ($this->items as $key => $item) {
+            if (!$this->oldItems[$key]->isEqual($item)) {
+                $result[$key] = $item;
+            }
+        }
+        return $result;
     }
 
     public function flush(): void
     {
         $this->added = [];
         $this->deleted = [];
-        $this->updated = [];
+        foreach ($this->items as $key => $item) {
+            $this->oldItems[$key] = $this->cloneItem($item);
+        }
     }
 
     public function isDirty(): bool
@@ -103,10 +112,8 @@ abstract class Collection implements CollectionInterface
         if (!isset($collection->items[$key]) && !isset($collection->deleted[$key])) {
             $collection->added[$key] = $item;
         }
-        if (isset($collection->items[$key])) {
-            if (!$collection->items[$key]->isEqual($item)) {
-                $collection->updated[$key] = $item;
-            }
+        if (!isset($collection->oldItems[$key])) {
+            $collection->oldItems[$key] = $this->cloneItem($item);
         }
         $collection->items[$key] = $item;
         unset($collection->deleted[$key]);
@@ -123,7 +130,6 @@ abstract class Collection implements CollectionInterface
         }
         unset($collection->items[$key]);
         unset($collection->added[$key]);
-        unset($collection->updated[$key]);
 
         return $collection;
     }
@@ -145,7 +151,14 @@ abstract class Collection implements CollectionInterface
         $collection->items = $other->items;
         $collection->added = $other->added;
         $collection->deleted = $other->deleted;
+        $collection->oldItems = $other->oldItems;
         return $collection;
+    }
+
+    private function cloneItem(Hashable $item): Hashable
+    {
+        //TODO Is shallow copy ?
+        return clone $item;
     }
 
     private function ensureIsValidType(mixed $value): void
