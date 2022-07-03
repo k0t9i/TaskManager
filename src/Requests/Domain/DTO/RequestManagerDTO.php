@@ -17,4 +17,16 @@ final class RequestManagerDTO
         public readonly RequestCollection $requests
     ) {
     }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['id'],
+            $item['project_id'],
+            $item['status'],
+            $item['owner_id'],
+            $item['participant_ids'],
+            $item['requests']
+        );
+    }
 }

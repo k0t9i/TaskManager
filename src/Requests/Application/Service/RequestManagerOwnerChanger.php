@@ -6,7 +6,7 @@ namespace App\Requests\Application\Service;
 use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestManagerFactory;
-use App\Requests\Domain\Factory\RequestStatusFactory;
+use App\Shared\Domain\Factory\ProjectStatusFactory;
 
 final class RequestManagerOwnerChanger
 {
@@ -19,7 +19,7 @@ final class RequestManagerOwnerChanger
         $dto = new RequestManagerDTO(
             $requestManager->getId()->value,
             $requestManager->getProjectId()->value,
-            RequestStatusFactory::scalarFromObject($requestManager->getStatus()),
+            ProjectStatusFactory::scalarFromObject($requestManager->getStatus()),
             $ownerId,
             $requestManager->getParticipantIds(),
             $requestManager->getRequests()

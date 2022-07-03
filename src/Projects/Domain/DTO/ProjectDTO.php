@@ -29,7 +29,7 @@ final class ProjectDTO
             $item['finish_date'],
             $item['status'],
             $item['owner_id'],
-            $item['participants'],
+            $item['participant_ids'],
             $item['tasks']
         );
     }

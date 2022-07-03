@@ -13,7 +13,7 @@ use Exception;
 
 final class ProjectTasks
 {
-    private readonly ProjectTaskCollection $tasks;
+    private ProjectTaskCollection $tasks;
 
     public function __construct(?ProjectTaskCollection $items = null)
     {

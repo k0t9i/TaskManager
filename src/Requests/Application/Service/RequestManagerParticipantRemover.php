@@ -6,7 +6,7 @@ namespace App\Requests\Application\Service;
 use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestManagerFactory;
-use App\Requests\Domain\Factory\RequestStatusFactory;
+use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManagerParticipantRemover
@@ -21,7 +21,7 @@ final class RequestManagerParticipantRemover
         $dto = new RequestManagerDTO(
             $requestManager->getId()->value,
             $requestManager->getProjectId()->value,
-            RequestStatusFactory::scalarFromObject($requestManager->getStatus()),
+            ProjectStatusFactory::scalarFromObject($requestManager->getStatus()),
             $requestManager->getOwnerId()->value,
             $participants,
             $requestManager->getRequests()

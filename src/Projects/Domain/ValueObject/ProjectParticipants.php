@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectParticipants
 {
-    private readonly UserIdCollection $participants;
+    private UserIdCollection $participants;
 
     public function __construct(?UserIdCollection $items = null)
     {
