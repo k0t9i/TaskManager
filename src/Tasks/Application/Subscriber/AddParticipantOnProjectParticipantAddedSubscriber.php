@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Subscriber;
 
-use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
+use App\Requests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
@@ -26,10 +26,10 @@ final class AddParticipantOnProjectParticipantAddedSubscriber implements EventSu
      */
     public function subscribeTo(): array
     {
-        return [ProjectParticipantWasRemovedEvent::class];
+        return [ProjectParticipantWasAddedEvent::class];
     }
 
-    public function __invoke(ProjectParticipantWasRemovedEvent $event): void
+    public function __invoke(ProjectParticipantWasAddedEvent $event): void
     {
         $manager = $this->managerRepository->findByProjectId(new ProjectId($event->aggregateId));
         if ($manager === null) {
