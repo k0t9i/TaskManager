@@ -62,7 +62,9 @@ final class TaskManager extends AggregateRoot
             throw new TaskUserNotExistException();
         }
 
-        $task->registerEvent(new TaskWasCreatedEvent(
+        $this->tasks = $this->tasks->add($task);
+
+        $this->registerEvent(new TaskWasCreatedEvent(
             $this->id->value,
             $this->projectId->value,
             $task->getId()->value,
@@ -134,10 +136,19 @@ final class TaskManager extends AggregateRoot
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->addLink($toTaskId);
 
+        /** @var Task $task */
+        $task = $this->tasks->get($toTaskId->getHash());
+        $task->addLink($fromTaskId);
+
         $this->registerEvent(new TaskLinkWasAddedEvent(
             $this->id->value,
             $fromTaskId->value,
             $toTaskId->value
+        ));
+        $this->registerEvent(new TaskLinkWasAddedEvent(
+            $this->id->value,
+            $toTaskId->value,
+            $fromTaskId->value
         ));
     }
 
@@ -154,10 +165,19 @@ final class TaskManager extends AggregateRoot
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->deleteLink($toTaskId);
 
+        /** @var Task $task */
+        $task = $this->tasks->get($toTaskId->getHash());
+        $task->deleteLink($fromTaskId);
+
         $this->registerEvent(new TaskLinkWasDeletedEvent(
             $this->id->value,
             $fromTaskId->value,
             $toTaskId->value
+        ));
+        $this->registerEvent(new TaskLinkWasDeletedEvent(
+            $this->id->value,
+            $toTaskId->value,
+            $fromTaskId->value
         ));
     }
 
@@ -199,7 +219,7 @@ final class TaskManager extends AggregateRoot
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
-        if (!$this->isOwner($currentUserId) && $taskOwnerId->isEqual($currentUserId)) {
+        if (!$this->isOwner($currentUserId) && !$taskOwnerId->isEqual($currentUserId)) {
             throw new InsufficientPermissionsToChangeTaskException();
         }
     }

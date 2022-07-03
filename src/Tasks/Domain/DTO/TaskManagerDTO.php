@@ -18,4 +18,17 @@ final class TaskManagerDTO
         public readonly TaskCollection $tasks
     ) {
     }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['id'],
+            $item['project_id'],
+            $item['status'],
+            $item['owner_id'],
+            $item['finish_date'],
+            $item['participant_ids'],
+            $item['tasks']
+        );
+    }
 }

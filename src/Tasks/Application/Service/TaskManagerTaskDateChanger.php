@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Service;
 
+use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
@@ -76,7 +77,7 @@ final class TaskManagerTaskDateChanger
         $dto = new TaskManagerDTO(
             $taskManager->getId()->value,
             $taskManager->getProjectId()->value,
-            TaskStatusFactory::scalarFromObject($taskManager->getStatus()),
+            ProjectStatusFactory::scalarFromObject($taskManager->getStatus()),
             $taskManager->getOwnerId()->value,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipantIds(),

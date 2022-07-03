@@ -19,4 +19,19 @@ final class TaskDTO
         public readonly TaskLinkCollection $links
     ) {
     }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['id'],
+            $item['name'],
+            $item['brief'],
+            $item['description'],
+            $item['start_date'],
+            $item['finish_date'],
+            $item['owner_id'],
+            $item['status'],
+            $item['links']
+        );
+    }
 }

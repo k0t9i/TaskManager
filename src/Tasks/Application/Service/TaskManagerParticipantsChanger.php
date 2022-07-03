@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Service;
 
-use App\Requests\Domain\Factory\RequestStatusFactory;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\TaskManager;
@@ -24,7 +24,7 @@ final class TaskManagerParticipantsChanger
 
     public function removeParticipant(TaskManager $taskManager, string $participantId): TaskManager
     {
-        $participants = $taskManager->getParticipantIds()->add(new UserId($participantId));
+        $participants = $taskManager->getParticipantIds()->remove(new UserId($participantId));
         return $this->createNewTaskManager($taskManager, $participants);
     }
 
@@ -33,7 +33,7 @@ final class TaskManagerParticipantsChanger
         $dto = new TaskManagerDTO(
             $taskManager->getId()->value,
             $taskManager->getProjectId()->value,
-            RequestStatusFactory::scalarFromObject($taskManager->getStatus()),
+            ProjectStatusFactory::scalarFromObject($taskManager->getStatus()),
             $taskManager->getOwnerId()->value,
             $taskManager->getFinishDate()->getValue(),
             $participants,

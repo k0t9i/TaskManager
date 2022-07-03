@@ -31,7 +31,7 @@ final class AddParticipantOnProjectParticipantAddedSubscriber implements EventSu
 
     public function __invoke(ProjectParticipantWasAddedEvent $event): void
     {
-        $manager = $this->managerRepository->findByProjectId(new ProjectId($event->aggregateId));
+        $manager = $this->managerRepository->findByProjectId(new ProjectId($event->projectId));
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }

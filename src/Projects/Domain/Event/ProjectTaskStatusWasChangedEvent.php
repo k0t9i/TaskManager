@@ -9,6 +9,7 @@ final class ProjectTaskStatusWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
+        public readonly string $projectTaskId,
         public readonly string $taskId,
         public readonly string $status,
         string $occurredOn = null
@@ -23,12 +24,13 @@ final class ProjectTaskStatusWasChangedEvent extends DomainEvent
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
-        return new self($aggregateId, $body['taskId'], $body['status'], $occurredOn);
+        return new self($aggregateId, $body['projectTaskId'], $body['taskId'], $body['status'], $occurredOn);
     }
 
     public function toPrimitives(): array
     {
         return [
+            'projectTaskId' => $this->projectTaskId,
             'taskId' => $this->taskId,
             'status' => $this->status,
         ];

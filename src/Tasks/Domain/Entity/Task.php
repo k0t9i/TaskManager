@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tasks\Domain\Entity;
 
-use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
@@ -11,11 +10,12 @@ use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
 use App\Tasks\Domain\Exception\TaskLinkNotExistException;
+use App\Tasks\Domain\Exception\TasksOfTaskLinkAreEqualException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskLink;
 
-final class Task extends AggregateRoot implements Hashable
+final class Task implements Hashable
 {
     public function __construct(
         private TaskId $id,
@@ -42,14 +42,16 @@ final class Task extends AggregateRoot implements Hashable
 
     public function addLink(TaskId $taskId): void
     {
-        $taskLink = new TaskLink($this->id, $taskId);
+        $this->ensureIsDifferentTask($taskId);
+        $taskLink = new TaskLink($taskId);
         $this->ensureLinkDoesNotExist($taskLink);
         $this->links = $this->links->add($taskLink);
     }
 
     public function deleteLink(TaskId $taskId): void
     {
-        $taskLink = new TaskLink($this->id, $taskId);
+        $this->ensureIsDifferentTask($taskId);
+        $taskLink = new TaskLink($taskId);
         $this->ensureLinkExists($taskLink);
         $this->links = $this->links->remove($taskLink);
     }
@@ -118,6 +120,13 @@ final class Task extends AggregateRoot implements Hashable
     {
         if (!$this->links->exists($link)) {
             throw new TaskLinkNotExistException();
+        }
+    }
+
+    private function ensureIsDifferentTask(TaskId $toTaskId)
+    {
+        if ($this->id->isEqual($toTaskId)) {
+            throw new TasksOfTaskLinkAreEqualException();
         }
     }
 }

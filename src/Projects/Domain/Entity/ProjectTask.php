@@ -35,6 +35,7 @@ final class ProjectTask implements Hashable
             $project->registerEvent(new ProjectTaskStartDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
+                $this->getTaskId()->value,
                 $this->getStartDate()->getValue()
             ));
         }
@@ -43,6 +44,7 @@ final class ProjectTask implements Hashable
             $project->registerEvent(new ProjectTaskFinishDateWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
+                $this->getTaskId()->value,
                 $this->getFinishDate()->getValue()
             ));
         }
@@ -55,6 +57,7 @@ final class ProjectTask implements Hashable
             $project->registerEvent(new ProjectTaskStatusWasChangedEvent(
                 $project->getId()->value,
                 $this->getId()->value,
+                $this->getTaskId()->value,
                 (string) $this->getStatus()->getScalar()
             ));
         }
