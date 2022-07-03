@@ -35,6 +35,7 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
         if ($project === null) {
             throw new ProjectNotExistException();
         }
+        //TODO what can I do with using of user repository here?
         $user = $this->userRepository->findById(new UserId($command->ownerId));
         if ($user === null) {
             throw new UserNotExistException();

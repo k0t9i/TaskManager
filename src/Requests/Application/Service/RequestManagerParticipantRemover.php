@@ -17,7 +17,7 @@ final class RequestManagerParticipantRemover
 
     public function removeParticipant(RequestManager $requestManager, string $participantId): RequestManager
     {
-        $participants = $requestManager->getParticipantIds()->remove(new UserId($participantId));;
+        $participants = $requestManager->getParticipantIds()->remove(new UserId($participantId));
         $dto = new RequestManagerDTO(
             $requestManager->getId()->value,
             $requestManager->getProjectId()->value,
