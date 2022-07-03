@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\DTO;
+namespace App\Projects\Domain\DTO;
 
 final class ProjectTaskDTO
 {
@@ -12,5 +12,16 @@ final class ProjectTaskDTO
         public readonly string $startDate,
         public readonly string $finishDate
     ) {
+    }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['task_id'],
+            $item['status'],
+            $item['owner_id'],
+            $item['start_date'],
+            $item['finish_date']
+        );
     }
 }

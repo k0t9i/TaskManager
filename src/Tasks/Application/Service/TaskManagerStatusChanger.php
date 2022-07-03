@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Service;
 
-use App\Tasks\Application\DTO\TaskManagerDTO;
-use App\Tasks\Application\Factory\TaskManagerFactory;
+use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\TaskManager;
+use App\Tasks\Domain\Factory\TaskManagerFactory;
 
 final class TaskManagerStatusChanger
 {

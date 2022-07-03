@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Application\DTO;
+namespace App\Tasks\Domain\DTO;
 
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Tasks\Domain\Collection\TaskCollection;

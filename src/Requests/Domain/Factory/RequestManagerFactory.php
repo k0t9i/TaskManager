@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Application\Factory;
+namespace App\Requests\Domain\Factory;
 
-use App\Requests\Application\DTO\RequestManagerDTO;
+use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Shared\Domain\Factory\ProjectStatusFactory;

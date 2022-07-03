@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Subscriber;
 
-use App\Projects\Application\DTO\ProjectTaskDTO;
 use App\Projects\Application\Service\ProjectTaskCreator;
+use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;

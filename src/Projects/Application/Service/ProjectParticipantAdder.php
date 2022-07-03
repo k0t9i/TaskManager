@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Service;
 
-use App\Projects\Application\DTO\ProjectDTO;
-use App\Projects\Application\Factory\ProjectFactory;
+use App\Projects\Domain\DTO\ProjectDTO;
 use App\Projects\Domain\Entity\Project;
+use App\Projects\Domain\Factory\ProjectFactory;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\UserId;
 

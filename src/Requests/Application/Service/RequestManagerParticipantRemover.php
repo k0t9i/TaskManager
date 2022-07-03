@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Service;
 
-use App\Requests\Application\DTO\RequestManagerDTO;
-use App\Requests\Application\Factory\RequestManagerFactory;
+use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
+use App\Requests\Domain\Factory\RequestManagerFactory;
 use App\Requests\Domain\Factory\RequestStatusFactory;
 use App\Shared\Domain\ValueObject\UserId;
 

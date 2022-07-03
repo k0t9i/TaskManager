@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Application\Factory;
+namespace App\Projects\Domain\Factory;
 
-use App\Projects\Application\DTO\ProjectDTO;
+use App\Projects\Domain\DTO\ProjectDTO;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;
