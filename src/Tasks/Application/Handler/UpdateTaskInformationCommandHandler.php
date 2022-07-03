@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
@@ -42,7 +42,7 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

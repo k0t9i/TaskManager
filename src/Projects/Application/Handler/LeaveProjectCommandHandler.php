@@ -8,7 +8,7 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 use Exception;
 
@@ -32,7 +32,7 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
             throw new ProjectNotExistException();
         }
 
-        $currentUserId = $this->authenticator->getAuthUser()->userId;
+        $currentUserId = $this->authenticator->getAuthUser()->getId();
         $project->removeParticipant(
             $currentUserId,
             $currentUserId

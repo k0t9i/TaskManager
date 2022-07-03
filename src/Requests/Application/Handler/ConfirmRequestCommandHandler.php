@@ -10,7 +10,7 @@ use App\Requests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 
 final class ConfirmRequestCommandHandler implements CommandHandlerInterface
 {
@@ -32,7 +32,7 @@ final class ConfirmRequestCommandHandler implements CommandHandlerInterface
         $manager->changeRequestStatus(
             $requestId,
             new ConfirmedRequestStatus(),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

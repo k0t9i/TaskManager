@@ -8,7 +8,7 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use Exception;
@@ -35,7 +35,7 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
 
         $project->removeParticipant(
             new UserId($command->participantId),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->projectRepository->save($project);

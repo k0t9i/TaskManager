@@ -6,7 +6,7 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectId;
@@ -54,7 +54,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new DateTime($command->finishDate)
             ),
             $owner->getId(),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

@@ -24,10 +24,21 @@ services:
             - '../src/**/Domain/Exception/*'
             - '../src/**/Domain/ValueObject/*'
             - '../src/**/Domain/Event/*'
+            - '../src/Shared/Infrastructure/**/ValueObject/*'
             - '../src/Shared/Infrastructure/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Symfony\Component\PasswordHasher\Hasher\Pbkdf2PasswordHasher:
+        arguments:
+            $iterations: 100
+
+    Symfony\Component\PasswordHasher\PasswordHasherInterface: '@Symfony\Component\PasswordHasher\Hasher\Pbkdf2PasswordHasher'
+
+    App\Shared\Infrastructure\Security\LexikJwtAuthenticatorService:
+        arguments:
+            $path: '^/api/(?!.*login).*$'
 
     _instanceof:
         App\Shared\Domain\Bus\Command\CommandHandlerInterface:

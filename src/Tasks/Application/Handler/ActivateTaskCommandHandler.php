@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\ActivateTaskCommand;
@@ -32,7 +32,7 @@ class ActivateTaskCommandHandler implements CommandHandlerInterface
         $manager->changeTaskStatus(
             $taskId,
             new ActiveTaskStatus(),
-            $this->authenticator->getAuthUser()->userId,
+            $this->authenticator->getAuthUser()->getId(),
         );
 
         $this->managerRepository->save($manager);

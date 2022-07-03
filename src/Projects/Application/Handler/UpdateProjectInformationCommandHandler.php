@@ -11,7 +11,7 @@ use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectId;
 
@@ -37,7 +37,7 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
                 new ProjectDescription($command->description),
                 new DateTime($command->finishDate)
             ),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->projectRepository->save($project);

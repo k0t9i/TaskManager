@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
@@ -31,7 +31,7 @@ class AddLinkCommandHandler implements CommandHandlerInterface
         $manager->createTaskLink(
             $fromTaskId,
             new TaskId($command->toTaskId),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

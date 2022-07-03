@@ -10,7 +10,7 @@ use App\Requests\Domain\ValueObject\RejectedRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 
 final class RejectRequestCommandHandler implements CommandHandlerInterface
 {
@@ -32,7 +32,7 @@ final class RejectRequestCommandHandler implements CommandHandlerInterface
         $manager->changeRequestStatus(
             $requestId,
             new RejectedRequestStatus(),
-            $this->authenticator->getAuthUser()->userId
+            $this->authenticator->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

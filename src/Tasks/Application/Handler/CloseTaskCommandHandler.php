@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\AuthenticatorServiceInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\CloseTaskCommand;
@@ -32,7 +32,7 @@ class CloseTaskCommandHandler implements CommandHandlerInterface
         $manager->changeTaskStatus(
             $taskId,
             new ClosedTaskStatus(),
-            $this->authenticator->getAuthUser()->userId,
+            $this->authenticator->getAuthUser()->getId(),
         );
 
         $this->managerRepository->save($manager);

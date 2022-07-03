@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
+use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\InvalidArgumentException;
 
-abstract class StringValueObject
+abstract class StringValueObject implements Hashable
 {
     final public function __construct(public readonly string $value)
     {
@@ -39,5 +40,23 @@ abstract class StringValueObject
                 '%s cannot be blank.', $attributeName
             ));
         }
+    }
+
+    public function getHash(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        if (get_class($this) !== get_class($other)) {
+            return false;
+        }
+
+        return $this->value === $other->value;
     }
 }

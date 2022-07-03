@@ -48,7 +48,7 @@ final class Version20220703151100 extends AbstractMigration
                 request_manager_id VARCHAR(36) NOT NULL,
                 user_id VARCHAR(36) NOT NULL,
                 status INT NOT NULL,
-                change_date DATE NOT NULL,
+                change_date TIMESTAMP NOT NULL,
                 PRIMARY KEY(id)
             )
         ');

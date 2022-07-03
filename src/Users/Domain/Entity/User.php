@@ -3,74 +3,46 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\Entity;
 
+use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
 use App\Users\Domain\ValueObject\UserLastname;
+use App\Users\Domain\ValueObject\UserPassword;
 
-class User
+final class User extends AggregateRoot
 {
     public function __construct(
         private UserId $id,
         private UserEmail $email,
         private UserFirstname $firstname,
-        private UserLastname $lastname
+        private UserLastname $lastname,
+        private UserPassword $password
     ) {
     }
 
-    /**
-     * @return UserId
-     */
     public function getId(): UserId
     {
         return $this->id;
     }
 
-    /**
-     * @return UserEmail
-     */
     public function getEmail(): UserEmail
     {
         return $this->email;
     }
 
-    /**
-     * @param UserEmail $email
-     */
-    public function setEmail(UserEmail $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return UserFirstname
-     */
     public function getFirstname(): UserFirstname
     {
         return $this->firstname;
     }
 
-    /**
-     * @param UserFirstname $firstname
-     */
-    public function setFirstname(UserFirstname $firstname): void
-    {
-        $this->firstname = $firstname;
-    }
-
-    /**
-     * @return UserLastname
-     */
     public function getLastname(): UserLastname
     {
         return $this->lastname;
     }
 
-    /**
-     * @param UserLastname $lastname
-     */
-    public function setLastname(UserLastname $lastname): void
+    public function getPassword(): UserPassword
     {
-        $this->lastname = $lastname;
+        return $this->password;
     }
 }
