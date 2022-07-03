@@ -19,6 +19,7 @@ use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -31,6 +32,11 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
     ) {
     }
 
+    /**
+     * @param ProjectId $id
+     * @return RequestManager|null
+     * @throws Exception
+     */
     public function findByProjectId(ProjectId $id): ?RequestManager
     {
         $rawManager = $this->queryBuilder()
@@ -46,6 +52,11 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
         return $this->find($rawManager);
     }
 
+    /**
+     * @param RequestId $id
+     * @return RequestManager|null
+     * @throws Exception
+     */
     public function findByRequestId(RequestId $id): ?RequestManager
     {
         $rawManager = $this->queryBuilder()
@@ -62,6 +73,10 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
         return $this->find($rawManager);
     }
 
+    /**
+     * @param RequestManager $manager
+     * @throws Exception
+     */
     public function save(RequestManager $manager): void
     {
         $participants = $manager->getParticipantIds();
@@ -169,6 +184,11 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
         }
     }
 
+    /**
+     * @param array $rawManager
+     * @return RequestManager|null
+     * @throws Exception
+     */
     private function find(array $rawManager): ?RequestManager
     {
         $rawParticipants = $this->queryBuilder()
@@ -196,6 +216,11 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
         return $this->requestManagerFactory->create(RequestManagerDTO::createFromRequest($rawManager));
     }
 
+    /**
+     * @param RequestManagerId $id
+     * @return bool
+     * @throws Exception
+     */
     private function isExist(RequestManagerId $id): bool
     {
         $count = $this->queryBuilder()

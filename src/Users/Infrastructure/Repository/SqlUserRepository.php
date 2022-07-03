@@ -9,6 +9,7 @@ use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
 use App\Users\Domain\ValueObject\UserLastname;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SqlUserRepository implements UserRepositoryInterface
@@ -18,6 +19,11 @@ class SqlUserRepository implements UserRepositoryInterface
     ) {
     }
 
+    /**
+     * @param UserId $id
+     * @return User|null
+     * @throws Exception
+     */
     public function findById(UserId $id): ?User
     {
         $rawUser = $this->entityManager->getConnection()->createQueryBuilder()

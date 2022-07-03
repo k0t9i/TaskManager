@@ -21,6 +21,7 @@ use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskLink;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -33,6 +34,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
     ) {
     }
 
+    /**
+     * @param ProjectId $id
+     * @return TaskManager|null
+     * @throws Exception
+     */
     public function findByProjectId(ProjectId $id): ?TaskManager
     {
         $rawManager = $this->queryBuilder()
@@ -48,6 +54,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         return $this->find($rawManager);
     }
 
+    /**
+     * @param TaskId $id
+     * @return TaskManager|null
+     * @throws Exception
+     */
     public function findByTaskId(TaskId $id): ?TaskManager
     {
         $rawManager = $this->queryBuilder()
@@ -64,6 +75,10 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         return $this->find($rawManager);
     }
 
+    /**
+     * @param TaskManager $manager
+     * @throws Exception
+     */
     public function save(TaskManager $manager): void
     {
         $participants = $manager->getParticipantIds();
@@ -220,6 +235,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         }
     }
 
+    /**
+     * @param array $rawManager
+     * @return TaskManager|null
+     * @throws Exception
+     */
     private function find(array $rawManager): ?TaskManager
     {
         $rawParticipants = $this->queryBuilder()
@@ -261,6 +281,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         return $this->taskManagerFactory->create(TaskManagerDTO::createFromRequest($rawManager));
     }
 
+    /**
+     * @param TaskManagerId $id
+     * @return bool
+     * @throws Exception
+     */
     private function isExist(TaskManagerId $id): bool
     {
         $count = $this->queryBuilder()

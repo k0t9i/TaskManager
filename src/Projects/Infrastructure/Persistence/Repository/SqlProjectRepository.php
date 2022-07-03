@@ -17,6 +17,7 @@ use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,6 +30,11 @@ class SqlProjectRepository implements ProjectRepositoryInterface
     ) {
     }
 
+    /**
+     * @param ProjectId $id
+     * @return Project|null
+     * @throws Exception
+     */
     public function findById(ProjectId $id): ?Project
     {
         $rawProject = $this->queryBuilder()
@@ -66,6 +72,10 @@ class SqlProjectRepository implements ProjectRepositoryInterface
         return $this->projectFactory->create(ProjectDTO::createFromRequest($rawProject));
     }
 
+    /**
+     * @param Project $project
+     * @throws Exception
+     */
     public function save(Project $project): void
     {
         $participants = $project->getParticipants()->getInnerItems();
@@ -189,6 +199,11 @@ class SqlProjectRepository implements ProjectRepositoryInterface
         }
     }
 
+    /**
+     * @param ProjectId $id
+     * @return bool
+     * @throws Exception
+     */
     private function isExist(ProjectId $id): bool
     {
         $count = $this->queryBuilder()
