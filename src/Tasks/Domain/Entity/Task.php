@@ -54,17 +54,11 @@ final class Task extends AggregateRoot implements Hashable
         $this->links = $this->links->remove($taskLink);
     }
 
-    /**
-     * @return TaskId
-     */
     public function getId(): TaskId
     {
         return $this->id;
     }
 
-    /**
-     * @return TaskInformation
-     */
     public function getInformation(): TaskInformation
     {
         return $this->information;
@@ -73,6 +67,16 @@ final class Task extends AggregateRoot implements Hashable
     public function getOwnerId(): UserId
     {
         return $this->ownerId;
+    }
+
+    public function getStatus(): TaskStatus
+    {
+        return $this->status;
+    }
+
+    public function getLinks(): TaskLinkCollection
+    {
+        return $this->links;
     }
 
     public function getHash(): string

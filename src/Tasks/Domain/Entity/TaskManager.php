@@ -29,18 +29,9 @@ use App\Tasks\Domain\ValueObject\TaskManagerId;
 
 final class TaskManager extends AggregateRoot
 {
-    //TODO add project ProjectWasCreatedEvent
-    //TODO change project status ProjectStatusWasChangedEvent
-    //TODO change project owner ProjectOwnerWasChangedEvent
-    //TODO change project information ProjectInformationWasChangedEvent
-    //TODO change project task start date ProjectTaskStartDateWasChangedEvent
-    //TODO change project task finish date ProjectTaskFinishDateWasChangedEvent
-    //TODO change project task status ProjectTaskStatusWasChangedEvent
-    //TODO add project participant ProjectParticipantWasAddedEvent
-    //TODO remove project participant ProjectParticipantWasRemovedEvent
     public function __construct(
         private TaskManagerId    $id,
-        private ProjectId         $projectId,
+        private ProjectId        $projectId,
         private ProjectStatus    $status,
         private UserId           $ownerId,
         private DateTime         $finishDate,
@@ -168,6 +159,41 @@ final class TaskManager extends AggregateRoot
             $fromTaskId->value,
             $toTaskId->value
         ));
+    }
+
+    public function getId(): TaskManagerId
+    {
+        return $this->id;
+    }
+
+    public function getProjectId(): ProjectId
+    {
+        return $this->projectId;
+    }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function getOwnerId(): UserId
+    {
+        return $this->ownerId;
+    }
+
+    public function getFinishDate(): DateTime
+    {
+        return $this->finishDate;
+    }
+
+    public function getParticipantIds(): UserIdCollection
+    {
+        return $this->participantIds;
+    }
+
+    public function getTasks(): TaskCollection
+    {
+        return $this->tasks;
     }
 
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
