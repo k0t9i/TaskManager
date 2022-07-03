@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Factory;
 
+use App\Projects\Application\DTO\ProjectDTO;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;

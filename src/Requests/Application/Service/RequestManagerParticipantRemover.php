@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Service;
 
-use App\Requests\Application\Factory\RequestManagerDTO;
+use App\Requests\Application\DTO\RequestManagerDTO;
 use App\Requests\Application\Factory\RequestManagerFactory;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestStatusFactory;

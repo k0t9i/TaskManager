@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Service;
 
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\UuidGeneratorInterface;
-use App\Tasks\Application\Factory\TaskManagerDTO;
+use App\Tasks\Application\DTO\TaskManagerDTO;
 use App\Tasks\Application\Factory\TaskManagerFactory;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Entity\TaskManager;

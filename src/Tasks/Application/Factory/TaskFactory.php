@@ -7,6 +7,7 @@ use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Tasks\Application\DTO\TaskDTO;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;

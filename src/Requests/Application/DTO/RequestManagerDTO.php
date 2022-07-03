@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Application\Factory;
+namespace App\Requests\Application\DTO;
 
 use App\Requests\Domain\Collection\RequestCollection;
 use App\Shared\Domain\Collection\UserIdCollection;

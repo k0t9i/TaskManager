@@ -19,6 +19,7 @@ services:
         exclude:
             - '../src/**/Application/Command/*'
             - '../src/**/Application/Query/*'
+            - '../src/**/Application/DTO/*'
             - '../src/**/Domain/Entity/*'
             - '../src/**/Domain/Exception/*'
             - '../src/**/Domain/ValueObject/*'

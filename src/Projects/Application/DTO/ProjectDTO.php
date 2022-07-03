@@ -1,21 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Application\Factory;
+namespace App\Projects\Application\DTO;
 
+use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Tasks\Domain\Collection\TaskCollection;
 
-final class TaskManagerDTO
+final class ProjectDTO
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $projectId,
+        public readonly string $name,
+        public readonly string $description,
+        public readonly string $finishDate,
         public readonly int $status,
         public readonly string $ownerId,
-        public readonly string $finishDate,
         public readonly UserIdCollection $participantIds,
-        public readonly TaskCollection $tasks
+        public readonly ProjectTaskCollection $tasks
     ) {
     }
 }
