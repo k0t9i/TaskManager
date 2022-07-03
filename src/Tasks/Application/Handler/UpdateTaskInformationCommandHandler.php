@@ -5,9 +5,9 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
@@ -21,6 +21,7 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
         private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 
@@ -41,7 +42,7 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            new UserId($command->currentUserId),
+            $this->authenticator->getAuthUser()->userId
         );
 
         $this->managerRepository->save($manager);

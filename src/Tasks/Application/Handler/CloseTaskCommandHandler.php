@@ -5,9 +5,9 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\CloseTaskCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
@@ -17,6 +17,7 @@ class CloseTaskCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
         private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 
@@ -31,7 +32,7 @@ class CloseTaskCommandHandler implements CommandHandlerInterface
         $manager->changeTaskStatus(
             $taskId,
             new ClosedTaskStatus(),
-            new UserId($command->currentUserId),
+            $this->authenticator->getAuthUser()->userId,
         );
 
         $this->managerRepository->save($manager);

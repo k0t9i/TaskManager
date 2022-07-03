@@ -8,8 +8,7 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 final class LeaveProjectCommand implements CommandInterface
 {
     public function __construct(
-        public readonly string $projectId,
-        public readonly string $currentUserId
+        public readonly string $id
     ) {
     }
 }

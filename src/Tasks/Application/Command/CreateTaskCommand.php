@@ -8,14 +8,13 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 class CreateTaskCommand implements CommandInterface
 {
     public function __construct(
-        public string $name,
-        public string $brief,
-        public string $description,
-        public string $startDate,
-        public string $finishDate,
-        public string $ownerId,
-        public string $projectId,
-        public string $currentUserId,
+        public readonly string $name,
+        public readonly string $brief,
+        public readonly string $description,
+        public readonly string $startDate,
+        public readonly string $finishDate,
+        public readonly string $ownerId,
+        public readonly string $projectId
     ) {
     }
 }

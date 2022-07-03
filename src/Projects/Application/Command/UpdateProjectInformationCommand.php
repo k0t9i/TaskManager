@@ -8,11 +8,10 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 final class UpdateProjectInformationCommand implements CommandInterface
 {
     public function __construct(
-        public string $projectId,
-        public string $name,
-        public string $description,
-        public string $finishDate,
-        public string $currentUserId
+        public readonly string $id,
+        public readonly string $name,
+        public readonly string $description,
+        public readonly string $finishDate
     ) {
     }
 }

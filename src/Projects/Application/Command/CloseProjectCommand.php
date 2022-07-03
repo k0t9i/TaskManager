@@ -8,8 +8,7 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 final class CloseProjectCommand implements CommandInterface
 {
     public function __construct(
-        public string $projectId,
-        public string $currentUserId
+        public readonly string $id
     ) {
     }
 }

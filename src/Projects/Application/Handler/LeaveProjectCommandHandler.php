@@ -8,8 +8,8 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
+use App\Shared\Domain\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
 use Exception;
 
 final class LeaveProjectCommandHandler implements CommandHandlerInterface
@@ -17,6 +17,7 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly ProjectRepositoryInterface $projectRepository,
         private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 
@@ -26,12 +27,12 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
      */
     public function __invoke(LeaveProjectCommand $command): void
     {
-        $project = $this->projectRepository->findById(new ProjectId($command->projectId));
+        $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
             throw new ProjectNotExistException();
         }
 
-        $currentUserId = new UserId($command->currentUserId);
+        $currentUserId = $this->authenticator->getAuthUser()->userId;
         $project->removeParticipant(
             $currentUserId,
             $currentUserId

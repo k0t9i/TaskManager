@@ -8,8 +8,7 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 final class RejectRequestCommand implements CommandInterface
 {
     public function __construct(
-        public string $id,
-        public string $currentUserId
+        public readonly string $id
     ) {
     }
 }

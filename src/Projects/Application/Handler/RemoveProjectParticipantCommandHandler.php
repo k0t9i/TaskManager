@@ -9,6 +9,7 @@ use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Exception\UserNotExistException;
+use App\Shared\Domain\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Domain\Repository\UserRepositoryInterface;
@@ -20,6 +21,7 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
         private readonly ProjectRepositoryInterface $projectRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 
@@ -29,7 +31,7 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
      */
     public function __invoke(RemoveProjectParticipantCommand $command): void
     {
-        $project = $this->projectRepository->findById(new ProjectId($command->projectId));
+        $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
             throw new ProjectNotExistException();
         }
@@ -40,7 +42,7 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
 
         $project->removeParticipant(
             $participant->getId(),
-            new UserId($command->currentUserId)
+            $this->authenticator->getAuthUser()->userId
         );
 
         $this->projectRepository->save($project);

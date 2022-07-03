@@ -8,13 +8,12 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 class UpdateTaskInformationCommand implements CommandInterface
 {
     public function __construct(
-        public string $id,
-        public string $name,
-        public string $brief,
-        public string $description,
-        public string $startDate,
-        public string $finishDate,
-        public string $currentUserId,
+        public readonly string $id,
+        public readonly string $name,
+        public readonly string $brief,
+        public readonly string $description,
+        public readonly string $startDate,
+        public readonly string $finishDate
     ) {
     }
 }

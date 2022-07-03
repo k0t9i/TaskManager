@@ -9,8 +9,7 @@ final class AddLinkCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $fromTaskId,
-        public readonly string $toTaskId,
-        public readonly string $currentUserId,
+        public readonly string $toTaskId
     ) {
     }
 }

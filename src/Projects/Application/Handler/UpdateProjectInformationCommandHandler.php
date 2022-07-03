@@ -11,21 +11,22 @@ use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
+use App\Shared\Domain\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
 
 final class UpdateProjectInformationCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly ProjectRepositoryInterface $projectRepository,
         private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 
     public function __invoke(UpdateProjectInformationCommand $command): void
     {
-        $project = $this->projectRepository->findById(new ProjectId($command->projectId));
+        $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
             throw new ProjectNotExistException();
         }
@@ -36,7 +37,7 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
                 new ProjectDescription($command->description),
                 new DateTime($command->finishDate)
             ),
-            new UserId($command->currentUserId)
+            $this->authenticator->getAuthUser()->userId
         );
 
         $this->projectRepository->save($project);
