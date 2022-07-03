@@ -67,17 +67,12 @@ final class Request implements Hashable
             $this->changeDate->isEqual($other->changeDate);
     }
 
-    public function isNonRejected(): bool
-    {
-        return $this->isConfirmed() || $this->isPending();
-    }
-
     public function isConfirmed(): bool
     {
         return $this->status instanceof ConfirmedRequestStatus;
     }
 
-    private function isPending(): bool
+    public function isPending(): bool
     {
         return $this->status instanceof PendingRequestStatus;
     }

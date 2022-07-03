@@ -8,7 +8,7 @@ use App\Requests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Requests\Domain\Event\RequestStatusWasChangedEvent;
 use App\Requests\Domain\Event\RequestWasCreatedEvent;
 use App\Requests\Domain\Exception\RequestNotExistsException;
-use App\Requests\Domain\Exception\UserAlreadyHasNonRejectedRequestException;
+use App\Requests\Domain\Exception\UserAlreadyHasPendingRequestException;
 use App\Requests\Domain\ValueObject\PendingRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
@@ -44,6 +44,8 @@ final class RequestManager extends AggregateRoot
         $request = new Request($id, $requestUserId, $status, $changeDate);
 
         $this->ensureCanAddRequest($request->getUserId());
+
+        $this->requests = $this->requests->add($request);
 
         $this->registerEvent(new RequestWasCreatedEvent(
             $this->id->value,
@@ -123,7 +125,7 @@ final class RequestManager extends AggregateRoot
     {
         $this->status->ensureAllowsModification();
         $this->ensureIsUserAlreadyInProject($userId);
-        $this->ensureUserDoesNotHaveNonRejectedRequest($userId);
+        $this->ensureUserDoesNotHavePendingRequest($userId);
     }
 
     private function ensureCanChangeRequest(UserId $userId): void
@@ -134,12 +136,12 @@ final class RequestManager extends AggregateRoot
         }
     }
 
-    private function ensureUserDoesNotHaveNonRejectedRequest(UserId $userId): void
+    private function ensureUserDoesNotHavePendingRequest(UserId $userId): void
     {
         /** @var Request $request */
         foreach ($this->requests as $request) {
-            if ($request->isNonRejected() && $request->getUserId()->isEqual($userId)) {
-                throw new UserAlreadyHasNonRejectedRequestException();
+            if ($request->isPending() && $request->getUserId()->isEqual($userId)) {
+                throw new UserAlreadyHasPendingRequestException();
             }
         }
     }
