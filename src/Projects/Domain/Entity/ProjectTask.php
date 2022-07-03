@@ -94,4 +94,21 @@ final class ProjectTask implements Hashable
     {
         return $this->getId()->getHash();
     }
+
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        if (get_class($this) !== get_class($other)) {
+            return false;
+        }
+        return $this->id->isEqual($other->id) &&
+            $this->taskId->isEqual($other->taskId) &&
+            $this->status->isEqual($other->status) &&
+            $this->ownerId->isEqual($other->ownerId) &&
+            $this->startDate->isEqual($other->startDate) &&
+            $this->finishDate->isEqual($other->finishDate);
+    }
 }

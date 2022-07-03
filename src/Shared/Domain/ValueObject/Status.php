@@ -29,6 +29,11 @@ abstract class Status
         }
     }
 
+    public function isEqual(self $other): bool
+    {
+        return get_class($this) == get_class($other);
+    }
+
     /**
      * @return string[]
      */

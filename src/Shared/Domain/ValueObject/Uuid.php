@@ -19,11 +19,6 @@ abstract class Uuid implements Stringable, Hashable
         return $this->value;
     }
 
-    public function isEqual(Uuid $other): bool
-    {
-        return get_class($this) === get_class($other) && $this->value === $other->value;
-    }
-
     public static function createFrom(Uuid $other): static
     {
         return new static($other->value);
@@ -32,6 +27,15 @@ abstract class Uuid implements Stringable, Hashable
     public function getHash(): string
     {
         return $this->value;
+    }
+
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        return get_class($this) === get_class($other) && $this->getHash() === $other->getHash();
     }
 
     private function ensureIsValidUuid(string $value): void

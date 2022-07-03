@@ -6,4 +6,5 @@ namespace App\Shared\Domain\Collection;
 interface Hashable
 {
     public function getHash(): string;
+    public function isEqual(object $other): bool;
 }

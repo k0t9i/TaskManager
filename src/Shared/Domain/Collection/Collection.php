@@ -25,6 +25,11 @@ abstract class Collection implements CollectionInterface
     private array $deleted = [];
 
     /**
+     * @var Hashable[]
+     */
+    private array $updated = [];
+
+    /**
      * @param array|Hashable $items
      */
     public function __construct(array $items = [])
@@ -52,10 +57,16 @@ abstract class Collection implements CollectionInterface
         return $this->items;
     }
 
+    public function getUpdated(): array
+    {
+        return $this->updated;
+    }
+
     public function flush(): void
     {
         $this->added = [];
         $this->deleted = [];
+        $this->updated = [];
     }
 
     public function isDirty(): bool
@@ -92,6 +103,11 @@ abstract class Collection implements CollectionInterface
         if (!isset($collection->items[$key]) && !isset($collection->deleted[$key])) {
             $collection->added[$key] = $item;
         }
+        if (isset($collection->items[$key])) {
+            if (!$collection->items[$key]->isEqual($item)) {
+                $collection->updated[$key] = $item;
+            }
+        }
         $collection->items[$key] = $item;
         unset($collection->deleted[$key]);
 
@@ -107,6 +123,7 @@ abstract class Collection implements CollectionInterface
         }
         unset($collection->items[$key]);
         unset($collection->added[$key]);
+        unset($collection->updated[$key]);
 
         return $collection;
     }

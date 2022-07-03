@@ -27,6 +27,11 @@ interface CollectionInterface extends Countable, IteratorAggregate
      * @return Hashable[]
      */
     public function getItems(): array;
+
+    /**
+     * @return Hashable[]
+     */
+    public function getUpdated(): array;
     public function flush(): void;
     public function isDirty(): bool;
 }

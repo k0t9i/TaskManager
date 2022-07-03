@@ -52,6 +52,21 @@ final class Request implements Hashable
         return $this->getId()->getHash();
     }
 
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        if (get_class($this) !== get_class($other)) {
+            return false;
+        }
+        return $this->id->isEqual($other->id) &&
+            $this->userId->isEqual($other->userId) &&
+            $this->status->isEqual($other->status) &&
+            $this->changeDate->isEqual($other->changeDate);
+    }
+
     public function isNonRejected(): bool
     {
         return $this->isConfirmed() || $this->isPending();

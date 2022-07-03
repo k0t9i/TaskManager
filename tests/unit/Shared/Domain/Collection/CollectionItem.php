@@ -15,4 +15,9 @@ class CollectionItem implements Hashable
     {
         return $this->value;
     }
+
+    public function isEqual(object $other): bool
+    {
+        return true;
+    }
 }

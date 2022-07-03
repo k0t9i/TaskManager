@@ -49,4 +49,9 @@ class DateTime implements Stringable
     {
         return new static($date->format(self::DEFAULT_FORMAT));
     }
+
+    public function isEqual(self $other): bool
+    {
+        return $this->getValue() === $other->getValue();
+    }
 }

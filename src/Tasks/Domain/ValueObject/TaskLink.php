@@ -25,6 +25,18 @@ final class TaskLink implements Hashable
         return implode('|', $hashes);
     }
 
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        if (get_class($this) !== get_class($other)) {
+            return false;
+        }
+        return $this->getHash() === $other->getHash();
+    }
+
     private function ensureIsDifferentTasks()
     {
         if ($this->fromTaskId->isEqual($this->toTaskId)) {

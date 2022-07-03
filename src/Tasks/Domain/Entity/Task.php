@@ -84,6 +84,22 @@ final class Task extends AggregateRoot implements Hashable
         return $this->id->getHash();
     }
 
+    /**
+     * @param self $other
+     * @return bool
+     */
+    public function isEqual(object $other): bool
+    {
+        if (get_class($this) !== get_class($other)) {
+            return false;
+        }
+        //FIXME should I add links to equality check?
+        return $this->id->isEqual($other->id) &&
+            $this->information->isEqual($other->information) &&
+            $this->status->isEqual($other->status) &&
+            $this->ownerId->isEqual($other->ownerId);
+    }
+
     private function ensureFinishDateGreaterThanStart()
     {
         if ($this->information->startDate->isGreaterThan($this->information->finishDate)) {
