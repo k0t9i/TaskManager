@@ -65,11 +65,11 @@ class SqlProjectRepository implements ProjectRepositoryInterface
             ->fetchAllAssociative();
         $rawProject['tasks'] = new ProjectTaskCollection(
             array_map(function (array $item) {
-                return $this->projectTaskFactory->create($item['id'], ProjectTaskDTO::createFromRequest($item));
+                return $this->projectTaskFactory->create($item['id'], ProjectTaskDTO::create($item));
             }, $rawTasks)
         );
 
-        return $this->projectFactory->create(ProjectDTO::createFromRequest($rawProject));
+        return $this->projectFactory->create(ProjectDTO::create($rawProject));
     }
 
     /**

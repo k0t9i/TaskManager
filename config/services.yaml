@@ -38,7 +38,7 @@ services:
 
     App\Shared\Infrastructure\Security\LexikJwtAuthenticatorService:
         arguments:
-            $path: '^/api/(?!.*(login|register)).*$'
+            $path: '^/api/(?!.*(security)).*$'
 
     _instanceof:
         App\Shared\Domain\Bus\Command\CommandHandlerInterface:

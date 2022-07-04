@@ -209,11 +209,11 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
             ->fetchAllAssociative();
         $rawManager['requests'] = new RequestCollection(
             array_map(function (array $item) {
-                return $this->requestFactory->create(RequestDTO::createFromRequest($item));
+                return $this->requestFactory->create(RequestDTO::create($item));
             }, $rawRequests)
         );
 
-        return $this->requestManagerFactory->create(RequestManagerDTO::createFromRequest($rawManager));
+        return $this->requestManagerFactory->create(RequestManagerDTO::create($rawManager));
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
+use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskBrief;
@@ -32,15 +33,19 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }
+        /** @var Task $task */
+        $task = $manager->getTasks()->get($taskId->value);
+        //TODO throw exception if task doesn't exist
 
+        $prevInfo = $task->getInformation();
         $manager->changeTaskInformation(
             $taskId,
             new TaskInformation(
-                new TaskName($command->name),
-                new TaskBrief($command->brief),
-                new TaskDescription($command->description),
-                new DateTime($command->startDate),
-                new DateTime($command->finishDate)
+                new TaskName($command->name ?? $prevInfo->name->value),
+                new TaskBrief($command->brief ?? $prevInfo->brief->value),
+                new TaskDescription($command->description ?? $prevInfo->description->value),
+                new DateTime($command->startDate ?? $prevInfo->startDate->getValue()),
+                new DateTime($command->finishDate ?? $prevInfo->finishDate->getValue())
             ),
             $this->authenticator->getAuthUser()->getId()
         );

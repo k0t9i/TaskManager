@@ -9,9 +9,19 @@ final class UpdateProjectInformationCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $name,
-        public readonly string $description,
-        public readonly string $finishDate
+        public readonly ?string $name,
+        public readonly ?string $description,
+        public readonly ?string $finishDate
     ) {
+    }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['id'],
+            $item['name'] ?? null,
+            $item['description'] ?? null,
+            $item['finish_date'] ?? null,
+        );
     }
 }

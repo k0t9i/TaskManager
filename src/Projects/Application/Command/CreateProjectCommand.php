@@ -13,4 +13,13 @@ final class CreateProjectCommand implements CommandInterface
         public readonly string $finishDate
     ) {
     }
+
+    public static function createFromRequest(array $item): self
+    {
+        return new self(
+            $item['name'] ?? '',
+            $item['description'] ?? '',
+            $item['finish_date'] ?? '',
+        );
+    }
 }

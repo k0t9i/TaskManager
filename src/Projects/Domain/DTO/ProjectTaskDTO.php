@@ -14,7 +14,7 @@ final class ProjectTaskDTO
     ) {
     }
 
-    public static function createFromRequest(array $item): self
+    public static function create(array $item): self
     {
         return new self(
             $item['task_id'],

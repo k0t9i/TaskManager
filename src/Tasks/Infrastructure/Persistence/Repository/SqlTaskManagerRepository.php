@@ -274,11 +274,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                         );
                     }, $rawLinks)
                 );
-                return $this->taskFactory->create(TaskDTO::createFromRequest($item));
+                return $this->taskFactory->create(TaskDTO::create($item));
             }, $rawTasks)
         );
 
-        return $this->taskManagerFactory->create(TaskManagerDTO::createFromRequest($rawManager));
+        return $this->taskManagerFactory->create(TaskManagerDTO::create($rawManager));
     }
 
     /**

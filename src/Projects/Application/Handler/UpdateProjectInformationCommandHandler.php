@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
+use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;
@@ -26,16 +27,18 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
 
     public function __invoke(UpdateProjectInformationCommand $command): void
     {
+        /** @var Project $project */
         $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
             throw new ProjectNotExistException();
         }
 
+        $prevInfo = $project->getInformation();
         $project->changeInformation(
             new ProjectInformation(
-                new ProjectName($command->name),
-                new ProjectDescription($command->description),
-                new DateTime($command->finishDate)
+                new ProjectName($command->name ?? $prevInfo->name->value),
+                new ProjectDescription($command->description ?? $prevInfo->description->value),
+                new DateTime($command->finishDate ?? $prevInfo->finishDate->getValue())
             ),
             $this->authenticator->getAuthUser()->getId()
         );

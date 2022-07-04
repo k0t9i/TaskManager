@@ -38,11 +38,16 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }
-        //TODO what can I do with using of user repository here?
-        $owner = $this->userRepository->findById(new UserId($command->ownerId));
-        if ($owner === null) {
-            throw new UserNotExistException();
+        $ownerId = $this->authenticator->getAuthUser()->getId();
+        if ($command->ownerId !== null) {
+            //TODO what can I do with using of user repository here?
+            $owner = $this->userRepository->findById(new UserId($command->ownerId));
+            if ($owner === null) {
+                throw new UserNotExistException();
+            }
+            $ownerId = $owner->getId();
         }
+
 
         $manager->createTask(
             new TaskId($this->uuidGenerator->generate()),
@@ -53,7 +58,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            $owner->getId(),
+            $ownerId,
             $this->authenticator->getAuthUser()->getId()
         );
 

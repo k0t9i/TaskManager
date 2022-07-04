@@ -18,10 +18,10 @@ final class RegisterCommand implements CommandInterface
     public static function createFromRequest(array $item): self
     {
         return new self(
-            $item['email'],
-            $item['firstname'],
-            $item['lastname'],
-            $item['password'],
+            $item['email'] ?? '',
+            $item['firstname'] ?? '',
+            $item['lastname'] ?? '',
+            $item['password'] ?? '',
         );
     }
 }

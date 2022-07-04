@@ -18,7 +18,7 @@ final class RequestManagerDTO
     ) {
     }
 
-    public static function createFromRequest(array $item): self
+    public static function create(array $item): self
     {
         return new self(
             $item['id'],
