@@ -33,7 +33,7 @@ final class ExceptionListener
     private function getParentDomainExceptionIfExists(Throwable $exception): Throwable
     {
         $result = $exception;
-        while ($result->getPrevious() !== null) {
+        while ($result !== null) {
             if ($result instanceof DomainException) {
                 return $result;
             }
