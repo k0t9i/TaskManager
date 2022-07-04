@@ -5,6 +5,7 @@ namespace App\Shared\Infrastructure\Bus;
 
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Shared\Domain\Bus\Query\QueryInterface;
+use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -17,7 +18,7 @@ class InMemoryQueryBus implements QueryBusInterface
         $this->messageBus = $queryBus;
     }
 
-    public function dispatch(QueryInterface $query): mixed
+    public function dispatch(QueryInterface $query): QueryResponseInterface
     {
         return $this->handle($query);
     }

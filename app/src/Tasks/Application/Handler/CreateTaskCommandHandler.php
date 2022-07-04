@@ -5,13 +5,11 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
@@ -19,13 +17,11 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
-use App\Users\Domain\Repository\UserRepositoryInterface;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
-        private readonly UserRepositoryInterface $userRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticator
@@ -38,16 +34,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }
-        $ownerId = $this->authenticator->getAuthUser()->getId();
-        if ($command->ownerId !== null) {
-            //TODO what can I do with using of user repository here?
-            $owner = $this->userRepository->findById(new UserId($command->ownerId));
-            if ($owner === null) {
-                throw new UserNotExistException($command->ownerId);
-            }
-            $ownerId = $owner->getId();
-        }
-
+        $ownerId = $command->ownerId ?? $this->authenticator->getAuthUser()->getId();
 
         $manager->createTask(
             new TaskId($this->uuidGenerator->generate()),

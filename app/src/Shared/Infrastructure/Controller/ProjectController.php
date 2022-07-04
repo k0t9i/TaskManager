@@ -12,7 +12,10 @@ use App\Projects\Application\Command\RemoveProjectParticipantCommand;
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
+use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Tasks\Application\Command\CreateTaskCommand;
+use App\Users\Application\Query\GetUserQuery;
+use App\Users\Application\Query\GetUserQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +24,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/projects', name: 'project.')]
 final class ProjectController
 {
-    public function __construct(private CommandBusInterface $commandBus)
-    {
+    public function __construct(
+        private readonly CommandBusInterface $commandBus,
+        private readonly QueryBusInterface $queryBus,
+    ) {
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
@@ -65,7 +70,10 @@ final class ProjectController
     #[Route('/{id}/change-owner/{ownerId}/', name: 'changeOwner', methods: ['PATCH'])]
     public function changeOwner(string $id, string $ownerId): JsonResponse
     {
-        $this->commandBus->dispatch(new ChangeProjectOwnerCommand($id, $ownerId));
+        /** @var GetUserQueryResponse $owner */
+        $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
+
+        $this->commandBus->dispatch(new ChangeProjectOwnerCommand($id, $owner->id));
 
         return new JsonResponse();
     }
@@ -108,9 +116,12 @@ final class ProjectController
     #[Route('/{id}/create-task-for-participant/{participantId}/', name: 'createTaskForParticipant', methods: ['POST'])]
     public function createTaskForParticipant(string $id, string $participantId, Request $request): JsonResponse
     {
+        /** @var GetUserQueryResponse $owner */
+        $owner = $this->queryBus->dispatch(new GetUserQuery($participantId));
+
         $parameters = json_decode($request->getContent(), true);
         $parameters['project_id'] = $id;
-        $parameters['owner_id'] = $participantId;
+        $parameters['owner_id'] = $owner->id;
 
         $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
 
