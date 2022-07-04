@@ -5,6 +5,7 @@ namespace App\Users\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Users\Domain\Event\UserWasCreatedEvent;
 use App\Users\Domain\ValueObject\UserEmail;
 use App\Users\Domain\ValueObject\UserFirstname;
 use App\Users\Domain\ValueObject\UserLastname;
@@ -19,6 +20,26 @@ final class User extends AggregateRoot
         private UserLastname $lastname,
         private UserPassword $password
     ) {
+    }
+
+    public static function create(
+        UserId $id,
+        UserEmail $email,
+        UserFirstname $firstname,
+        UserLastname $lastname,
+        UserPassword $password
+    ): self {
+        $user = new self($id, $email, $firstname, $lastname, $password);
+
+        $user->registerEvent(new UserWasCreatedEvent(
+            $user->id->value,
+            $user->email->value,
+            $user->firstname->value,
+            $user->lastname->value,
+            $user->password->value,
+        ));
+
+        return $user;
     }
 
     public function getId(): UserId

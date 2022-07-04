@@ -9,7 +9,7 @@ use App\Shared\Domain\Security\PasswordHasherInterface;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserEmail;
 
-final class SecurityService
+final class LoginService
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,

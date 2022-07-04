@@ -61,6 +61,49 @@ class SqlUserRepository implements UserRepositoryInterface
         return $this->find($rawUser);
     }
 
+    /**
+     * @param User $user
+     * @throws Exception
+     */
+    public function save(User $user): void
+    {
+        if (!$this->isExist($user->getId())) {
+            $this->queryBuilder()
+                ->insert('users')
+                ->values([
+                    'id' => '?',
+                    'email' => '?',
+                    'firstname' => '?',
+                    'lastname' => '?',
+                    'password' => '?'
+                ])
+                ->setParameters([
+                    $user->getId()->value,
+                    $user->getEmail()->value,
+                    $user->getFirstname()->value,
+                    $user->getLastname()->value,
+                    $user->getPassword()->value,
+                ])
+                ->executeStatement();
+        } else {
+            $this->queryBuilder()
+                ->update('users')
+                ->set('email', '?')
+                ->set('firstname', '?')
+                ->set('lastname', '?')
+                ->set('password', '?')
+                ->where('id = ?')
+                ->setParameters([
+                    $user->getEmail()->value,
+                    $user->getFirstname()->value,
+                    $user->getLastname()->value,
+                    $user->getPassword()->value,
+                    $user->getId()->value,
+                ])
+                ->executeStatement();
+        }
+    }
+
     private function find(array $rawUser): ?User
     {
         return new User(
@@ -70,6 +113,22 @@ class SqlUserRepository implements UserRepositoryInterface
             new UserLastname($rawUser['lastname']),
             new UserPassword($rawUser['password'])
         );
+    }
+
+    /**
+     * @param UserId $id
+     * @return bool
+     * @throws Exception
+     */
+    private function isExist(UserId $id): bool
+    {
+        $count = $this->queryBuilder()
+            ->select('count(id)')
+            ->from('users')
+            ->where('id = ?')
+            ->setParameters([$id->value])
+            ->fetchOne();
+        return $count > 0;
     }
 
     private function queryBuilder(): QueryBuilder
