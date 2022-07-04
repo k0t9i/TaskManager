@@ -29,7 +29,7 @@ final class LeaveProjectCommandHandler implements CommandHandlerInterface
     {
         $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($command->id);
         }
 
         $currentUserId = $this->authenticator->getAuthUser()->getId();

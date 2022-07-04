@@ -42,6 +42,9 @@ services:
 
     App\Shared\Domain\Bus\Event\EventBusInterface: '@App\Shared\Infrastructure\Bus\SqlLogEventBusWrapper'
 
+    App\Shared\Infrastructure\Service\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onException }
 
     App\Shared\Infrastructure\Security\LexikJwtAuthenticatorService:
         arguments:

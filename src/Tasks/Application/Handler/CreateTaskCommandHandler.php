@@ -43,7 +43,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
             //TODO what can I do with using of user repository here?
             $owner = $this->userRepository->findById(new UserId($command->ownerId));
             if ($owner === null) {
-                throw new UserNotExistException();
+                throw new UserNotExistException($command->ownerId);
             }
             $ownerId = $owner->getId();
         }

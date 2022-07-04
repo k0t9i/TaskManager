@@ -19,7 +19,7 @@ abstract class StringValueObject implements Hashable
     {
         if (mb_strlen($this->value) > $maxLength) {
             throw new InvalidArgumentException(sprintf(
-                '%s should contain at most %s characters.', $attributeName, $maxLength
+                '"%s" should contain at most %s characters.', $attributeName, $maxLength
             ));
         }
     }
@@ -28,7 +28,7 @@ abstract class StringValueObject implements Hashable
     {
         if (mb_strlen($this->value) < $minLength) {
             throw new InvalidArgumentException(sprintf(
-                '%s should contain at least %s characters.', $attributeName, $minLength
+                '"%s" should contain at least %s characters.', $attributeName, $minLength
             ));
         }
     }
@@ -37,7 +37,7 @@ abstract class StringValueObject implements Hashable
     {
         if (empty($this->value)) {
             throw new InvalidArgumentException(sprintf(
-                '%s cannot be blank.', $attributeName
+                '"%s" cannot be blank.', $attributeName
             ));
         }
     }

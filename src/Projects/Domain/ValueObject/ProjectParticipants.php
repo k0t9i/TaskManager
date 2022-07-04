@@ -24,14 +24,14 @@ final class ProjectParticipants
     public function ensureIsParticipant(UserId $userId): void
     {
         if (!$this->isParticipant($userId)) {
-            throw new ProjectParticipantNotExistException();
+            throw new ProjectParticipantNotExistException($userId->value);
         }
     }
 
     public function ensureIsNotParticipant(UserId $userId): void
     {
         if ($this->isParticipant($userId)) {
-            throw new UserIsAlreadyParticipantException();
+            throw new UserIsAlreadyParticipantException($userId->value);
         }
     }
 

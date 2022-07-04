@@ -31,7 +31,7 @@ final class RegisterCommandHandler implements CommandHandlerInterface
     {
         $user = $this->userRepository->findByEmail(new UserEmail($command->email));
         if ($user !== null) {
-            throw new EmailAlreadyTakenException();
+            throw new EmailAlreadyTakenException($command->email);
         }
 
         $hashedPassword = $this->passwordHasher->hashPassword($command->password);

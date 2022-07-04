@@ -11,7 +11,7 @@ use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
 use App\Tasks\Domain\Exception\TaskLinkNotExistException;
 use App\Tasks\Domain\Exception\TasksOfTaskLinkAreEqualException;
-use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
+use App\Tasks\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskLink;
 
@@ -105,28 +105,31 @@ final class Task implements Hashable
     private function ensureFinishDateGreaterThanStart()
     {
         if ($this->information->startDate->isGreaterThan($this->information->finishDate)) {
-            throw new TaskStartDateGreaterThanProjectFinishDateException();
+            throw new TaskStartDateGreaterThanFinishDateException(
+                $this->information->startDate->getValue(),
+                $this->information->finishDate->getValue()
+            );
         }
     }
 
     private function ensureLinkDoesNotExist(TaskLink $link): void
     {
         if ($this->links->exists($link)) {
-            throw new TaskLinkAlreadyExistsException();
+            throw new TaskLinkAlreadyExistsException($this->id->value, $link->toTaskId->value);
         }
     }
 
     private function ensureLinkExists(TaskLink $link): void
     {
         if (!$this->links->exists($link)) {
-            throw new TaskLinkNotExistException();
+            throw new TaskLinkNotExistException($this->id->value, $link->toTaskId->value);
         }
     }
 
     private function ensureIsDifferentTask(TaskId $toTaskId)
     {
         if ($this->id->isEqual($toTaskId)) {
-            throw new TasksOfTaskLinkAreEqualException();
+            throw new TasksOfTaskLinkAreEqualException($toTaskId->value);
         }
     }
 }

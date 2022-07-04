@@ -107,7 +107,10 @@ final class Project extends AggregateRoot
     {
         $this->status->ensureAllowsModification();
         if (!$this->owner->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
-            throw new InsufficientPermissionsToChangeProjectParticipantException();
+            throw new InsufficientPermissionsToChangeProjectParticipantException(
+                $participantId->value,
+                $this->id->value
+            );
         }
         $this->participants->ensureIsParticipant($participantId);
         $this->tasks->ensureDoesUserHaveTask($participantId);

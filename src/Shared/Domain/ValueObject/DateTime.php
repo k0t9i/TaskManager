@@ -21,7 +21,7 @@ class DateTime implements Stringable
             $value = $value ?: 'now';
             $this->dateTime = new DateTimeImmutable($value);
         } catch (Exception $e) {
-            throw new InvalidArgumentException(sprintf('Invalid datetime value %s', $value), 0, $e);
+            throw new InvalidArgumentException(sprintf('Invalid datetime value "%s"', $value), 0, $e);
         }
     }
 

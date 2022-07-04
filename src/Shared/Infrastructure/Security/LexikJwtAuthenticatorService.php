@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Security;
 
 use App\Shared\Domain\Exception\AuthenticationException;
-use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\AuthUser;
 use App\Shared\Infrastructure\Security\ValueObject\SymfonySecurityUser;
@@ -30,7 +30,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
         try {
             preg_match($this->pathRegexp,'');
         } catch (ErrorException $e) {
-            throw new InvalidArgumentException(sprintf('Invalid path regexp %s', $this->path), 0, $e);
+            throw new LogicException(sprintf('Invalid path regexp "%s"', $this->path), 0, $e);
         }
         $this->authUser = new AuthUser('');
     }

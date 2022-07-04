@@ -59,7 +59,7 @@ final class TaskManager extends AggregateRoot
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
         if (!$this->isOwner($ownerId) && !$this->isParticipant($ownerId)) {
-            throw new TaskUserNotExistException();
+            throw new TaskUserNotExistException($ownerId->value);
         }
 
         $this->tasks = $this->tasks->add($task);
@@ -227,17 +227,23 @@ final class TaskManager extends AggregateRoot
     private function ensureIsFinishDateGreaterThanTaskDates(DateTime $startDate, DateTime $finishDate): void
     {
         if ($startDate->isGreaterThan($this->finishDate)) {
-            throw new TaskStartDateGreaterThanProjectFinishDateException();
+            throw new TaskStartDateGreaterThanProjectFinishDateException(
+                $this->finishDate->getValue(),
+                $startDate->getValue()
+            );
         }
         if ($finishDate->isGreaterThan($this->finishDate)) {
-            throw new TaskFinishDateGreaterThanProjectFinishDateException();
+            throw new TaskFinishDateGreaterThanProjectFinishDateException(
+                $this->finishDate->getValue(),
+                $finishDate->getValue()
+            );
         }
     }
 
     private function ensureTaskExists(TaskId $taskId): void
     {
         if (!$this->tasks->hashExists($taskId->getHash())) {
-            throw new TaskNotExistException();
+            throw new TaskNotExistException($taskId->value);
         }
     }
 

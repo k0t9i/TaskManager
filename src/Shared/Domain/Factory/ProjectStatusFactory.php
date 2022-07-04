@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Factory;
 
-use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\ProjectStatus;
@@ -22,7 +22,7 @@ final class ProjectStatusFactory
             return self::STATUS_ACTIVE;
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid project status %s', gettype($status)));
+        throw new LogicException(sprintf('Invalid type "%s" of project status', gettype($status)));
     }
 
     public static function objectFromScalar(int $status): ProjectStatus
@@ -34,6 +34,6 @@ final class ProjectStatusFactory
             return new ActiveProjectStatus();
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid project status %s', gettype($status)));
+        throw new LogicException(sprintf('Invalid project status "%s"', gettype($status)));
     }
 }

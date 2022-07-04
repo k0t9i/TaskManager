@@ -30,7 +30,7 @@ final class RemoveProjectParticipantCommandHandler implements CommandHandlerInte
     {
         $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($command->id);
         }
 
         $project->removeParticipant(

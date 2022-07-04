@@ -29,7 +29,7 @@ final class AddParticipantOnProjectParticipantAddedSubscriber implements EventSu
     {
         $project = $this->projectRepository->findById(new ProjectId($event->projectId));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($event->projectId);
         }
 
         $project = $this->participantAdder->addParticipant($project, $event->participantId);

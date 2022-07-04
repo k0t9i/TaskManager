@@ -30,7 +30,7 @@ final class UpdateProjectInformationCommandHandler implements CommandHandlerInte
         /** @var Project $project */
         $project = $this->projectRepository->findById(new ProjectId($command->id));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($command->id);
         }
 
         $prevInfo = $project->getInformation();

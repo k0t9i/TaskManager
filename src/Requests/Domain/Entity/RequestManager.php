@@ -63,7 +63,7 @@ final class RequestManager extends AggregateRoot
     ): void {
         $this->ensureCanChangeRequest($currentUserId);
         if (!$this->requests->hashExists($id->getHash())) {
-            throw new RequestNotExistsException();
+            throw new RequestNotExistsException($id->value);
         }
         /** @var Request $request */
         $request = $this->requests->get($id->getHash());
@@ -132,7 +132,7 @@ final class RequestManager extends AggregateRoot
     {
         $this->status->ensureAllowsModification();
         if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException();
+            throw new UserIsNotOwnerException($userId->value);
         }
     }
 
@@ -141,7 +141,7 @@ final class RequestManager extends AggregateRoot
         /** @var Request $request */
         foreach ($this->requests as $request) {
             if ($request->isPending() && $request->getUserId()->isEqual($userId)) {
-                throw new UserAlreadyHasPendingRequestException();
+                throw new UserAlreadyHasPendingRequestException($userId->value, $this->projectId->value);
             }
         }
     }
@@ -149,10 +149,10 @@ final class RequestManager extends AggregateRoot
     private function ensureIsUserAlreadyInProject(UserId $userId): void
     {
         if ($this->isParticipant($userId)) {
-            throw new UserIsAlreadyParticipantException();
+            throw new UserIsAlreadyParticipantException($userId->value);
         }
         if ($this->isOwner($userId)) {
-            throw new UserIsAlreadyOwnerException();
+            throw new UserIsAlreadyOwnerException($userId->value);
         }
     }
 

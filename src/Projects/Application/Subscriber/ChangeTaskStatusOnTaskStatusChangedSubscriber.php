@@ -30,7 +30,7 @@ final class ChangeTaskStatusOnTaskStatusChangedSubscriber implements EventSubscr
     {
         $project = $this->projectRepository->findById(new ProjectId($event->projectId));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($event->projectId);
         }
 
         $project = $this->taskStatusChanger->changeStatus($project, $event->taskId, (int) $event->status);

@@ -29,7 +29,7 @@ final class ChangeTaskDatesOnTaskInformationChangedSubscriber implements EventSu
     {
         $project = $this->projectRepository->findById(new ProjectId($event->projectId));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($event->projectId);
         }
 
         $project = $this->datesChanger->changeDates($project, $event->taskId, $event->startDate, $event->finishDate);

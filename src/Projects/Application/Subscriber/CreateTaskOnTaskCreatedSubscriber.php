@@ -30,7 +30,7 @@ final class CreateTaskOnTaskCreatedSubscriber implements EventSubscriberInterfac
     {
         $project = $this->projectRepository->findById(new ProjectId($event->projectId));
         if ($project === null) {
-            throw new ProjectNotExistException();
+            throw new ProjectNotExistException($event->projectId);
         }
 
         $taskDto = new ProjectTaskDTO(

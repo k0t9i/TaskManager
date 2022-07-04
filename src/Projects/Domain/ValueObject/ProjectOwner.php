@@ -16,14 +16,14 @@ final class ProjectOwner
     public function ensureIsOwner(UserId $userId): void
     {
         if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException();
+            throw new UserIsNotOwnerException($userId->value);
         }
     }
 
     public function ensureIsNotOwner(UserId $userId): void
     {
         if ($this->isOwner($userId)) {
-            throw new UserIsAlreadyOwnerException();
+            throw new UserIsAlreadyOwnerException($userId->value);
         }
     }
 

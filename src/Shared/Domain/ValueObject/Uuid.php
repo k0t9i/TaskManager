@@ -42,7 +42,7 @@ abstract class Uuid implements Stringable, Hashable
     {
         $pattern = '/\A[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\z/Dms';
         if (!preg_match($pattern, $value)) {
-            throw new InvalidArgumentException(sprintf('Invalid uuid %s', $value));
+            throw new InvalidArgumentException(sprintf('Invalid uuid "%s"', $value));
         }
     }
 }

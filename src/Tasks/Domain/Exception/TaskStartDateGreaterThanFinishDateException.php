@@ -5,14 +5,14 @@ namespace App\Tasks\Domain\Exception;
 
 use App\Shared\Domain\Exception\DomainException;
 
-final class TaskStartDateGreaterThanProjectFinishDateException extends DomainException
+final class TaskStartDateGreaterThanFinishDateException extends DomainException
 {
-    public function __construct(string $projectFinishDate, string $startDate)
+    public function __construct(string $startDate, string $finishDate)
     {
         $message = sprintf(
-            'Task start date "%s" greater than project finish date "%s"',
+            'Task start date "%s" greater than finish date "%s"',
             $startDate,
-            $projectFinishDate
+            $finishDate
         );
         parent::__construct($message, self::CODE_UNPROCESSABLE_ENTITY);
     }

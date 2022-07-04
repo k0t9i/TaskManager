@@ -34,7 +34,7 @@ final class ProjectTasks
         /** @var ProjectTask $task */
         foreach ($this->tasks as $task) {
             if ($task->getOwnerId()->isEqual($userId)) {
-                throw new UserHasProjectTaskException();
+                throw new UserHasProjectTaskException($userId->value);
             }
         }
     }

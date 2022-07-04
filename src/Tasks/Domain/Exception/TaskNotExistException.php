@@ -5,7 +5,14 @@ namespace App\Tasks\Domain\Exception;
 
 use App\Shared\Domain\Exception\DomainException;
 
-class TaskNotExistException extends DomainException
+final class TaskNotExistException extends DomainException
 {
-
+    public function __construct(string $id)
+    {
+        $message = sprintf(
+            'Task "%s" doesn\'t exist',
+            $id
+        );
+        parent::__construct($message, self::CODE_NOT_FOUND);
+    }
 }

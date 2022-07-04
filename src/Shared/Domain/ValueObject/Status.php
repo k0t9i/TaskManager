@@ -18,7 +18,7 @@ abstract class Status
     public function ensureCanBeChangedTo(self $status): void
     {
         if (!$this->canBeChangedTo($status)) {
-            throw new InvalidNextStatusException(get_class($status));
+            throw new InvalidNextStatusException(get_class($this), get_class($status));
         }
     }
 

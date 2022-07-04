@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Collection;
 
-use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\Exception\LogicException;
 use ArrayIterator;
 use Traversable;
 
@@ -164,13 +164,13 @@ abstract class Collection implements CollectionInterface
     private function ensureIsValidType(mixed $value): void
     {
         if (!$value instanceof Hashable) {
-            throw new InvalidArgumentException(sprintf(
-                'Object must be of type %s',
+            throw new LogicException(sprintf(
+                'Object must be of type "%s"',
                 Hashable::class
             ));
         }
         if (!is_a($value, $this->getType())) {
-            throw new InvalidArgumentException(sprintf('Object must be of type %s', $this->getType()));
+            throw new LogicException(sprintf('Object must be of type "%s"', $this->getType()));
         }
     }
 }

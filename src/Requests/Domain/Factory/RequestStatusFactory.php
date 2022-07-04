@@ -7,7 +7,7 @@ use App\Requests\Domain\ValueObject\ConfirmedRequestStatus;
 use App\Requests\Domain\ValueObject\PendingRequestStatus;
 use App\Requests\Domain\ValueObject\RejectedRequestStatus;
 use App\Requests\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\Exception\LogicException;
 
 final class RequestStatusFactory
 {
@@ -27,7 +27,7 @@ final class RequestStatusFactory
             return self::STATUS_REJECTED;
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid project request status %s', gettype($status)));
+        throw new LogicException(sprintf('Invalid type "%s" of project request status', gettype($status)));
     }
 
     public static function objectFromScalar(int $status): RequestStatus
@@ -42,6 +42,6 @@ final class RequestStatusFactory
             return new RejectedRequestStatus();
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid project request status %s', gettype($status)));
+        throw new LogicException(sprintf('Invalid project request status "%s"', gettype($status)));
     }
 }

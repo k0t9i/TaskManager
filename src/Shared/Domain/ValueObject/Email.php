@@ -11,7 +11,7 @@ class Email extends StringValueObject
     {
         if (!empty($this->value) && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(sprintf(
-                '%s is not a valid email address.', $attributeName
+                '"%s" is not a valid email address.', $attributeName
             ));
         }
     }

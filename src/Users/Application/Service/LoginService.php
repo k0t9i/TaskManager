@@ -22,11 +22,11 @@ final class LoginService
     {
         $user = $this->userRepository->findByEmail(new UserEmail($username));
         if ($user === null) {
-            throw new UserNotExistException();
+            throw new UserNotExistException($username);
         }
 
         if (!$this->hasher->verifyPassword($user->getPassword()->value, $plainPassword)) {
-            throw new UserNotExistException();
+            throw new UserNotExistException($username);
         }
 
         return $this->authenticator->getToken($user->getId()->value);
