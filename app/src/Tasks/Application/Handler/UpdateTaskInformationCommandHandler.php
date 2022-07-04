@@ -11,6 +11,7 @@ use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
+use App\Tasks\Domain\Exception\TaskNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
@@ -35,7 +36,9 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
         }
         /** @var Task $task */
         $task = $manager->getTasks()->get($taskId->value);
-        //TODO throw exception if task doesn't exist
+        if ($task === null) {
+            throw new TaskNotExistException($command->id);
+        }
 
         $prevInfo = $task->getInformation();
         $manager->changeTaskInformation(
