@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Exception;
+namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Domain\Exception\DomainException;
 use Symfony\Component\HttpFoundation\Response;

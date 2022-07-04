@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Domain\Exception\DomainException;
-use App\Shared\Infrastructure\Exception\DomainExceptionToHttpStatusCodeMapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Throwable;
@@ -35,10 +34,10 @@ final class ExceptionListener
     {
         $result = $exception;
         while ($result->getPrevious() !== null) {
-            $result = $result->getPrevious();
             if ($result instanceof DomainException) {
                 return $result;
             }
+            $result = $result->getPrevious();
         }
         return $exception;
     }
