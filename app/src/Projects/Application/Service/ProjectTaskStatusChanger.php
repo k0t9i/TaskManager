@@ -44,6 +44,7 @@ final class ProjectTaskStatusChanger
             $project->getInformation()->finishDate->getValue(),
             ProjectStatusFactory::scalarFromObject($project->getStatus()),
             $project->getOwner()->userId->value,
+            $project->getOwner()->userEmail->value,
             $project->getParticipants()->getInnerItems(),
             $tasks->getInnerItems()
         );

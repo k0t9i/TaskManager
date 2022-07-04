@@ -54,7 +54,8 @@ final class Project extends AggregateRoot
             $information->description->value,
             $information->finishDate->getValue(),
             (string) $status->getScalar(),
-            $owner->userId->value
+            $owner->userId->value,
+            $owner->userEmail->value,
         ));
 
         return $project;
@@ -124,24 +125,25 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @param UserId $ownerId
+     * @param ProjectOwner $owner
      * @param UserId $currentUserId
      * @throws Exception
      */
-    public function changeOwner(UserId $ownerId, UserId $currentUserId): void
+    public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
         $this->owner->ensureIsOwner($currentUserId);
 
-        $this->owner->ensureIsNotOwner($ownerId);
-        $this->participants->ensureIsNotParticipant($ownerId);
+        $this->owner->ensureIsNotOwner($owner->userId);
+        $this->participants->ensureIsNotParticipant($owner->userId);
         $this->tasks->ensureDoesUserHaveTask($this->owner->userId);
 
-        $this->owner = new ProjectOwner($ownerId);
+        $this->owner = $owner;
 
         $this->registerEvent(new ProjectOwnerWasChangedEvent(
             $this->id->value,
-            $this->owner->userId->value
+            $this->owner->userId->value,
+            $this->owner->userEmail->value,
         ));
     }
 

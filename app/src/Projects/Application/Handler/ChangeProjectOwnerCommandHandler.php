@@ -5,10 +5,12 @@ namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\Command\ChangeProjectOwnerCommand;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
+use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
+use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use Exception;
@@ -34,7 +36,10 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
         }
 
         $project->changeOwner(
-            new UserId($command->ownerId),
+            new ProjectOwner(
+                new UserId($command->ownerId),
+                new Email($command->ownerEmail)
+            ),
             $this->authenticator->getAuthUser()->getId()
         );
 

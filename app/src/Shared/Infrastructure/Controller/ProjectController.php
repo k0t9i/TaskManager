@@ -13,6 +13,7 @@ use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Users\Application\Query\GetUserQuery;
 use App\Users\Application\Query\GetUserQueryResponse;
@@ -27,13 +28,20 @@ final class ProjectController
     public function __construct(
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
+        private readonly AuthenticatorServiceInterface $authenticatorService,
     ) {
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
+        $ownerId = $this->authenticatorService->getAuthUser()->getId()->value;
+        /** @var GetUserQueryResponse $owner */
+        $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
+
         $parameters = json_decode($request->getContent(), true);
+        $parameters['owner_id'] = $owner->id;
+        $parameters['owner_email'] = $owner->email;
 
         $this->commandBus->dispatch(CreateProjectCommand::createFromRequest($parameters));
 
@@ -73,7 +81,7 @@ final class ProjectController
         /** @var GetUserQueryResponse $owner */
         $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
 
-        $this->commandBus->dispatch(new ChangeProjectOwnerCommand($id, $owner->id));
+        $this->commandBus->dispatch(new ChangeProjectOwnerCommand($id, $owner->id, $owner->email));
 
         return new JsonResponse();
     }

@@ -26,7 +26,7 @@ class CreateTaskCommand implements CommandInterface
             $item['description'] ?? '',
             $item['start_date'] ?? '',
             $item['finish_date'] ?? '',
-            $item['project_id'] ?? '',
+            $item['project_id'],
             $item['owner_id'] ?? null,
         );
     }

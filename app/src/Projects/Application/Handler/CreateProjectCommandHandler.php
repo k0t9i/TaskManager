@@ -12,10 +12,11 @@ use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\UserId;
 
 final class CreateProjectCommandHandler implements CommandHandlerInterface
 {
@@ -36,7 +37,10 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
                 new ProjectDescription($command->description),
                 new DateTime($command->finishDate)
             ),
-            new ProjectOwner($this->authenticator->getAuthUser()->getId())
+            new ProjectOwner(
+                new UserId($command->ownerId),
+                new Email($command->ownerEmail)
+            )
         );
 
         $this->projectRepository->save($project);

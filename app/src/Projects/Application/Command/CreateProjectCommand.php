@@ -10,7 +10,9 @@ final class CreateProjectCommand implements CommandInterface
     public function __construct(
         public readonly string $name,
         public readonly string $description,
-        public readonly string $finishDate
+        public readonly string $finishDate,
+        public readonly string $ownerId,
+        public readonly string $ownerEmail,
     ) {
     }
 
@@ -20,6 +22,8 @@ final class CreateProjectCommand implements CommandInterface
             $item['name'] ?? '',
             $item['description'] ?? '',
             $item['finish_date'] ?? '',
+            $item['owner_id'],
+            $item['owner_email'],
         );
     }
 }
