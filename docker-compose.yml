@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+    nginx:
+        container_name: task_manager-nginx
+        image: nginx:latest
+        ports:
+            - '9080:80'
+        volumes:
+            - ./docker/configs/nginx:/etc/nginx/conf.d
+            - ./app:/var/www
+            - ./logs/nginx:/var/log/nginx
+        working_dir: /var/www
+    php-fpm:
+        container_name: task_manager-php
+        build:
+            context: ./
+            dockerfile: ./docker/images/php/Dockerfile
+        restart: unless-stopped
+        user: "${UID}:${GID}"
+        ports:
+            - '9000:9000'
+        volumes:
+            - ./app:/var/www
+        working_dir: /var/www
+        depends_on:
+            - nginx
+            - db
+    db:
+        container_name: task_manager-db
+        image: postgres:14.2-alpine3.15
+        restart: always
+        environment:
+            POSTGRES_USER: symfony
+            POSTGRES_PASSWORD: symfony
+        ports:
+            - '5432:5432'
+        volumes: 
+            - ./data/db:/var/lib/postgresql/data
+            - ./logs/db:/var/log/nginx
+    adminer:
+        container_name: task_manager-adminer
+        image: adminer:latest
+        restart: always
+        ports:
+            - '8080:8080'
