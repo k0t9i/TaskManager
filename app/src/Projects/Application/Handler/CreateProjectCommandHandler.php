@@ -24,7 +24,6 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
         private readonly ProjectRepositoryInterface $projectRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
-        private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
 

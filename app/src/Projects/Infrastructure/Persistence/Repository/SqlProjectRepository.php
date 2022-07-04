@@ -3,15 +3,9 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Repository;
 
-use App\Projects\Domain\Collection\ProjectTaskCollection;
-use App\Projects\Domain\DTO\ProjectDTO;
-use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Entity\ProjectTask;
-use App\Projects\Domain\Factory\ProjectFactory;
-use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
@@ -25,9 +19,26 @@ class SqlProjectRepository implements ProjectRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProjectFactory $projectFactory,
-        private readonly ProjectTaskFactory $projectTaskFactory,
+        private readonly ProjectDbRetriever $dbRetriever
     ) {
+    }
+
+    /**
+     * @param UserId $userId
+     * @return Project[]
+     * @throws Exception
+     */
+    public function findAllByUserId(UserId $userId): array
+    {
+        $builder = $this->queryBuilder()
+            ->select('p.*')
+            ->distinct()
+            ->from('projects', 'p')
+            ->leftJoin('p', 'project_participants', 'pp', 'p.id = pp.project_id')
+            ->where('p.owner_id = ?')
+            ->setParameters([$userId->value]);
+
+        return $this->dbRetriever->retrieveAll($builder);
     }
 
     /**
@@ -37,39 +48,13 @@ class SqlProjectRepository implements ProjectRepositoryInterface
      */
     public function findById(ProjectId $id): ?Project
     {
-        $rawProject = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
             ->from('projects')
             ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawProject === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        $rawParticipants = $this->queryBuilder()
-            ->select('user_id')
-            ->from('project_participants')
-            ->where('project_id = ?')
-            ->setParameters([$id->value])
-            ->fetchFirstColumn();
-        $rawProject['participant_ids'] = new UserIdCollection(
-            array_map(fn(string $id) => new UserId($id), $rawParticipants)
-        );
-
-        $rawTasks = $this->queryBuilder()
-            ->select('*')
-            ->from('project_tasks')
-            ->where('project_id = ?')
-            ->setParameters([$id->value])
-            ->fetchAllAssociative();
-        $rawProject['tasks'] = new ProjectTaskCollection(
-            array_map(function (array $item) {
-                return $this->projectTaskFactory->create($item['id'], ProjectTaskDTO::create($item));
-            }, $rawTasks)
-        );
-
-        return $this->projectFactory->create(ProjectDTO::create($rawProject));
+        return $this->dbRetriever->retrieveOne($builder);
     }
 
     /**
@@ -168,6 +153,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     'finish_date' => '?',
                     'status' => '?',
                     'owner_id' => '?',
+                    'owner_email' => '?',
                 ])
                 ->setParameters([
                     $project->getId()->value,
@@ -175,7 +161,8 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     $project->getInformation()->description->value,
                     $project->getInformation()->finishDate->getValue(),
                     ProjectStatusFactory::scalarFromObject($project->getStatus()),
-                    $project->getOwner()->userId,
+                    $project->getOwner()->userId->value,
+                    $project->getOwner()->userEmail->value,
                 ])
                 ->executeStatement();
         } else {
@@ -186,13 +173,15 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ->set('finish_date', '?')
                 ->set('status', '?')
                 ->set('owner_id', '?')
+                ->set('owner_email', '?')
                 ->where('id = ?')
                 ->setParameters([
                     $project->getInformation()->name->value,
                     $project->getInformation()->description->value,
                     $project->getInformation()->finishDate->getValue(),
                     ProjectStatusFactory::scalarFromObject($project->getStatus()),
-                    $project->getOwner()->userId,
+                    $project->getOwner()->userId->value,
+                    $project->getOwner()->userEmail->value,
                     $project->getId()->value,
                 ])
                 ->executeStatement();

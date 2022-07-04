@@ -23,6 +23,7 @@ use Exception;
 
 final class Project extends AggregateRoot
 {
+    //TODO on user change email
     public function __construct(
         private ProjectId $id,
         private ProjectInformation $information,

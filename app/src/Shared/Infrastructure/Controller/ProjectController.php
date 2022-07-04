@@ -10,6 +10,8 @@ use App\Projects\Application\Command\CreateProjectCommand;
 use App\Projects\Application\Command\LeaveProjectCommand;
 use App\Projects\Application\Command\RemoveProjectParticipantCommand;
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
+use App\Projects\Application\Query\GetAllOwnProjectsQuery;
+use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
@@ -28,7 +30,7 @@ final class ProjectController
     public function __construct(
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
-        private readonly AuthenticatorServiceInterface $authenticatorService,
+        private readonly AuthenticatorServiceInterface $authenticatorService
     ) {
     }
 
@@ -134,5 +136,15 @@ final class ProjectController
         $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
 
         return new JsonResponse(status: Response::HTTP_CREATED);
+    }
+
+    #[Route('/', name: 'getAll', methods: ['GET'])]
+    public function getAll(): JsonResponse
+    {
+        //TODO add paginator and ordering
+        /** @var GetAllOwnProjectsQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery());
+
+        return new JsonResponse($envelope->getProjects());
     }
 }
