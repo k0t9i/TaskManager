@@ -35,7 +35,8 @@ final class TaskManagerTaskStatusChanger
             $task->getInformation()->description->value,
             $task->getInformation()->startDate->getValue(),
             $task->getInformation()->finishDate->getValue(),
-            $task->getOwnerId()->value,
+            $task->getOwner()->userId->value,
+            $task->getOwner()->userEmail->value,
             $status,
             $task->getLinks()
         );

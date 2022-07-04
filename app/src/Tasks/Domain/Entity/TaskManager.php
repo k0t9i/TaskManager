@@ -26,9 +26,11 @@ use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateExceptio
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
+use App\Tasks\Domain\ValueObject\TaskOwner;
 
 final class TaskManager extends AggregateRoot
 {
+    //TODO on user change email
     public function __construct(
         private TaskManagerId    $id,
         private ProjectId        $projectId,
@@ -43,23 +45,23 @@ final class TaskManager extends AggregateRoot
     public function createTask(
         TaskId $id,
         TaskInformation $information,
-        UserId $ownerId,
+        TaskOwner $owner,
         UserId $currentUserId
     ): Task {
         $status = new ActiveTaskStatus();
         $task = new Task(
             $id,
             $information,
-            $ownerId,
+            $owner,
             $status,
             new TaskLinkCollection()
         );
 
-        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
+        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
-        if (!$this->isOwner($ownerId) && !$this->isParticipant($ownerId)) {
-            throw new TaskUserNotExistException($ownerId->value);
+        if (!$this->isOwner($owner->userId) && !$this->isParticipant($owner->userId)) {
+            throw new TaskUserNotExistException($owner->userId->value);
         }
 
         $this->tasks = $this->tasks->add($task);
@@ -73,7 +75,8 @@ final class TaskManager extends AggregateRoot
             $information->description->value,
             $information->startDate->getValue(),
             $information->finishDate->getValue(),
-            $ownerId->value,
+            $owner->userId->value,
+            $owner->userEmail->value,
             (string)$status->getScalar()
         ));
 
@@ -89,7 +92,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($taskId->getHash());
-        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
+        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
         $task->changeInformation($information);
@@ -112,7 +115,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($taskId->getHash());
-        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
+        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
         $task->changeStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
@@ -133,7 +136,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($fromTaskId->getHash());
-        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
+        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
         $task->addLink($toTaskId);
 
         /** @var Task $task */
@@ -162,7 +165,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($fromTaskId->getHash());
-        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
+        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
         $task->deleteLink($toTaskId);
 
         /** @var Task $task */

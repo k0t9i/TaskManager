@@ -14,7 +14,8 @@ class CreateTaskCommand implements CommandInterface
         public readonly string $startDate,
         public readonly string $finishDate,
         public readonly string $projectId,
-        public readonly ?string $ownerId = null,
+        public readonly string $ownerId,
+        public readonly string $ownerEmail,
     ) {
     }
 
@@ -27,7 +28,8 @@ class CreateTaskCommand implements CommandInterface
             $item['start_date'] ?? '',
             $item['finish_date'] ?? '',
             $item['project_id'],
-            $item['owner_id'] ?? null,
+            $item['owner_id'],
+            $item['owner_email'],
         );
     }
 }

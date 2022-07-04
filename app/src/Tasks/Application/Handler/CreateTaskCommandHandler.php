@@ -8,8 +8,10 @@ use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Email;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
@@ -17,6 +19,7 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
+use App\Tasks\Domain\ValueObject\TaskOwner;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {
@@ -34,7 +37,6 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }
-        $ownerId = $command->ownerId ?? $this->authenticator->getAuthUser()->getId();
 
         $manager->createTask(
             new TaskId($this->uuidGenerator->generate()),
@@ -45,7 +47,10 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            $ownerId,
+            new TaskOwner(
+                new UserId($command->ownerId),
+                new Email($command->ownerEmail)
+            ),
             $this->authenticator->getAuthUser()->getId()
         );
 

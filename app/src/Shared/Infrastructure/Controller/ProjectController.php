@@ -17,6 +17,8 @@ use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Tasks\Application\Command\CreateTaskCommand;
+use App\Tasks\Application\Query\GetAllProjectTasksQuery;
+use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
 use App\Users\Application\Query\GetUserQuery;
 use App\Users\Application\Query\GetUserQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -115,8 +117,14 @@ final class ProjectController
     #[Route('/{id}/create-task/', name: 'createTask', methods: ['POST'])]
     public function createTask(string $id, Request $request): JsonResponse
     {
+        $ownerId = $this->authenticatorService->getAuthUser()->getId()->value;
+        /** @var GetUserQueryResponse $owner */
+        $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
+
         $parameters = json_decode($request->getContent(), true);
         $parameters['project_id'] = $id;
+        $parameters['owner_id'] = $owner->id;
+        $parameters['owner_email'] = $owner->email;
 
         $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
 
@@ -132,6 +140,7 @@ final class ProjectController
         $parameters = json_decode($request->getContent(), true);
         $parameters['project_id'] = $id;
         $parameters['owner_id'] = $owner->id;
+        $parameters['owner_email'] = $owner->email;
 
         $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
 
@@ -146,5 +155,15 @@ final class ProjectController
         $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery());
 
         return new JsonResponse($envelope->getProjects());
+    }
+
+    #[Route('/{id}/tasks/', name: 'getAllTasks', methods: ['GET'])]
+    public function getAllTasks(string $id): JsonResponse
+    {
+        //TODO add paginator and ordering
+        /** @var GetAllProjectTasksQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetAllProjectTasksQuery($id));
+
+        return new JsonResponse($envelope->getTasks());
     }
 }

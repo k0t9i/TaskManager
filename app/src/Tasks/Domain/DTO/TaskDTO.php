@@ -15,6 +15,7 @@ final class TaskDTO
         public readonly string $startDate,
         public readonly string $finishDate,
         public readonly string $ownerId,
+        public readonly string $ownerEmail,
         public readonly int $status,
         public readonly TaskLinkCollection $links
     ) {
@@ -30,6 +31,7 @@ final class TaskDTO
             $item['start_date'],
             $item['finish_date'],
             $item['owner_id'],
+            $item['owner_email'],
             $item['status'],
             $item['links']
         );

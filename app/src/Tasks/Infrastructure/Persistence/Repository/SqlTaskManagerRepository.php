@@ -3,20 +3,13 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Repository;
 
-use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\Tasks\Domain\Collection\TaskCollection;
-use App\Tasks\Domain\Collection\TaskLinkCollection;
-use App\Tasks\Domain\DTO\TaskDTO;
-use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Entity\TaskManager;
-use App\Tasks\Domain\Factory\TaskFactory;
-use App\Tasks\Domain\Factory\TaskManagerFactory;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskLink;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
@@ -29,8 +22,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly TaskManagerFactory $taskManagerFactory,
-        private readonly TaskFactory $taskFactory,
+        private readonly TaskManagerDbRetriever $dbRetriever,
     ) {
     }
 
@@ -41,17 +33,13 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
      */
     public function findByProjectId(ProjectId $id): ?TaskManager
     {
-        $rawManager = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
             ->from('task_managers')
             ->where('project_id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawManager === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return $this->find($rawManager);
+        return $this->dbRetriever->retrieveOne($builder);
     }
 
     /**
@@ -61,18 +49,14 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
      */
     public function findByTaskId(TaskId $id): ?TaskManager
     {
-        $rawManager = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('tm.*')
             ->from('task_managers', 'tm')
             ->leftJoin('tm', 'tasks', 't', 't.task_manager_id = tm.id')
             ->where('t.id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawManager === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return $this->find($rawManager);
+        return $this->dbRetriever->retrieveOne($builder);
     }
 
     /**
@@ -125,6 +109,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     'start_date' => '?',
                     'finish_date' => '?',
                     'owner_id' => '?',
+                    'owner_email' => '?',
                     'status' => '?',
                 ])
                 ->setParameters([
@@ -135,7 +120,8 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->description->value,
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
-                    $item->getOwnerId()->value,
+                    $item->getOwner()->userId->value,
+                    $item->getOwner()->userEmail->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus())
                 ])
                 ->executeStatement();
@@ -151,6 +137,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                 ->set('start_date', '?')
                 ->set('finish_date', '?')
                 ->set('owner_id', '?')
+                ->set('owner_email', '?')
                 ->set('status', '?')
                 ->where('id = ?')
                 ->setParameters([
@@ -160,7 +147,8 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->description->value,
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
-                    $item->getOwnerId()->value,
+                    $item->getOwner()->userId->value,
+                    $item->getOwner()->userEmail->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getId()->value,
                 ])
@@ -233,52 +221,6 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                 ])
                 ->executeStatement();
         }
-    }
-
-    /**
-     * @param array $rawManager
-     * @return TaskManager|null
-     * @throws Exception
-     */
-    private function find(array $rawManager): ?TaskManager
-    {
-        $rawParticipants = $this->queryBuilder()
-            ->select('user_id')
-            ->from('task_manager_participants')
-            ->where('task_manager_id = ?')
-            ->setParameters([$rawManager['id']])
-            ->fetchFirstColumn();
-        $rawManager['participant_ids'] = new UserIdCollection(
-            array_map(fn(string $id) => new UserId($id), $rawParticipants)
-        );
-
-        $rawTasks = $this->queryBuilder()
-            ->select('*')
-            ->from('tasks')
-            ->where('task_manager_id = ?')
-            ->setParameters([$rawManager['id']])
-            ->fetchAllAssociative();
-        $rawManager['tasks'] = new TaskCollection(
-            array_map(function (array $item) {
-                $rawLinks = $this->queryBuilder()
-                    ->select('*')
-                    ->from('task_links')
-                    ->where('from_task_id = ?')
-                    ->setParameters([$item['id']])
-                    ->fetchAllAssociative();
-
-                $item['links'] = new TaskLinkCollection(
-                    array_map(function (array $rawLink) {
-                        return new TaskLink(
-                            new TaskId($rawLink['to_task_id'])
-                        );
-                    }, $rawLinks)
-                );
-                return $this->taskFactory->create(TaskDTO::create($item));
-            }, $rawTasks)
-        );
-
-        return $this->taskManagerFactory->create(TaskManagerDTO::create($rawManager));
     }
 
     /**
