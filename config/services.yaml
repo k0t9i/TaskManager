@@ -36,6 +36,13 @@ services:
 
     Symfony\Component\PasswordHasher\PasswordHasherInterface: '@Symfony\Component\PasswordHasher\Hasher\Pbkdf2PasswordHasher'
 
+    App\Shared\Infrastructure\Bus\SqlLogEventBusWrapper:
+        arguments:
+            $realBus: '@App\Shared\Infrastructure\Bus\InMemoryEventBus'
+
+    App\Shared\Domain\Bus\Event\EventBusInterface: '@App\Shared\Infrastructure\Bus\SqlLogEventBusWrapper'
+
+
     App\Shared\Infrastructure\Security\LexikJwtAuthenticatorService:
         arguments:
             $path: '^/api/(?!.*(security)).*$'
