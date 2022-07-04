@@ -9,7 +9,7 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Factory\ProjectFactory;
 use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 
 final class ProjectTaskCreator
 {

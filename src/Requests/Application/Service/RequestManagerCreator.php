@@ -8,7 +8,7 @@ use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestManagerFactory;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 
 final class RequestManagerCreator
 {

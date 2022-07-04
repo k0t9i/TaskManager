@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure;
+namespace App\Shared\Infrastructure\Service;
 
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 use Ramsey\Uuid\Uuid;
 
 class RamseyUuid4Generator implements UuidGeneratorInterface

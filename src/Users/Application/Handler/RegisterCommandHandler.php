@@ -6,7 +6,7 @@ namespace App\Users\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\PasswordHasherInterface;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Users\Application\Command\RegisterCommand;
 use App\Users\Domain\Entity\User;

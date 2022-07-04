@@ -13,7 +13,7 @@ use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectId;
 

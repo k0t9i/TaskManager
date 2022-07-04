@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Service;
 
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\TaskManager;

@@ -5,7 +5,7 @@ namespace App\Shared\Infrastructure\Repository;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Repository\EventRepositoryInterface;
-use App\Shared\Domain\UuidGeneratorInterface;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 
