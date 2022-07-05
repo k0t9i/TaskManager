@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Handler;
 
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
-use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Tasks\Application\Query\GetAllProjectTasksQuery;
 use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
@@ -17,13 +17,14 @@ use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 final class GetAllProjectTasksQueryHandler implements QueryHandlerInterface
 {
     public function __construct(
-        private readonly TaskManagerRepositoryInterface $managerRepository
+        private readonly TaskManagerRepositoryInterface $managerRepository,
+        private readonly AuthenticatorServiceInterface $authenticatorService,
     ) {
     }
 
     /**
      * @param GetAllOwnProjectsQuery $query
-     * @return GetAllOwnProjectsQueryResponse
+     * @return GetAllProjectTasksQueryResponse
      */
     public function __invoke(GetAllProjectTasksQuery $query): QueryResponseInterface
     {
@@ -33,7 +34,8 @@ final class GetAllProjectTasksQueryHandler implements QueryHandlerInterface
         }
 
         $result = [];
-        foreach ($manager->getTasks() as $task) {
+        $userId = $this->authenticatorService->getAuthUser()->getId();
+        foreach ($manager->getTasksForProjectUser($userId) as $task) {
             $result[] = TaskResponse::createFromEntity($task);
         }
         return new GetAllProjectTasksQueryResponse(...$result);

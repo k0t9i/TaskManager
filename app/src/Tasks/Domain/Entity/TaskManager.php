@@ -219,6 +219,14 @@ final class TaskManager extends AggregateRoot
         return $this->tasks;
     }
 
+    public function getTasksForProjectUser(UserId $userId): TaskCollection
+    {
+        if (!$this->isOwner($userId) && !$this->isParticipant($userId)) {
+            throw new TaskUserNotExistException($userId->value);
+        }
+        return $this->tasks;
+    }
+
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
