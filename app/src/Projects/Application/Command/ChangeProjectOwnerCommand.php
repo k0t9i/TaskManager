@@ -9,8 +9,7 @@ final class ChangeProjectOwnerCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $ownerId,
-        public readonly string $ownerEmail
+        public readonly string $ownerId
     ) {
     }
 }

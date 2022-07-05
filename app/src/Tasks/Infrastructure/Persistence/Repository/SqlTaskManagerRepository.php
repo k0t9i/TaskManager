@@ -109,7 +109,6 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     'start_date' => '?',
                     'finish_date' => '?',
                     'owner_id' => '?',
-                    'owner_email' => '?',
                     'status' => '?',
                 ])
                 ->setParameters([
@@ -120,8 +119,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->description->value,
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
-                    $item->getOwner()->userId->value,
-                    $item->getOwner()->userEmail->value,
+                    $item->getOwnerId()->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus())
                 ])
                 ->executeStatement();
@@ -137,7 +135,6 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                 ->set('start_date', '?')
                 ->set('finish_date', '?')
                 ->set('owner_id', '?')
-                ->set('owner_email', '?')
                 ->set('status', '?')
                 ->where('id = ?')
                 ->setParameters([
@@ -147,8 +144,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->description->value,
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
-                    $item->getOwner()->userId->value,
-                    $item->getOwner()->userEmail->value,
+                    $item->getOwnerId()->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getId()->value,
                 ])

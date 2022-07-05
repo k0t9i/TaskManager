@@ -66,8 +66,7 @@ final class TaskManagerTaskDateChanger
             $task->getInformation()->description->value,
             $startDate,
             $finishDate,
-            $task->getOwner()->userId->value,
-            $task->getOwner()->userEmail->value,
+            $task->getOwnerId()->value,
             TaskStatusFactory::scalarFromObject($task->getStatus()),
             $task->getLinks()
         );

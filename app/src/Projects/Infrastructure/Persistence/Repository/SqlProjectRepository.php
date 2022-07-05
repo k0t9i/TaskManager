@@ -153,7 +153,6 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     'finish_date' => '?',
                     'status' => '?',
                     'owner_id' => '?',
-                    'owner_email' => '?',
                 ])
                 ->setParameters([
                     $project->getId()->value,
@@ -162,7 +161,6 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     $project->getInformation()->finishDate->getValue(),
                     ProjectStatusFactory::scalarFromObject($project->getStatus()),
                     $project->getOwner()->userId->value,
-                    $project->getOwner()->userEmail->value,
                 ])
                 ->executeStatement();
         } else {
@@ -173,7 +171,6 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ->set('finish_date', '?')
                 ->set('status', '?')
                 ->set('owner_id', '?')
-                ->set('owner_email', '?')
                 ->where('id = ?')
                 ->setParameters([
                     $project->getInformation()->name->value,
@@ -181,7 +178,6 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     $project->getInformation()->finishDate->getValue(),
                     ProjectStatusFactory::scalarFromObject($project->getStatus()),
                     $project->getOwner()->userId->value,
-                    $project->getOwner()->userEmail->value,
                     $project->getId()->value,
                 ])
                 ->executeStatement();

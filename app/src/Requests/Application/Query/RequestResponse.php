@@ -11,7 +11,6 @@ final class RequestResponse
         public readonly string $id,
         public readonly string $changeDate,
         public readonly string $userId,
-        public readonly string $userEmail,
         public readonly int $status
     ) {
     }
@@ -21,8 +20,7 @@ final class RequestResponse
         return new self(
             $request->getId()->value,
             $request->getChangeDate()->getValue(),
-            $request->getUser()->userId->value,
-            $request->getUser()->userEmail->value,
+            $request->getUserId()->value,
             $request->getStatus()->getScalar()
         );
     }

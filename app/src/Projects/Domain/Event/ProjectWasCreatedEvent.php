@@ -14,7 +14,6 @@ final class ProjectWasCreatedEvent extends DomainEvent
         public readonly string $finishDate,
         public readonly string $status,
         public readonly string $ownerId,
-        public readonly string $ownerEmail,
         string $occurredOn = null
     ) {
         parent::__construct($id, $occurredOn);
@@ -34,7 +33,6 @@ final class ProjectWasCreatedEvent extends DomainEvent
             $body['finishDate'],
             $body['status'],
             $body['ownerId'],
-            $body['ownerEmail'],
             $occurredOn
         );
     }
@@ -47,7 +45,6 @@ final class ProjectWasCreatedEvent extends DomainEvent
             'finishDate' => $this->finishDate,
             'status' => $this->status,
             'ownerId' => $this->ownerId,
-            'ownerEmail' => $this->ownerEmail,
         ];
     }
 }

@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Projects\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\ValueObject\UserId;
 
-final class Owner implements Hashable
+final class ProjectOwner implements Hashable
 {
     public function __construct(
-        public readonly UserId $userId,
-        public readonly Email $userEmail,
+        public readonly UserId $userId
     ) {
     }
 
@@ -36,7 +36,7 @@ final class Owner implements Hashable
 
     public function getHash(): string
     {
-        return $this->userId->getHash() . $this->userEmail->getHash();
+        return $this->userId->getHash();
     }
 
     /**
@@ -49,7 +49,6 @@ final class Owner implements Hashable
             return false;
         }
 
-        return $this->userId->isEqual($other->userId) &&
-            $this->userEmail->isEqual($other->userEmail);
+        return $this->userId->isEqual($other->userId);
     }
 }

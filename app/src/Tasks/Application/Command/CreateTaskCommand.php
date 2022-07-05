@@ -14,12 +14,11 @@ class CreateTaskCommand implements CommandInterface
         public readonly string $startDate,
         public readonly string $finishDate,
         public readonly string $projectId,
-        public readonly string $ownerId,
-        public readonly string $ownerEmail,
+        public readonly ?string $ownerId = null,
     ) {
     }
 
-    public static function createFromRequest(string $projectId, string $ownerId, string $ownerEmail ,array $item): self
+    public static function createFromRequest(array $item, string $projectId, ?string $ownerId = null): self
     {
         return new self(
             $item['name'] ?? '',
@@ -29,7 +28,6 @@ class CreateTaskCommand implements CommandInterface
             $item['finish_date'] ?? '',
             $projectId,
             $ownerId,
-            $ownerEmail,
         );
     }
 }

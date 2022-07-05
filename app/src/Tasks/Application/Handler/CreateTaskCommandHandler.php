@@ -5,11 +5,10 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\Email;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -20,11 +19,13 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
+use App\Users\Domain\Repository\UserRepositoryInterface;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
+        private readonly UserRepositoryInterface $userRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticator
@@ -37,6 +38,13 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         if ($manager === null) {
             throw new TaskManagerNotExistException();
         }
+        $userId = $command->ownerId !== null
+            ? new UserId($command->ownerId)
+            : $this->authenticator->getAuthUser()->getId();
+        $user = $this->userRepository->findById($userId);
+        if ($user === null) {
+            throw new UserNotExistException($userId->value);
+        }
 
         $manager->createTask(
             new TaskId($this->uuidGenerator->generate()),
@@ -47,10 +55,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            new Owner(
-                new UserId($command->ownerId),
-                new Email($command->ownerEmail)
-            ),
+            $userId,
             $this->authenticator->getAuthUser()->getId()
         );
 

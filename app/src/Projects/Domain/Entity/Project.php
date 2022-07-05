@@ -10,12 +10,12 @@ use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectInformation;
+use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipants;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
@@ -23,12 +23,11 @@ use Exception;
 
 final class Project extends AggregateRoot
 {
-    //TODO on user change email
     public function __construct(
         private ProjectId $id,
         private ProjectInformation $information,
         private ProjectStatus $status,
-        private Owner $owner,
+        private ProjectOwner $owner,
         private ProjectParticipants $participants,
         private ProjectTasks $tasks
     ) {
@@ -37,7 +36,7 @@ final class Project extends AggregateRoot
     public static function create(
         ProjectId $id,
         ProjectInformation $information,
-        Owner $owner
+        ProjectOwner $owner
     ): self {
         $status = new ActiveProjectStatus();
         $project = new self(
@@ -55,8 +54,7 @@ final class Project extends AggregateRoot
             $information->description->value,
             $information->finishDate->getValue(),
             (string) $status->getScalar(),
-            $owner->userId->value,
-            $owner->userEmail->value,
+            $owner->userId->value
         ));
 
         return $project;
@@ -126,11 +124,11 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @param Owner $owner
+     * @param ProjectOwner $owner
      * @param UserId $currentUserId
      * @throws Exception
      */
-    public function changeOwner(Owner $owner, UserId $currentUserId): void
+    public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
         $this->owner->ensureIsOwner($currentUserId);
@@ -143,8 +141,7 @@ final class Project extends AggregateRoot
 
         $this->registerEvent(new ProjectOwnerWasChangedEvent(
             $this->id->value,
-            $this->owner->userId->value,
-            $this->owner->userEmail->value,
+            $this->owner->userId->value
         ));
     }
 
@@ -163,7 +160,7 @@ final class Project extends AggregateRoot
         return $this->status;
     }
 
-    public function getOwner(): Owner
+    public function getOwner(): ProjectOwner
     {
         return $this->owner;
     }

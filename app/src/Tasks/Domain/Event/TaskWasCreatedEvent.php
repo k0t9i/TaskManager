@@ -17,7 +17,6 @@ final class TaskWasCreatedEvent extends DomainEvent
         public readonly string $startDate,
         public readonly string $finishDate,
         public readonly string $ownerId,
-        public readonly string $ownerEmail,
         public readonly string $status,
         string $occurredOn = null
     ) {
@@ -41,7 +40,6 @@ final class TaskWasCreatedEvent extends DomainEvent
             $body['startDate'],
             $body['finishDate'],
             $body['ownerId'],
-            $body['ownerEmail'],
             $body['status'],
             $occurredOn
         );
@@ -58,7 +56,6 @@ final class TaskWasCreatedEvent extends DomainEvent
             'startDate' => $this->startDate,
             'finishDate' => $this->finishDate,
             'ownerId' => $this->ownerId,
-            'ownerEmail' => $this->ownerEmail,
             'status' => $this->status,
         ];
     }

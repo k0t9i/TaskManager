@@ -15,7 +15,6 @@ final class ProjectDTO
         public readonly string $finishDate,
         public readonly int $status,
         public readonly string $ownerId,
-        public readonly string $ownerEmail,
         public readonly UserIdCollection $participantIds,
         public readonly ProjectTaskCollection $tasks
     ) {
@@ -30,7 +29,6 @@ final class ProjectDTO
             $item['finish_date'],
             $item['status'],
             $item['owner_id'],
-            $item['owner_email'],
             $item['participant_ids'],
             $item['tasks']
         );

@@ -27,7 +27,6 @@ final class ProjectParticipantAdder
             $project->getInformation()->finishDate->getValue(),
             ProjectStatusFactory::scalarFromObject($project->getStatus()),
             $project->getOwner()->userId->value,
-            $project->getOwner()->userEmail->value,
             $participants->getInnerItems(),
             $project->getTasks()->getInnerItems()
         );

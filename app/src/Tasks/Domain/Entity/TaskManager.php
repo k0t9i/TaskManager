@@ -7,7 +7,6 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\TaskId;
@@ -30,7 +29,6 @@ use App\Tasks\Domain\ValueObject\TaskManagerId;
 
 final class TaskManager extends AggregateRoot
 {
-    //TODO on user change email
     public function __construct(
         private TaskManagerId    $id,
         private ProjectId        $projectId,
@@ -43,25 +41,25 @@ final class TaskManager extends AggregateRoot
     }
 
     public function createTask(
-        TaskId $id,
+        TaskId          $id,
         TaskInformation $information,
-        Owner $owner,
-        UserId $currentUserId
+        UserId          $ownerId,
+        UserId          $currentUserId
     ): Task {
         $status = new ActiveTaskStatus();
         $task = new Task(
             $id,
             $information,
-            $owner,
+            $ownerId,
             $status,
             new TaskLinkCollection()
         );
 
-        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
+        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
-        if (!$this->isOwner($owner->userId) && !$this->isParticipant($owner->userId)) {
-            throw new TaskUserNotExistException($owner->userId->value);
+        if (!$this->isOwner($ownerId) && !$this->isParticipant($ownerId)) {
+            throw new TaskUserNotExistException($ownerId->value);
         }
 
         $this->tasks = $this->tasks->add($task);
@@ -75,8 +73,7 @@ final class TaskManager extends AggregateRoot
             $information->description->value,
             $information->startDate->getValue(),
             $information->finishDate->getValue(),
-            $owner->userId->value,
-            $owner->userEmail->value,
+            $ownerId->value,
             (string)$status->getScalar()
         ));
 
@@ -92,7 +89,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($taskId->getHash());
-        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
+        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
         $task->changeInformation($information);
@@ -115,7 +112,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($taskId->getHash());
-        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
+        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->changeStatus($status);
 
         $this->registerEvent(new TaskStatusWasChangedEvent(
@@ -136,7 +133,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($fromTaskId->getHash());
-        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
+        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->addLink($toTaskId);
 
         /** @var Task $task */
@@ -165,7 +162,7 @@ final class TaskManager extends AggregateRoot
 
         /** @var Task $task */
         $task = $this->tasks->get($fromTaskId->getHash());
-        $this->ensureCanChangeTask($task->getOwner()->userId, $currentUserId);
+        $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->deleteLink($toTaskId);
 
         /** @var Task $task */

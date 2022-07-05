@@ -7,8 +7,6 @@ use App\Requests\Domain\DTO\RequestDTO;
 use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\Email;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestFactory
@@ -17,10 +15,7 @@ final class RequestFactory
     {
         return new Request(
             new RequestId($dto->id),
-            new Owner(
-                new UserId($dto->userId),
-                new Email($dto->userEmail),
-            ),
+            new UserId($dto->userId),
             RequestStatusFactory::objectFromScalar($dto->status),
             new DateTime($dto->changeDate),
         );

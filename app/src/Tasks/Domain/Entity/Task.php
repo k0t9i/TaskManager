@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
 use App\Tasks\Domain\Exception\TaskLinkNotExistException;
@@ -20,7 +20,7 @@ final class Task implements Hashable
     public function __construct(
         private TaskId             $id,
         private TaskInformation    $information,
-        private Owner          $owner,
+        private UserId             $ownerId,
         private TaskStatus         $status,
         private TaskLinkCollection $links
     ) {
@@ -66,9 +66,9 @@ final class Task implements Hashable
         return $this->information;
     }
 
-    public function getOwner(): Owner
+    public function getOwnerId(): UserId
     {
-        return $this->owner;
+        return $this->ownerId;
     }
 
     public function getStatus(): TaskStatus
@@ -99,8 +99,7 @@ final class Task implements Hashable
         return $this->id->isEqual($other->id) &&
             $this->information->isEqual($other->information) &&
             $this->status->isEqual($other->status) &&
-            $this->owner->userId->isEqual($other->owner->userId) &&
-            $this->owner->userEmail->isEqual($other->owner->userEmail);
+            $this->ownerId->isEqual($other->ownerId);
     }
 
     private function ensureFinishDateGreaterThanStart()

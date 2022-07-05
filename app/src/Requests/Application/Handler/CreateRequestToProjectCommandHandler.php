@@ -9,18 +9,17 @@ use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
-use App\Shared\Domain\ValueObject\Email;
-use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
 
 final class CreateRequestToProjectCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly RequestManagerRepositoryInterface $managerRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
-        private readonly EventBusInterface $eventBus
+        private readonly EventBusInterface $eventBus,
+        private readonly AuthenticatorServiceInterface $authenticatorService,
     ) {
     }
 
@@ -33,10 +32,7 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
 
         $manager->createRequest(
             new RequestId($this->uuidGenerator->generate()),
-            new Owner(
-                new UserId($command->userId),
-                new Email($command->userEmail)
-            )
+            $this->authenticatorService->getAuthUser()->getId()
         );
 
         $this->managerRepository->save($manager);

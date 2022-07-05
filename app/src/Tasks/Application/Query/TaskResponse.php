@@ -13,7 +13,6 @@ final class TaskResponse
         public readonly string $startDate,
         public readonly string $finishDate,
         public readonly string $ownerId,
-        public readonly string $ownerEmail,
         public readonly int $status
     ) {
     }
@@ -25,8 +24,7 @@ final class TaskResponse
             $task->getInformation()->name->value,
             $task->getInformation()->startDate->getValue(),
             $task->getInformation()->finishDate->getValue(),
-            $task->getOwner()->userId->value,
-            $task->getOwner()->userEmail->value,
+            $task->getOwnerId()->value,
             $task->getStatus()->getScalar()
         );
     }
