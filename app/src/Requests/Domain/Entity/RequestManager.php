@@ -19,12 +19,14 @@ use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManager extends AggregateRoot
 {
+    //TODO on user change email
     public function __construct(
         private RequestManagerId  $id,
         private ProjectId         $projectId,
@@ -37,20 +39,21 @@ final class RequestManager extends AggregateRoot
 
     public function createRequest(
         RequestId $id,
-        UserId $requestUserId,
+        Owner $user,
     ): Request {
         $status = new PendingRequestStatus();
         $changeDate = new DateTime();
-        $request = new Request($id, $requestUserId, $status, $changeDate);
+        $request = new Request($id, $user, $status, $changeDate);
 
-        $this->ensureCanAddRequest($request->getUserId());
+        $this->ensureCanAddRequest($request->getUser()->userId);
 
         $this->requests = $this->requests->add($request);
 
         $this->registerEvent(new RequestWasCreatedEvent(
             $this->id->value,
             $request->getId()->value,
-            $requestUserId->value,
+            $user->userId->value,
+            $user->userEmail->value,
         ));
 
         return $request;
@@ -70,11 +73,11 @@ final class RequestManager extends AggregateRoot
         $request->changeStatus($status);
 
         if ($request->isConfirmed()) {
-            $this->addParticipantFromRequest($request->getUserId());
+            $this->addParticipantFromRequest($request->getUser()->userId);
             $this->registerEvent(new ProjectParticipantWasAddedEvent(
                 $this->id->value,
                 $this->projectId->value,
-                $request->getUserId()->value
+                $request->getUser()->userId->value
             ));
         }
 
@@ -140,7 +143,7 @@ final class RequestManager extends AggregateRoot
     {
         /** @var Request $request */
         foreach ($this->requests as $request) {
-            if ($request->isPending() && $request->getUserId()->isEqual($userId)) {
+            if ($request->isPending() && $request->getUser()->isEqual($userId)) {
                 throw new UserAlreadyHasPendingRequestException($userId->value, $this->projectId->value);
             }
         }

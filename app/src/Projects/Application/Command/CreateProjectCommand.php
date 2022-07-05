@@ -16,14 +16,14 @@ final class CreateProjectCommand implements CommandInterface
     ) {
     }
 
-    public static function createFromRequest(array $item): self
+    public static function createFromRequest(string $ownerId, string $ownerEmail ,array $item): self
     {
         return new self(
             $item['name'] ?? '',
             $item['description'] ?? '',
             $item['finish_date'] ?? '',
-            $item['owner_id'],
-            $item['owner_email'],
+            $ownerId,
+            $ownerEmail
         );
     }
 }

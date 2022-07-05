@@ -118,13 +118,15 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
                     'id' => '?',
                     'request_manager_id' => '?',
                     'user_id' => '?',
+                    'user_email' => '?',
                     'status' => '?',
                     'change_date' => '?'
                 ])
                 ->setParameters([
                     $item->getId()->value,
                     $manager->getId()->value,
-                    $item->getUserId()->value,
+                    $item->getUser()->userId->value,
+                    $item->getUser()->userEmail->value,
                     RequestStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getChangeDate()->getValue()
                 ])
@@ -136,12 +138,14 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
                 ->update('requests')
                 ->set('request_manager_id', '?')
                 ->set('user_id', '?')
+                ->set('user_email', '?')
                 ->set('status', '?')
                 ->set('change_date', '?')
                 ->where('id = ?')
                 ->setParameters([
                     $manager->getId()->value,
-                    $item->getUserId()->value,
+                    $item->getUser()->userId->value,
+                    $item->getUser()->userEmail->value,
                     RequestStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getChangeDate()->getValue(),
                     $item->getId()->value,

@@ -9,13 +9,13 @@ use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Owner;
 
 final class Request implements Hashable
 {
     public function __construct(
         private RequestId $id,
-        private UserId $userId,
+        private Owner $user,
         private RequestStatus $status,
         private DateTime $changeDate
     ) {
@@ -32,9 +32,9 @@ final class Request implements Hashable
         return $this->id;
     }
 
-    public function getUserId(): UserId
+    public function getUser(): Owner
     {
-        return $this->userId;
+        return $this->user;
     }
 
     public function getStatus(): RequestStatus
@@ -62,7 +62,7 @@ final class Request implements Hashable
             return false;
         }
         return $this->id->isEqual($other->id) &&
-            $this->userId->isEqual($other->userId) &&
+            $this->user->isEqual($other->user) &&
             $this->status->isEqual($other->status) &&
             $this->changeDate->isEqual($other->changeDate);
     }

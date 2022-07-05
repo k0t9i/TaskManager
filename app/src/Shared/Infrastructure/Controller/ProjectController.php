@@ -44,10 +44,12 @@ final class ProjectController
         $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
 
         $parameters = json_decode($request->getContent(), true);
-        $parameters['owner_id'] = $owner->id;
-        $parameters['owner_email'] = $owner->email;
 
-        $this->commandBus->dispatch(CreateProjectCommand::createFromRequest($parameters));
+        $this->commandBus->dispatch(CreateProjectCommand::createFromRequest(
+            $owner->id,
+            $owner->email,
+            $parameters
+        ));
 
         return new JsonResponse(status: Response::HTTP_CREATED);
     }
@@ -93,7 +95,11 @@ final class ProjectController
     #[Route('/{id}/create-request/', name: 'createRequest', methods: ['POST'])]
     public function createRequest(string $id): JsonResponse
     {
-        $this->commandBus->dispatch(new CreateRequestToProjectCommand($id));
+        $ownerId = $this->authenticatorService->getAuthUser()->getId()->value;
+        /** @var GetUserQueryResponse $owner */
+        $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
+
+        $this->commandBus->dispatch(new CreateRequestToProjectCommand($id, $owner->id, $owner->email));
 
         return new JsonResponse();
     }
@@ -122,11 +128,13 @@ final class ProjectController
         $owner = $this->queryBus->dispatch(new GetUserQuery($ownerId));
 
         $parameters = json_decode($request->getContent(), true);
-        $parameters['project_id'] = $id;
-        $parameters['owner_id'] = $owner->id;
-        $parameters['owner_email'] = $owner->email;
 
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
+        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+            $id,
+            $owner->id,
+            $owner->email,
+            $parameters
+        ));
 
         return new JsonResponse(status: Response::HTTP_CREATED);
     }
@@ -138,11 +146,13 @@ final class ProjectController
         $owner = $this->queryBus->dispatch(new GetUserQuery($participantId));
 
         $parameters = json_decode($request->getContent(), true);
-        $parameters['project_id'] = $id;
-        $parameters['owner_id'] = $owner->id;
-        $parameters['owner_email'] = $owner->email;
 
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest($parameters));
+        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+            $id,
+            $owner->id,
+            $owner->email,
+            $parameters
+        ));
 
         return new JsonResponse(status: Response::HTTP_CREATED);
     }

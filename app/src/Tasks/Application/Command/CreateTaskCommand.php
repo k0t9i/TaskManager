@@ -19,7 +19,7 @@ class CreateTaskCommand implements CommandInterface
     ) {
     }
 
-    public static function createFromRequest(array $item): self
+    public static function createFromRequest(string $projectId, string $ownerId, string $ownerEmail ,array $item): self
     {
         return new self(
             $item['name'] ?? '',
@@ -27,9 +27,9 @@ class CreateTaskCommand implements CommandInterface
             $item['description'] ?? '',
             $item['start_date'] ?? '',
             $item['finish_date'] ?? '',
-            $item['project_id'],
-            $item['owner_id'],
-            $item['owner_email'],
+            $projectId,
+            $ownerId,
+            $ownerEmail,
         );
     }
 }

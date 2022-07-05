@@ -8,7 +8,9 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 final class CreateRequestToProjectCommand implements CommandInterface
 {
     public function __construct(
-        public readonly string $projectId
+        public readonly string $projectId,
+        public readonly string $userId,
+        public readonly string $userEmail
     ) {
     }
 }

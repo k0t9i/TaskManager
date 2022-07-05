@@ -8,6 +8,7 @@ final class RequestDTO
     public function __construct(
         public readonly string $id,
         public readonly string $userId,
+        public readonly string $userEmail,
         public readonly int $status,
         public readonly string $changeDate
     ) {
@@ -18,6 +19,7 @@ final class RequestDTO
         return new self(
             $item['id'],
             $item['user_id'],
+            $item['user_email'],
             $item['status'],
             $item['change_date']
         );
