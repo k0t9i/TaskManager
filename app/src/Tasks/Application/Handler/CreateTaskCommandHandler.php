@@ -9,6 +9,7 @@ use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -19,7 +20,6 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
-use App\Tasks\Domain\ValueObject\TaskOwner;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {
@@ -47,7 +47,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
                 new DateTime($command->startDate),
                 new DateTime($command->finishDate)
             ),
-            new TaskOwner(
+            new Owner(
                 new UserId($command->ownerId),
                 new Email($command->ownerEmail)
             ),

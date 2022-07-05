@@ -10,12 +10,12 @@ use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectInformation;
-use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipants;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
@@ -28,7 +28,7 @@ final class Project extends AggregateRoot
         private ProjectId $id,
         private ProjectInformation $information,
         private ProjectStatus $status,
-        private ProjectOwner $owner,
+        private Owner $owner,
         private ProjectParticipants $participants,
         private ProjectTasks $tasks
     ) {
@@ -37,7 +37,7 @@ final class Project extends AggregateRoot
     public static function create(
         ProjectId $id,
         ProjectInformation $information,
-        ProjectOwner $owner
+        Owner $owner
     ): self {
         $status = new ActiveProjectStatus();
         $project = new self(
@@ -126,11 +126,11 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @param ProjectOwner $owner
+     * @param Owner $owner
      * @param UserId $currentUserId
      * @throws Exception
      */
-    public function changeOwner(ProjectOwner $owner, UserId $currentUserId): void
+    public function changeOwner(Owner $owner, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
         $this->owner->ensureIsOwner($currentUserId);
@@ -163,7 +163,7 @@ final class Project extends AggregateRoot
         return $this->status;
     }
 
-    public function getOwner(): ProjectOwner
+    public function getOwner(): Owner
     {
         return $this->owner;
     }

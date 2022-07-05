@@ -7,6 +7,7 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\TaskId;
@@ -26,7 +27,6 @@ use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateExceptio
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
-use App\Tasks\Domain\ValueObject\TaskOwner;
 
 final class TaskManager extends AggregateRoot
 {
@@ -45,7 +45,7 @@ final class TaskManager extends AggregateRoot
     public function createTask(
         TaskId $id,
         TaskInformation $information,
-        TaskOwner $owner,
+        Owner $owner,
         UserId $currentUserId
     ): Task {
         $status = new ActiveTaskStatus();

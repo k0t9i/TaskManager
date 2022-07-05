@@ -6,6 +6,7 @@ namespace App\Tasks\Domain\Factory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Email;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\DTO\TaskDTO;
@@ -14,7 +15,6 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
-use App\Tasks\Domain\ValueObject\TaskOwner;
 
 final class TaskFactory
 {
@@ -29,7 +29,7 @@ final class TaskFactory
                 new DateTime($dto->startDate),
                 new DateTime($dto->finishDate),
             ),
-            new TaskOwner(
+            new Owner(
                 new UserId($dto->ownerId),
                 new Email($dto->ownerEmail)
             ),
