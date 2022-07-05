@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Infrastructure\Persistence\Repository;
+namespace App\Tasks\Infrastructure\Repository;
 
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;

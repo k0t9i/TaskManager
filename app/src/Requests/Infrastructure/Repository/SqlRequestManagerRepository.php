@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Infrastructure\Persistence\Repository;
+namespace App\Requests\Infrastructure\Repository;
 
 use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\DTO\RequestDTO;

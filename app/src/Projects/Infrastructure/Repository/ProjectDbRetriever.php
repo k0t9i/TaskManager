@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Infrastructure\Persistence\Repository;
+namespace App\Projects\Infrastructure\Repository;
 
 use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\DTO\ProjectDTO;
