@@ -13,6 +13,8 @@ use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
+use App\Requests\Application\Query\GetAllProjectRequestsQuery;
+use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
@@ -175,5 +177,15 @@ final class ProjectController
         $envelope = $this->queryBus->dispatch(new GetAllProjectTasksQuery($id));
 
         return new JsonResponse($envelope->getTasks());
+    }
+
+    #[Route('/{id}/requests/', name: 'getAllRequests', methods: ['GET'])]
+    public function getAllRequests(string $id): JsonResponse
+    {
+        //TODO add paginator and ordering
+        /** @var GetAllProjectRequestsQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetAllProjectRequestsQuery($id));
+
+        return new JsonResponse($envelope->getRequests());
     }
 }

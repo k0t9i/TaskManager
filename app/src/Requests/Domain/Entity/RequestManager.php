@@ -118,6 +118,14 @@ final class RequestManager extends AggregateRoot
         return $this->requests;
     }
 
+    public function getRequestsForOwner(UserId $userId): RequestCollection
+    {
+        if (!$this->isOwner($userId)) {
+            throw new UserIsNotOwnerException($userId->value);
+        }
+        return $this->requests;
+    }
+
     private function addParticipantFromRequest(UserId $participantId): void
     {
         $this->ensureIsUserAlreadyInProject($participantId);
