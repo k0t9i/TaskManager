@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Users\Domain\ValueObject;
-
-use App\Shared\Domain\ValueObject\Email;
+namespace App\Shared\Domain\ValueObject;
 
 final class UserEmail extends Email
 {

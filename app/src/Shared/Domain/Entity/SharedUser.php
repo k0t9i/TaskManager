@@ -1,24 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Users\Domain\Entity;
+namespace App\Shared\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\Event\SharedUserWasCreatedEvent;
 use App\Shared\Domain\ValueObject\UserEmail;
 use App\Shared\Domain\ValueObject\UserFirstname;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Domain\ValueObject\UserLastname;
-use App\Users\Domain\Event\UserWasCreatedEvent;
-use App\Users\Domain\ValueObject\UserPassword;
 
-final class User extends AggregateRoot
+final class SharedUser extends AggregateRoot
 {
     public function __construct(
         private UserId $id,
         private UserEmail $email,
         private UserFirstname $firstname,
-        private UserLastname $lastname,
-        private UserPassword $password
+        private UserLastname $lastname
     ) {
     }
 
@@ -26,17 +24,15 @@ final class User extends AggregateRoot
         UserId $id,
         UserEmail $email,
         UserFirstname $firstname,
-        UserLastname $lastname,
-        UserPassword $password
+        UserLastname $lastname
     ): self {
-        $user = new self($id, $email, $firstname, $lastname, $password);
+        $user = new SharedUser($id, $email, $firstname, $lastname);
 
-        $user->registerEvent(new UserWasCreatedEvent(
+        $user->registerEvent(new SharedUserWasCreatedEvent(
             $user->id->value,
             $user->email->value,
             $user->firstname->value,
             $user->lastname->value,
-            $user->password->value,
         ));
 
         return $user;
@@ -60,10 +56,5 @@ final class User extends AggregateRoot
     public function getLastname(): UserLastname
     {
         return $this->lastname;
-    }
-
-    public function getPassword(): UserPassword
-    {
-        return $this->password;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
+use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
@@ -19,13 +20,12 @@ use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
-use App\Users\Domain\Repository\UserRepositoryInterface;
 
 class CreateTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
-        private readonly UserRepositoryInterface $userRepository,
+        private readonly SharedUserRepositoryInterface $userRepository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticator

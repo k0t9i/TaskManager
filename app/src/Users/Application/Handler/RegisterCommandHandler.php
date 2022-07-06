@@ -7,14 +7,14 @@ use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\PasswordHasherInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
+use App\Shared\Domain\ValueObject\UserEmail;
+use App\Shared\Domain\ValueObject\UserFirstname;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\UserLastname;
 use App\Users\Application\Command\RegisterCommand;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Exception\EmailAlreadyTakenException;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserEmail;
-use App\Users\Domain\ValueObject\UserFirstname;
-use App\Users\Domain\ValueObject\UserLastname;
 use App\Users\Domain\ValueObject\UserPassword;
 
 final class RegisterCommandHandler implements CommandHandlerInterface

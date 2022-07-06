@@ -6,8 +6,8 @@ namespace App\Users\Application\Service;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Security\PasswordHasherInterface;
+use App\Shared\Domain\ValueObject\UserEmail;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserEmail;
 
 final class LoginService
 {
