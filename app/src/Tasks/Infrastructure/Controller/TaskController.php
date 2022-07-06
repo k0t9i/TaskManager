@@ -1,23 +1,61 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Controller;
+namespace App\Tasks\Infrastructure\Controller;
 
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
+use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Tasks\Application\Command\ActivateTaskCommand;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Application\Command\CloseTaskCommand;
+use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Tasks\Application\Command\DeleteLinkCommand;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
+use App\Tasks\Application\Query\GetAllProjectTasksQuery;
+use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/tasks', name: 'task.')]
 final class TaskController
 {
-    public function __construct(private CommandBusInterface $commandBus)
+    public function __construct(
+        private CommandBusInterface $commandBus,
+        private readonly QueryBusInterface $queryBus
+    ) {
+    }
+
+    #[Route('/in-project/{projectId}/', name: 'createInProject', methods: ['POST'])]
+    public function createInProject(string $projectId, Request $request): JsonResponse
     {
+        $parameters = json_decode($request->getContent(), true);
+
+        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+            $parameters,
+            $projectId
+        ));
+
+        return new JsonResponse(status: Response::HTTP_CREATED);
+    }
+
+    #[Route(
+        '/in-project/{projectId}/create-for-participant/{participantId}/',
+        name: 'createForParticipant',
+        methods: ['POST']
+    )]
+    public function createTaskForParticipant(string $projectId, string $participantId, Request $request): JsonResponse
+    {
+        $parameters = json_decode($request->getContent(), true);
+
+        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+            $parameters,
+            $projectId,
+            $participantId
+        ));
+
+        return new JsonResponse(status: Response::HTTP_CREATED);
     }
 
     #[Route('/{id}/activate/', name: 'activate', methods: ['PATCH'])]
@@ -61,5 +99,15 @@ final class TaskController
         $this->commandBus->dispatch(new DeleteLinkCommand($id, $toTaskId));
 
         return new JsonResponse();
+    }
+
+    #[Route('/in-project/{projectId}/', name: 'getAllInProject', methods: ['GET'])]
+    public function getAllInProject(string $projectId): JsonResponse
+    {
+        //TODO add paginator and ordering
+        /** @var GetAllProjectTasksQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetAllProjectTasksQuery($projectId));
+
+        return new JsonResponse($envelope->getTasks());
     }
 }

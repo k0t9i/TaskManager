@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Controller;
+namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Users\Application\Command\RegisterCommand;

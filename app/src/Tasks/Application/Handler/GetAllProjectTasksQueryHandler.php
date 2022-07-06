@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
 
-use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
@@ -23,7 +22,7 @@ final class GetAllProjectTasksQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetAllOwnProjectsQuery $query
+     * @param GetAllProjectTasksQuery $query
      * @return GetAllProjectTasksQueryResponse
      */
     public function __invoke(GetAllProjectTasksQuery $query): QueryResponseInterface

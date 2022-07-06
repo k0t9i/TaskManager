@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Controller;
+namespace App\Projects\Infrastructure\Controller;
 
 use App\Projects\Application\Command\ActivateProjectCommand;
 use App\Projects\Application\Command\ChangeProjectOwnerCommand;
@@ -12,14 +12,8 @@ use App\Projects\Application\Command\RemoveProjectParticipantCommand;
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
-use App\Requests\Application\Command\CreateRequestToProjectCommand;
-use App\Requests\Application\Query\GetAllProjectRequestsQuery;
-use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
-use App\Tasks\Application\Command\CreateTaskCommand;
-use App\Tasks\Application\Query\GetAllProjectTasksQuery;
-use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,14 +73,6 @@ final class ProjectController
         return new JsonResponse();
     }
 
-    #[Route('/{id}/create-request/', name: 'createRequest', methods: ['POST'])]
-    public function createRequest(string $id): JsonResponse
-    {
-        $this->commandBus->dispatch(new CreateRequestToProjectCommand($id));
-
-        return new JsonResponse();
-    }
-
     #[Route('/{id}/leave/', name: 'leave', methods: ['PATCH'])]
     public function leave(string $id): JsonResponse
     {
@@ -103,33 +89,6 @@ final class ProjectController
         return new JsonResponse();
     }
 
-    #[Route('/{id}/create-task/', name: 'createTask', methods: ['POST'])]
-    public function createTask(string $id, Request $request): JsonResponse
-    {
-        $parameters = json_decode($request->getContent(), true);
-
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
-            $parameters,
-            $id
-        ));
-
-        return new JsonResponse(status: Response::HTTP_CREATED);
-    }
-
-    #[Route('/{id}/create-task-for-participant/{participantId}/', name: 'createTaskForParticipant', methods: ['POST'])]
-    public function createTaskForParticipant(string $id, string $participantId, Request $request): JsonResponse
-    {
-        $parameters = json_decode($request->getContent(), true);
-
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
-            $parameters,
-            $id,
-            $participantId
-        ));
-
-        return new JsonResponse(status: Response::HTTP_CREATED);
-    }
-
     #[Route('/', name: 'getAll', methods: ['GET'])]
     public function getAll(): JsonResponse
     {
@@ -138,25 +97,5 @@ final class ProjectController
         $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery());
 
         return new JsonResponse($envelope->getProjects());
-    }
-
-    #[Route('/{id}/tasks/', name: 'getAllTasks', methods: ['GET'])]
-    public function getAllTasks(string $id): JsonResponse
-    {
-        //TODO add paginator and ordering
-        /** @var GetAllProjectTasksQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetAllProjectTasksQuery($id));
-
-        return new JsonResponse($envelope->getTasks());
-    }
-
-    #[Route('/{id}/requests/', name: 'getAllRequests', methods: ['GET'])]
-    public function getAllRequests(string $id): JsonResponse
-    {
-        //TODO add paginator and ordering
-        /** @var GetAllProjectRequestsQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetAllProjectRequestsQuery($id));
-
-        return new JsonResponse($envelope->getRequests());
     }
 }

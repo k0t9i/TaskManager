@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Handler;
 
-use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Requests\Application\Query\GetAllProjectRequestsQuery;
 use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
 use App\Requests\Application\Query\RequestResponse;
@@ -23,7 +22,7 @@ final class GetAllProjectRequestsQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetAllOwnProjectsQuery $query
+     * @param GetAllProjectRequestsQuery $query
      * @return GetAllProjectRequestsQueryResponse
      */
     public function __invoke(GetAllProjectRequestsQuery $query): QueryResponseInterface
