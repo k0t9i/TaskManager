@@ -19,5 +19,3 @@ COPY ./docker/configs/php /usr/local/etc/php/conf.d
 RUN mkdir -p /opt/home
 RUN chmod 777 /opt/home
 ENV HOME /opt/home
-
-CMD ["php-fpm"]

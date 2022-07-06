@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Requests\Domain\Entity;
 
 use App\Requests\Domain\Collection\RequestCollection;
-use App\Requests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Requests\Domain\Event\RequestStatusWasChangedEvent;
 use App\Requests\Domain\Event\RequestWasCreatedEvent;
 use App\Requests\Domain\Exception\RequestNotExistsException;
@@ -15,6 +14,7 @@ use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;

@@ -5,9 +5,9 @@ namespace App\Projects\Application\Subscriber;
 
 use App\Projects\Application\Service\ProjectParticipantAdder;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Requests\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\ProjectId;
 

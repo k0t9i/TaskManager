@@ -8,9 +8,9 @@ use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Tasks\Domain\Event\TaskWasCreatedEvent;
 
 final class CreateTaskOnTaskCreatedSubscriber implements EventSubscriberInterface
 {

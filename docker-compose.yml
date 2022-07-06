@@ -1,31 +1,110 @@
 version: '3.8'
 
 services:
-    nginx:
-        container_name: task_manager-nginx
-        image: nginx:latest
-        ports:
-            - '9080:80'
-        volumes:
-            - ./docker/configs/nginx:/etc/nginx/conf.d
-            - ./app:/var/www
-            - ./logs/nginx:/var/log/nginx
-        working_dir: /var/www
-    php-fpm:
-        container_name: task_manager-php
+    php-fpm-projects:
+        container_name: task_manager-php-projects
         build:
             context: ./
             dockerfile: ./docker/images/php/Dockerfile
         restart: unless-stopped
         user: "${UID}:${GID}"
         ports:
-            - '9000:9000'
+            - '8080:8080'
         volumes:
-            - ./app:/var/www
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Projects:/var/www/src/Projects
+            - ./app/symfony:/var/www/symfony
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/project:/var/www/config/app
         working_dir: /var/www
         depends_on:
-            - nginx
             - db
+        command: symfony serve --dir=symfony/public --port=8080
+        environment:
+            - DATABASE_USER=symfony
+            - DATABASE_PASSWORD=symfony
+            - DATABASE_HOST=task_manager-db
+            - DATABASE_DB=projects
+            - APP_CACHE_DIR=projects
+            - APP_LOG_DIR=projects
+    php-fpm-users:
+        container_name: task_manager-php-users
+        build:
+            context: ./
+            dockerfile: ./docker/images/php/Dockerfile
+        restart: unless-stopped
+        user: "${UID}:${GID}"
+        ports:
+            - '8081:8081'
+        volumes:
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Users:/var/www/src/Users
+            - ./app/symfony:/var/www/symfony
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/user:/var/www/config/app
+        working_dir: /var/www
+        depends_on:
+            - db
+        command: symfony serve --dir=symfony/public --port=8081
+        environment:
+            - DATABASE_USER=symfony
+            - DATABASE_PASSWORD=symfony
+            - DATABASE_HOST=task_manager-db
+            - DATABASE_DB=users
+            - APP_CACHE_DIR=users
+            - APP_LOG_DIR=users
+    php-fpm-requests:
+        container_name: task_manager-php-requests
+        build:
+            context: ./
+            dockerfile: ./docker/images/php/Dockerfile
+        restart: unless-stopped
+        user: "${UID}:${GID}"
+        ports:
+            - '8082:8082'
+        volumes:
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Requests:/var/www/src/Requests
+            - ./app/symfony:/var/www/symfony
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/request:/var/www/config/app
+        working_dir: /var/www
+        depends_on:
+            - db
+        command: symfony serve --dir=symfony/public --port=8082
+        environment:
+            - DATABASE_USER=symfony
+            - DATABASE_PASSWORD=symfony
+            - DATABASE_HOST=task_manager-db
+            - DATABASE_DB=requests
+            - APP_CACHE_DIR=requests
+            - APP_LOG_DIR=requests
+    php-fpm-tasks:
+        container_name: task_manager-php-tasks
+        build:
+            context: ./
+            dockerfile: ./docker/images/php/Dockerfile
+        restart: unless-stopped
+        user: "${UID}:${GID}"
+        ports:
+            - '8083:8083'
+        volumes:
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Tasks:/var/www/src/Tasks
+            - ./app/symfony:/var/www/symfony
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/request:/var/www/config/app
+        working_dir: /var/www
+        depends_on:
+            - db
+        command: symfony serve --dir=symfony/public --port=8083
+        environment:
+            - DATABASE_USER=symfony
+            - DATABASE_PASSWORD=symfony
+            - DATABASE_HOST=task_manager-db
+            - DATABASE_DB=tasks
+            - APP_CACHE_DIR=tasks
+            - APP_LOG_DIR=tasks
     db:
         container_name: task_manager-db
         image: postgres:14.2-alpine3.15
@@ -43,4 +122,4 @@ services:
         image: adminer:latest
         restart: always
         ports:
-            - '8080:8080'
+            - '9080:9080'

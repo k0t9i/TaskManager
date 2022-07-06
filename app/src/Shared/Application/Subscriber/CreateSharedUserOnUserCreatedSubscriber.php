@@ -6,12 +6,12 @@ namespace App\Shared\Application\Subscriber;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Entity\SharedUser;
+use App\Shared\Domain\Event\UserWasCreatedEvent;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\UserEmail;
 use App\Shared\Domain\ValueObject\UserFirstname;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Domain\ValueObject\UserLastname;
-use App\Users\Domain\Event\UserWasCreatedEvent;
 
 final class CreateSharedUserOnUserCreatedSubscriber implements EventSubscriberInterface
 {

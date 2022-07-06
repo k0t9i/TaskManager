@@ -7,9 +7,9 @@ use App\Projects\Application\Service\ProjectTaskDatesChanger;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\TaskInformationWasChangedEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Tasks\Domain\Event\TaskInformationWasChangedEvent;
 
 final class ChangeTaskDatesOnTaskInformationChangedSubscriber implements EventSubscriberInterface
 {

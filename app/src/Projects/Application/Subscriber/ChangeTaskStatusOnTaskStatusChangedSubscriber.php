@@ -7,10 +7,10 @@ use App\Projects\Application\Service\ProjectTaskStatusChanger;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\TaskStatusWasChangedEvent;
+use App\Shared\Domain\Event\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\ProjectId;
-use App\Tasks\Domain\Event\TaskStatusWasChangedEvent;
-use App\Tasks\Domain\Event\TaskWasCreatedEvent;
 
 final class ChangeTaskStatusOnTaskStatusChangedSubscriber implements EventSubscriberInterface
 {

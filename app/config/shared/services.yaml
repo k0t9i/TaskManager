@@ -15,17 +15,17 @@ services:
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/'
+        resource: '../../src/'
         exclude:
-            - '../src/**/Application/Command/*'
-            - '../src/**/Application/Query/*'
-            - '../src/**/Domain/DTO/*'
-            - '../src/**/Domain/Entity/*'
-            - '../src/**/Domain/Exception/*'
-            - '../src/**/Domain/ValueObject/*'
-            - '../src/**/Domain/Event/*'
-            - '../src/Shared/Infrastructure/**/ValueObject/*'
-            - '../src/Shared/Infrastructure/Kernel.php'
+            - '../../src/**/Application/Command/*'
+            - '../../src/**/Application/Query/*'
+            - '../../src/**/Domain/DTO/*'
+            - '../../src/**/Domain/Entity/*'
+            - '../../src/**/Domain/Exception/*'
+            - '../../src/**/Domain/ValueObject/*'
+            - '../../src/**/Domain/Event/*'
+            - '../../src/Shared/Infrastructure/**/ValueObject/*'
+            - '../../src/Shared/Infrastructure/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -35,12 +35,6 @@ services:
             $iterations: 100
 
     Symfony\Component\PasswordHasher\PasswordHasherInterface: '@Symfony\Component\PasswordHasher\Hasher\Pbkdf2PasswordHasher'
-
-    App\Shared\Infrastructure\Bus\SqlLogEventBusWrapper:
-        arguments:
-            $realBus: '@App\Shared\Infrastructure\Bus\InMemoryEventBus'
-
-    App\Shared\Domain\Bus\Event\EventBusInterface: '@App\Shared\Infrastructure\Bus\SqlLogEventBusWrapper'
 
     App\Shared\Infrastructure\Service\ExceptionListener:
         tags:

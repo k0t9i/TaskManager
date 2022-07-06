@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Event;
+namespace App\Shared\Domain\Event;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 
-class TaskInformationWasChangedEvent extends DomainEvent
+final class TaskInformationWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
