@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
-use App\Projects\Domain\Event\ProjectInformationWasChangedEvent;
-use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Projects\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\Projects\Domain\Event\ProjectStatusWasChangedEvent;
-use App\Projects\Domain\Event\ProjectWasCreatedEvent;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectOwner;
 use App\Projects\Domain\ValueObject\ProjectParticipants;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
+use App\Shared\Domain\Event\ProjectOwnerWasChangedEvent;
+use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
+use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
+use App\Shared\Domain\Event\ProjectWasCreatedEvent;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\ProjectId;

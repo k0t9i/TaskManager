@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
 
-use App\Projects\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
-use App\Projects\Domain\Event\ProjectTaskStartDateWasChangedEvent;
-use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
+use App\Shared\Domain\Event\ProjectTaskStartDateWasChangedEvent;
+use App\Shared\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;

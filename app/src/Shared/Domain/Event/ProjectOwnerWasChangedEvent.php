@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\Event;
+namespace App\Shared\Domain\Event;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 
-final class ProjectStatusWasChangedEvent extends DomainEvent
+final class ProjectOwnerWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
-        public readonly string $status,
+        public readonly string $ownerId,
         string $occurredOn = null
     ) {
         parent::__construct($id, $occurredOn);
@@ -17,18 +17,18 @@ final class ProjectStatusWasChangedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'project.statusChanged';
+        return 'project.ownerChanged';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
-        return new self($aggregateId, $body['status'], $occurredOn);
+        return new self($aggregateId, $body['ownerId'], $occurredOn);
     }
 
     public function toPrimitives(): array
     {
         return [
-            'status' => $this->status,
+            'ownerId' => $this->ownerId,
         ];
     }
 }

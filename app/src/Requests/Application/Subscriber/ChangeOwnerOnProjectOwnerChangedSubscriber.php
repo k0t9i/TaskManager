@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Subscriber;
 
-use App\Projects\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\Requests\Application\Service\RequestManagerOwnerChanger;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\ValueObject\ProjectId;
 
 final class ChangeOwnerOnProjectOwnerChangedSubscriber implements EventSubscriberInterface

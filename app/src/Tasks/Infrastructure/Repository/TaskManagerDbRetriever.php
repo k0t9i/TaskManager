@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
-use App\Projects\Domain\Collection\ProjectTaskCollection;
-use App\Projects\Domain\Entity\Project;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -45,7 +43,7 @@ final class TaskManagerDbRetriever
 
     /**
      * @param QueryBuilder $builder
-     * @return Project|null
+     * @return TaskManager|null
      * @throws Exception
      */
     public function retrieveOne(QueryBuilder $builder): ?TaskManager
@@ -61,7 +59,7 @@ final class TaskManagerDbRetriever
     /**
      * @param QueryBuilder $builder
      * @param array $rawManager
-     * @return Project
+     * @return TaskManager
      * @throws Exception
      */
     private function retrieve(QueryBuilder $builder, array $rawManager): TaskManager
@@ -96,7 +94,7 @@ final class TaskManagerDbRetriever
     /**
      * @param QueryBuilder $builder
      * @param string $managerId
-     * @return ProjectTaskCollection
+     * @return TaskCollection
      * @throws Exception
      */
     private function retrieveTasks(QueryBuilder $builder, string $managerId): TaskCollection

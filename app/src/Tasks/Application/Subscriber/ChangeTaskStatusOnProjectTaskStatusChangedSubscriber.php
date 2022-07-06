@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Subscriber;
 
-use App\Projects\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Tasks\Application\Service\TaskManagerTaskStatusChanger;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
