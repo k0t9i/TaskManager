@@ -5,8 +5,10 @@ namespace App\Shared\Infrastructure\Security;
 
 use App\Shared\Domain\Exception\AuthenticationException;
 use App\Shared\Domain\Exception\LogicException;
+use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\AuthUser;
+use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Infrastructure\Security\ValueObject\SymfonySecurityUser;
 use ErrorException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
@@ -24,6 +26,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
     public function __construct(
         private readonly JWTTokenManagerInterface $tokenManager,
         private readonly TokenExtractorInterface $tokenExtractor,
+        private readonly SharedUserRepositoryInterface $userRepository,
         private $path
     ) {
         $this->pathRegexp = '/' . str_replace('/', '\/', $this->path) . '/';
@@ -74,10 +77,16 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
 
             $idClaim = $this->tokenManager->getUserIdClaim();
             if (!isset($payload[$idClaim])) {
-                throw new AuthenticationException(sprintf('Invalid payload %s', $idClaim));
+                throw new AuthenticationException(sprintf('Invalid payload "%s"', $idClaim));
             }
 
-            $this->authUser = new AuthUser($payload[$idClaim]);
+            $id = $payload[$idClaim];
+            $user = $this->userRepository->findById(new UserId($id));
+            if ($user === null) {
+                throw new AuthenticationException(sprintf('User "%s" doesn\'t exist', $id));
+            }
+
+            $this->authUser = new AuthUser($id);
         } catch (AuthenticationException $e) {
             if (preg_match($this->pathRegexp, $uri) > 0) {
                 throw $e;
