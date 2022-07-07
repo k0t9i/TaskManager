@@ -36,7 +36,7 @@ services:
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Projects:/var/www/src/Projects
-            - ./app/config/project:/var/www/config/app
+            - ./app/config/projects:/var/www/config/app
         ports:
             - '8080:8080'
     php-fpm-users:
@@ -52,7 +52,7 @@ services:
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Users:/var/www/src/Users
-            - ./app/config/user:/var/www/config/app
+            - ./app/config/users:/var/www/config/app
         ports:
             - '8081:8081'
     php-fpm-requests:
@@ -68,7 +68,7 @@ services:
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Requests:/var/www/src/Requests
-            - ./app/config/request:/var/www/config/app
+            - ./app/config/requests:/var/www/config/app
         ports:
             - '8082:8082'
     php-fpm-tasks:
@@ -84,7 +84,7 @@ services:
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Tasks:/var/www/src/Tasks
-            - ./app/config/task:/var/www/config/app
+            - ./app/config/tasks:/var/www/config/app
         ports:
             - '8083:8083'
     db:
