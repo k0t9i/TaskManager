@@ -1,5 +1,13 @@
-version: '3.8'
-
+x-php-fpm-template: &php-template
+    restart: unless-stopped
+    working_dir: /var/www
+    depends_on:
+        - db
+        - php-fpm-base
+        - rabbitmq
+    build: &php-template-build
+        context: ./
+        dockerfile: ./docker/images/php/Dockerfile
 services:
     php-fpm-base:
         container_name: task_manager-php-base
@@ -16,93 +24,69 @@ services:
             - "5672:5672"
             - "15672:15672"
     php-fpm-projects:
+        <<: *php-template
         container_name: task_manager-php-projects
         build:
-            context: ./
-            dockerfile: ./docker/images/php/Dockerfile
+            <<: *php-template-build
             args:
                 COMMON_NAME: projects
                 HTTP_SERVER_PORT: 8080
-        restart: unless-stopped
-        ports:
-            - '8080:8080'
         volumes:
             - ./app/src/Shared:/var/www/src/Shared
-            - ./app/src/Projects:/var/www/src/Projects
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
+            - ./app/src/Projects:/var/www/src/Projects
             - ./app/config/project:/var/www/config/app
-        working_dir: /var/www
-        depends_on:
-            - db
-            - php-fpm-base
-            - rabbitmq
+        ports:
+            - '8080:8080'
     php-fpm-users:
+        <<: *php-template
         container_name: task_manager-php-users
         build:
-            context: ./
-            dockerfile: ./docker/images/php/Dockerfile
+            <<: *php-template-build
             args:
                 COMMON_NAME: users
                 HTTP_SERVER_PORT: 8081
-        restart: unless-stopped
-        ports:
-            - '8081:8081'
         volumes:
             - ./app/src/Shared:/var/www/src/Shared
-            - ./app/src/Users:/var/www/src/Users
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
+            - ./app/src/Users:/var/www/src/Users
             - ./app/config/user:/var/www/config/app
-        working_dir: /var/www
-        depends_on:
-            - db
-            - php-fpm-base
-            - rabbitmq
+        ports:
+            - '8081:8081'
     php-fpm-requests:
+        <<: *php-template
         container_name: task_manager-php-requests
         build:
-            context: ./
-            dockerfile: ./docker/images/php/Dockerfile
+            <<: *php-template-build
             args:
                 COMMON_NAME: requests
                 HTTP_SERVER_PORT: 8082
-        restart: unless-stopped
-        ports:
-            - '8082:8082'
         volumes:
             - ./app/src/Shared:/var/www/src/Shared
-            - ./app/src/Requests:/var/www/src/Requests
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
+            - ./app/src/Requests:/var/www/src/Requests
             - ./app/config/request:/var/www/config/app
-        working_dir: /var/www
-        depends_on:
-            - db
-            - php-fpm-base
-            - rabbitmq
+        ports:
+            - '8082:8082'
     php-fpm-tasks:
+        <<: *php-template
         container_name: task_manager-php-tasks
         build:
-            context: ./
-            dockerfile: ./docker/images/php/Dockerfile
+            <<: *php-template-build
             args:
                 COMMON_NAME: tasks
                 HTTP_SERVER_PORT: 8083
-        restart: unless-stopped
-        ports:
-            - '8083:8083'
         volumes:
             - ./app/src/Shared:/var/www/src/Shared
-            - ./app/src/Tasks:/var/www/src/Tasks
             - ./app/symfony:/var/www/symfony
             - ./app/config/shared:/var/www/config/shared
+            - ./app/src/Tasks:/var/www/src/Tasks
             - ./app/config/task:/var/www/config/app
-        working_dir: /var/www
-        depends_on:
-            - db
-            - php-fpm-base
-            - rabbitmq
+        ports:
+            - '8083:8083'
     db:
         container_name: task_manager-db
         image: postgres:14.2-alpine3.15
