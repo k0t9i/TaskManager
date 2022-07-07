@@ -9,10 +9,10 @@ use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectOwner;
-use App\Projects\Domain\ValueObject\ProjectParticipants;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 
@@ -30,7 +30,7 @@ final class ProjectFactory
             new ProjectOwner(
                 new UserId($dto->ownerId)
             ),
-            new ProjectParticipants($dto->participantIds),
+            new Participants($dto->participantIds),
             new ProjectTasks($dto->tasks)
         );
     }

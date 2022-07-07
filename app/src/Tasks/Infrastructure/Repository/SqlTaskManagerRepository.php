@@ -92,7 +92,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         $this->ensureIsVersionLesserThanPrevious($manager->getId()->value, $version);
         $version += 1;
 
-        $participants = $manager->getParticipantIds();
+        $participants = $manager->getParticipants()->getInnerItems();
         $this->insertParticipants($participants, $manager->getId()->value);
         $this->deleteParticipants($participants, $manager->getId()->value);
         $participants->flush();

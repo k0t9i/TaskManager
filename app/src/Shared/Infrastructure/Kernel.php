@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use function dirname;
 
 class Kernel extends BaseKernel
 {
@@ -14,7 +15,7 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
-        return \dirname(__DIR__, 3) . '/symfony';
+        return dirname(__DIR__, 3) . '/symfony';
     }
 
     public function getCacheDir(): string
@@ -54,7 +55,7 @@ class Kernel extends BaseKernel
      */
     private function getConfigDir(): string
     {
-        return \dirname($this->getProjectDir(), 1) . '/config';
+        return dirname($this->getProjectDir()) . '/config';
     }
 
     private function configureContainerInDir(ContainerConfigurator $container, string $dir): void

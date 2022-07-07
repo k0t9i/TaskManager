@@ -22,7 +22,7 @@ final class TaskManagerOwnerChanger
             ProjectStatusFactory::scalarFromObject($taskManager->getStatus()),
             $ownerId,
             $taskManager->getFinishDate()->getValue(),
-            $taskManager->getParticipantIds(),
+            $taskManager->getParticipants()->getInnerItems(),
             $taskManager->getTasks()
         );
         return $this->managerFactory->create($dto);

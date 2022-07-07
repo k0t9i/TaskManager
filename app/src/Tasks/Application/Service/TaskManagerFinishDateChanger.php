@@ -22,7 +22,7 @@ final class TaskManagerFinishDateChanger
             ProjectStatusFactory::scalarFromObject($taskManager->getStatus()),
             $taskManager->getOwnerId()->value,
             $finishDate,
-            $taskManager->getParticipantIds(),
+            $taskManager->getParticipants()->getInnerItems(),
             $taskManager->getTasks()
         );
         return $this->managerFactory->create($dto);

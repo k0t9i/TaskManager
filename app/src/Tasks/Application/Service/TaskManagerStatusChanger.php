@@ -21,7 +21,7 @@ final class TaskManagerStatusChanger
             $status,
             $taskManager->getOwnerId()->value,
             $taskManager->getFinishDate()->getValue(),
-            $taskManager->getParticipantIds(),
+            $taskManager->getParticipants()->getInnerItems(),
             $taskManager->getTasks()
         );
         return $this->managerFactory->create($dto);

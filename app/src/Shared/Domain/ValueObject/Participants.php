@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
 use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
-use App\Shared\Domain\ValueObject\UserId;
 
-final class ProjectParticipants
+final class Participants
 {
     private UserIdCollection $participants;
 

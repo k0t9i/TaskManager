@@ -6,7 +6,6 @@ namespace App\Projects\Domain\Entity;
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectOwner;
-use App\Projects\Domain\ValueObject\ProjectParticipants;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
@@ -16,6 +15,7 @@ use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Event\ProjectWasCreatedEvent;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\ClosedProjectStatus;
+use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
@@ -24,12 +24,12 @@ use Exception;
 final class Project extends AggregateRoot
 {
     public function __construct(
-        private ProjectId $id,
+        private ProjectId          $id,
         private ProjectInformation $information,
-        private ProjectStatus $status,
-        private ProjectOwner $owner,
-        private ProjectParticipants $participants,
-        private ProjectTasks $tasks
+        private ProjectStatus      $status,
+        private ProjectOwner       $owner,
+        private Participants       $participants,
+        private ProjectTasks       $tasks
     ) {
     }
 
@@ -44,7 +44,7 @@ final class Project extends AggregateRoot
             $information,
             $status,
             $owner,
-            new ProjectParticipants(),
+            new Participants(),
             new ProjectTasks()
         );
 
@@ -165,7 +165,7 @@ final class Project extends AggregateRoot
         return $this->owner;
     }
 
-    public function getParticipants(): ProjectParticipants
+    public function getParticipants(): Participants
     {
         return $this->participants;
     }

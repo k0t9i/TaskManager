@@ -72,7 +72,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
                     throw new AuthenticationException('Expired token');
                 }
 
-                throw new AuthenticationException('Invalid JWT Token', 0, $e);
+                throw new AuthenticationException('Invalid JWT Token');
             }
 
             $idClaim = $this->tokenManager->getUserIdClaim();
