@@ -29,7 +29,6 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "optimize-autoloader": true,
         "preferred-install": {
             "*": "dist"
         },
