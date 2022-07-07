@@ -23,7 +23,7 @@ final class TaskManagerFinishDateChanger
             $taskManager->getOwner()->userId->value,
             $finishDate,
             $taskManager->getParticipants()->getInnerItems(),
-            $taskManager->getTasks()
+            $taskManager->getTasks()->getInnerItems()
         );
         return $this->managerFactory->create($dto);
     }

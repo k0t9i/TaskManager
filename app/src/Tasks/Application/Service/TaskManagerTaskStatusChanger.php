@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Service;
 
 use App\Shared\Domain\Factory\ProjectStatusFactory;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\Task;
@@ -22,7 +23,7 @@ final class TaskManagerTaskStatusChanger
     public function changeStatus(TaskManager $taskManager, string $taskId, int $status): TaskManager
     {
         /** @var Task $task */
-        $task = $taskManager->getTasks()->get($taskId);
+        $task = $taskManager->getTasks()->get(new TaskId($taskId));
         //TODO throw exception?
         if ($task === null) {
             return $taskManager;
@@ -50,7 +51,7 @@ final class TaskManagerTaskStatusChanger
             $taskManager->getOwner()->userId->value,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipants()->getInnerItems(),
-            $tasks
+            $tasks->getInnerItems()
         );
         return $this->managerFactory->create($dto);
     }

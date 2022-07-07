@@ -35,7 +35,7 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
             throw new TaskManagerNotExistException();
         }
         /** @var Task $task */
-        $task = $manager->getTasks()->get($taskId->value);
+        $task = $manager->getTasks()->get($taskId);
         if ($task === null) {
             throw new TaskNotExistException($command->id);
         }

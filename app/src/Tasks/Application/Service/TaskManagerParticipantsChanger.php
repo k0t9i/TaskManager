@@ -37,7 +37,7 @@ final class TaskManagerParticipantsChanger
             $taskManager->getOwner()->userId->value,
             $taskManager->getFinishDate()->getValue(),
             $participants->getInnerItems(),
-            $taskManager->getTasks()
+            $taskManager->getTasks()->getInnerItems()
         );
 
         return $this->managerFactory->create($dto);

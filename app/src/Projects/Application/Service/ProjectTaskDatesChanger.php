@@ -22,7 +22,7 @@ final class ProjectTaskDatesChanger
 
     public function changeDates(Project $project, string $taskId, string $startDate, string $finishDate): Project
     {
-        $task = $project->getTasks()->getByTaskId(new TaskId($taskId));
+        $task = $project->getTasks()->get(new TaskId($taskId));
         $tasks = $project->getTasks();
         // TODO add exception?
         if ($task !== null) {

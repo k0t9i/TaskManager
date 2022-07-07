@@ -12,6 +12,7 @@ use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
+use App\Tasks\Domain\ValueObject\Tasks;
 
 final class TaskManagerFactory
 {
@@ -24,7 +25,7 @@ final class TaskManagerFactory
             new Owner(new UserId($dto->ownerId)),
             new DateTime($dto->finishDate),
             new Participants($dto->participantIds),
-            $dto->tasks
+            new Tasks($dto->tasks)
         );
     }
 }

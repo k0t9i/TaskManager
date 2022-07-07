@@ -97,7 +97,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
         $this->deleteParticipants($participants, $manager->getId()->value);
         $participants->flush();
 
-        $tasks = $manager->getTasks();
+        $tasks = $manager->getTasks()->getInnerItems();
         $this->insertTasks($tasks, $manager->getId()->value);
         $this->updateTasks($tasks, $manager->getId()->value);
         /** @var Task $task */

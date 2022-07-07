@@ -22,7 +22,7 @@ final class TaskManagerStatusChanger
             $taskManager->getOwner()->userId->value,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipants()->getInnerItems(),
-            $taskManager->getTasks()
+            $taskManager->getTasks()->getInnerItems()
         );
         return $this->managerFactory->create($dto);
     }

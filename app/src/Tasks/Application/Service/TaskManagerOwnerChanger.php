@@ -23,7 +23,7 @@ final class TaskManagerOwnerChanger
             $ownerId,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipants()->getInnerItems(),
-            $taskManager->getTasks()
+            $taskManager->getTasks()->getInnerItems()
         );
         return $this->managerFactory->create($dto);
     }

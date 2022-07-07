@@ -5,6 +5,7 @@ namespace App\Tasks\Application\Service;
 
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
+use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\Task;
@@ -23,7 +24,7 @@ final class TaskManagerTaskDateChanger
     public function changeStartDate(TaskManager $taskManager, string $taskId, string $startDate): TaskManager
     {
         /** @var Task $task */
-        $task = $taskManager->getTasks()->get($taskId);
+        $task = $taskManager->getTasks()->get(new TaskId($taskId));
         //TODO throw exception?
         if ($task === null) {
             return $taskManager;
@@ -39,7 +40,7 @@ final class TaskManagerTaskDateChanger
     public function changeFinishDate(TaskManager $taskManager, string $taskId, string $finishDate): TaskManager
     {
         /** @var Task $task */
-        $task = $taskManager->getTasks()->get($taskId);
+        $task = $taskManager->getTasks()->get(new TaskId($taskId));
         //TODO throw exception?
         if ($task === null) {
             return $taskManager;
@@ -81,7 +82,7 @@ final class TaskManagerTaskDateChanger
             $taskManager->getOwner()->userId->value,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipants()->getInnerItems(),
-            $tasks
+            $tasks->getInnerItems()
         );
         return $this->managerFactory->create($dto);
     }

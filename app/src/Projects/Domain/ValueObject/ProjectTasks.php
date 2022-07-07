@@ -7,6 +7,7 @@ use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\Exception\UserHasProjectTaskException;
+use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
 use Exception;
@@ -62,19 +63,17 @@ final class ProjectTasks
         return $result;
     }
 
+    /**
+     * @param TaskId $taskId
+     * @return ProjectTask|null|Hashable
+     */
+    public function get(TaskId $taskId): ?ProjectTask
+    {
+        return $this->tasks->get($taskId->getHash());
+    }
+
     public function getInnerItems(): ProjectTaskCollection
     {
         return $this->tasks;
-    }
-
-    public function getByTaskId(TaskId $taskId): ?ProjectTask
-    {
-        /** @var ProjectTask $task */
-        foreach ($this->tasks as $task) {
-            if ($task->getTaskId()->isEqual($taskId)) {
-                return $task;
-            }
-        }
-        return null;
     }
 }

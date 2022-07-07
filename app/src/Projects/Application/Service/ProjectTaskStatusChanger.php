@@ -21,7 +21,7 @@ final class ProjectTaskStatusChanger
 
     public function changeStatus(Project $project, string $taskId, int $status): Project
     {
-        $task = $project->getTasks()->getByTaskId(new TaskId($taskId));
+        $task = $project->getTasks()->get(new TaskId($taskId));
         $tasks = $project->getTasks();
         // TODO add exception?
         if ($task !== null) {
