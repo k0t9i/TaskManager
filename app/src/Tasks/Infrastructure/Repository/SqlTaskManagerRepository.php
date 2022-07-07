@@ -314,7 +314,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
             ->setParameters([
                 $manager->getProjectId()->value,
                 ProjectStatusFactory::scalarFromObject($manager->getStatus()),
-                $manager->getOwnerId()->value,
+                $manager->getOwner()->userId->value,
                 $manager->getFinishDate()->getValue(),
                 $version,
                 $manager->getId()->value,
@@ -343,7 +343,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                 $manager->getId()->value,
                 $manager->getProjectId()->value,
                 ProjectStatusFactory::scalarFromObject($manager->getStatus()),
-                $manager->getOwnerId()->value,
+                $manager->getOwner()->userId->value,
                 $manager->getFinishDate()->getValue(),
                 $version
             ])

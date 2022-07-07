@@ -19,7 +19,7 @@ final class TaskManagerStatusChanger
             $taskManager->getId()->value,
             $taskManager->getProjectId()->value,
             $status,
-            $taskManager->getOwnerId()->value,
+            $taskManager->getOwner()->userId->value,
             $taskManager->getFinishDate()->getValue(),
             $taskManager->getParticipants()->getInnerItems(),
             $taskManager->getTasks()

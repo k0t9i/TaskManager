@@ -9,6 +9,7 @@ use App\Shared\Domain\Event\TaskStatusWasChangedEvent;
 use App\Shared\Domain\Event\TaskWasCreatedEvent;
 use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
@@ -33,7 +34,7 @@ final class TaskManager extends AggregateRoot
         private TaskManagerId  $id,
         private ProjectId      $projectId,
         private ProjectStatus  $status,
-        private UserId         $ownerId,
+        private Owner          $owner,
         private DateTime       $finishDate,
         private Participants   $participants,
         private TaskCollection $tasks
@@ -60,7 +61,7 @@ final class TaskManager extends AggregateRoot
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $this->ensureIsFinishDateGreaterThanTaskDates($information->startDate, $information->finishDate);
 
-        if (!$this->isOwner($ownerId) && !$this->participants->isParticipant($ownerId)) {
+        if (!$this->owner->isOwner($ownerId) && !$this->participants->isParticipant($ownerId)) {
             throw new TaskUserNotExistException($ownerId->value);
         }
 
@@ -202,9 +203,9 @@ final class TaskManager extends AggregateRoot
         return $this->status;
     }
 
-    public function getOwnerId(): UserId
+    public function getOwner(): Owner
     {
-        return $this->ownerId;
+        return $this->owner;
     }
 
     public function getFinishDate(): DateTime
@@ -224,7 +225,7 @@ final class TaskManager extends AggregateRoot
 
     public function getTasksForProjectUser(UserId $userId): TaskCollection
     {
-        if (!$this->isOwner($userId) && !$this->participants->isParticipant($userId)) {
+        if (!$this->owner->isOwner($userId) && !$this->participants->isParticipant($userId)) {
             throw new TaskUserNotExistException($userId->value);
         }
         return $this->tasks;
@@ -232,7 +233,7 @@ final class TaskManager extends AggregateRoot
 
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
     {
-        if (!$this->isOwner($currentUserId) && !$taskOwnerId->isEqual($currentUserId)) {
+        if (!$this->owner->isOwner($currentUserId) && !$taskOwnerId->isEqual($currentUserId)) {
             throw new InsufficientPermissionsToChangeTaskException();
         }
     }
@@ -258,10 +259,5 @@ final class TaskManager extends AggregateRoot
         if (!$this->tasks->hashExists($taskId->getHash())) {
             throw new TaskNotExistException($taskId->value);
         }
-    }
-
-    private function isOwner(UserId $userId): bool
-    {
-        return $this->ownerId->isEqual($userId);
     }
 }

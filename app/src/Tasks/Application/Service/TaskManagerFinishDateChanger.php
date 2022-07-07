@@ -20,7 +20,7 @@ final class TaskManagerFinishDateChanger
             $taskManager->getId()->value,
             $taskManager->getProjectId()->value,
             ProjectStatusFactory::scalarFromObject($taskManager->getStatus()),
-            $taskManager->getOwnerId()->value,
+            $taskManager->getOwner()->userId->value,
             $finishDate,
             $taskManager->getParticipants()->getInnerItems(),
             $taskManager->getTasks()

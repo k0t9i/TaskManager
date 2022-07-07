@@ -5,6 +5,7 @@ namespace App\Tasks\Domain\Factory;
 
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -20,7 +21,7 @@ final class TaskManagerFactory
             new TaskManagerId($dto->id),
             new ProjectId($dto->projectId),
             ProjectStatusFactory::objectFromScalar($dto->status),
-            new UserId($dto->ownerId),
+            new Owner(new UserId($dto->ownerId)),
             new DateTime($dto->finishDate),
             new Participants($dto->participantIds),
             $dto->tasks

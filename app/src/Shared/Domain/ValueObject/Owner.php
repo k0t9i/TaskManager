@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
-use App\Shared\Domain\ValueObject\UserId;
 
-final class ProjectOwner implements Hashable
+final class Owner implements Hashable
 {
     public function __construct(
         public readonly UserId $userId
