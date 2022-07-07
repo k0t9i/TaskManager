@@ -24,6 +24,7 @@ services:
             - '../../src/**/Domain/Exception/*'
             - '../../src/**/Domain/ValueObject/*'
             - '../../src/**/Domain/Event/*'
+            - '../../src/**/Infrastructure/Exception/*'
             - '../../src/Shared/Infrastructure/**/ValueObject/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
 
