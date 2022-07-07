@@ -13,6 +13,7 @@
         "lexik/jwt-authentication-bundle": "^2.16",
         "ramsey/uuid": "^4.3",
         "sensio/framework-extra-bundle": "^6.2",
+        "symfony/amqp-messenger": "6.1.*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/flex": "^2",

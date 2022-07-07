@@ -1,21 +1,28 @@
-FROM php:8.1.4-fpm
+FROM task_manager-php-base
 
-RUN echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | tee /etc/apt/sources.list.d/symfony-cli.list \
-    && apt-get update && apt-get install -y unzip vim git libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng-dev libzip-dev libpq-dev libicu-dev symfony-cli \
-    && docker-php-ext-install -j$(nproc) zip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && pecl install xdebug-3.1.3 \
-    && docker-php-ext-enable xdebug \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pgsql pdo_pgsql \
-    && docker-php-ext-configure intl && docker-php-ext-install intl \
-    && docker-php-ext-install opcache \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
-    
+ARG COMMON_NAME
+ARG HTTP_SERVER_PORT
+
+ARG QUEUE_NAME=${COMMON_NAME}
+ARG MESSENGER_WORKER_PATH=/etc/supervisor/conf.d/messenger-worker.conf
+
+ENV DATABASE_DB ${COMMON_NAME}
+ENV APP_CACHE_DIR ${COMMON_NAME}
+ENV APP_LOG_DIR ${COMMON_NAME}
+ENV HTTP_SERVER_PORT ${HTTP_SERVER_PORT}
+
 COPY ./docker/configs/php /usr/local/etc/php/conf.d
 
-RUN mkdir -p /opt/home
-RUN chmod 777 /opt/home
+RUN mkdir -p /opt/home && chmod 777 /opt/home
 ENV HOME /opt/home
+
+RUN touch $MESSENGER_WORKER_PATH && \
+    echo "[program:messenger-consume]" >> $MESSENGER_WORKER_PATH && \
+    echo "command=php /var/www/symfony/bin/console messenger:consume async --queues=$QUEUE_NAME --time-limit=3600" >> $MESSENGER_WORKER_PATH && \
+    echo "user=root" >> $MESSENGER_WORKER_PATH && \
+    echo "numprocs=2" >> $MESSENGER_WORKER_PATH && \
+    echo "autostart=true" >> $MESSENGER_WORKER_PATH && \
+    echo "process_name=%(program_name)s_%(process_num)02d" >> $MESSENGER_WORKER_PATH && \
+    echo "environment=DATABASE_DB=${DATABASE_DB},APP_CACHE_DIR=${APP_CACHE_DIR},APP_LOG_DIR=${APP_LOG_DIR}" >> $MESSENGER_WORKER_PATH
+
+CMD ["sh", "-c", "service supervisor stop && service supervisor start && symfony serve --dir=symfony/public --port=${HTTP_SERVER_PORT}"]
