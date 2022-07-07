@@ -37,6 +37,7 @@ services:
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Projects:/var/www/src/Projects
             - ./app/config/projects:/var/www/config/app
+            - ./logs/supervisor/projects:/var/log/supervisor
         ports:
             - '8080:8080'
     php-fpm-users:
@@ -53,6 +54,7 @@ services:
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Users:/var/www/src/Users
             - ./app/config/users:/var/www/config/app
+            - ./logs/supervisor/users:/var/log/supervisor
         ports:
             - '8081:8081'
     php-fpm-requests:
@@ -69,6 +71,7 @@ services:
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Requests:/var/www/src/Requests
             - ./app/config/requests:/var/www/config/app
+            - ./logs/supervisor/requests:/var/log/supervisor
         ports:
             - '8082:8082'
     php-fpm-tasks:
@@ -85,6 +88,7 @@ services:
             - ./app/config/shared:/var/www/config/shared
             - ./app/src/Tasks:/var/www/src/Tasks
             - ./app/config/tasks:/var/www/config/app
+            - ./logs/supervisor/tasks:/var/log/supervisor
         ports:
             - '8083:8083'
     db:
@@ -98,7 +102,6 @@ services:
             - '5432:5432'
         volumes:
             - ./data/db:/var/lib/postgresql/data
-            - ./logs/db:/var/log/nginx
     adminer:
         container_name: task_manager-adminer
         image: adminer:latest
