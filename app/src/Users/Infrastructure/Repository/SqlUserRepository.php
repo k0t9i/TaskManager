@@ -12,6 +12,7 @@ use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserPassword;
+use App\Users\Domain\ValueObject\UserProfile;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -91,9 +92,11 @@ class SqlUserRepository implements UserRepositoryInterface
         return new User(
             new UserId($rawUser['id']),
             new UserEmail($rawUser['email']),
-            new UserFirstname($rawUser['firstname']),
-            new UserLastname($rawUser['lastname']),
-            new UserPassword($rawUser['password'])
+            new UserProfile(
+                new UserFirstname($rawUser['firstname']),
+                new UserLastname($rawUser['lastname']),
+                new UserPassword($rawUser['password'])
+            )
         );
     }
 
@@ -135,9 +138,9 @@ class SqlUserRepository implements UserRepositoryInterface
             ->where('id = ?')
             ->setParameters([
                 $user->getEmail()->value,
-                $user->getFirstname()->value,
-                $user->getLastname()->value,
-                $user->getPassword()->value,
+                $user->getProfile()->firstname->value,
+                $user->getProfile()->lastname->value,
+                $user->getProfile()->password->value,
                 $version,
                 $user->getId()->value,
             ])
@@ -164,9 +167,9 @@ class SqlUserRepository implements UserRepositoryInterface
             ->setParameters([
                 $user->getId()->value,
                 $user->getEmail()->value,
-                $user->getFirstname()->value,
-                $user->getLastname()->value,
-                $user->getPassword()->value,
+                $user->getProfile()->firstname->value,
+                $user->getProfile()->lastname->value,
+                $user->getProfile()->password->value,
                 $version
             ])
             ->executeStatement();

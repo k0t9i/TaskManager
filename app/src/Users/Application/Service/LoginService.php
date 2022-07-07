@@ -5,15 +5,15 @@ namespace App\Users\Application\Service;
 
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\Security\PasswordHasherInterface;
 use App\Shared\Domain\ValueObject\UserEmail;
 use App\Users\Domain\Repository\UserRepositoryInterface;
+use App\Users\Domain\ValueObject\UserPassword;
 
 final class LoginService
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
-        private readonly PasswordHasherInterface $hasher,
+        private readonly UserPasswordHasher $hasher,
         private readonly AuthenticatorServiceInterface $authenticator
     ) {
     }
@@ -25,7 +25,7 @@ final class LoginService
             throw new UserNotExistException($username);
         }
 
-        if (!$this->hasher->verifyPassword($user->getPassword()->value, $plainPassword)) {
+        if (!$this->hasher->verify($user->getProfile()->password, new UserPassword($plainPassword))) {
             throw new UserNotExistException($username);
         }
 

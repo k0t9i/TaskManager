@@ -1,0 +1,41 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Shared\Domain\Event;
+
+use App\Shared\Domain\Bus\Event\DomainEvent;
+
+final class SharedUserWasChangedEvent extends DomainEvent
+{
+    public function __construct(
+        string $id,
+        public readonly string $firstname,
+        public readonly string $lastname,
+        string $occurredOn = null
+    ) {
+        parent::__construct($id, $occurredOn);
+    }
+
+    public static function getEventName(): string
+    {
+        return 'sharedUser.changed';
+    }
+
+    public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
+    {
+        return new static(
+            $aggregateId,
+            $body['firstname'],
+            $body['lastname'],
+            $occurredOn
+        );
+    }
+
+    public function toPrimitives(): array
+    {
+        return [
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+        ];
+    }
+}

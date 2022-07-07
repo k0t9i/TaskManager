@@ -12,6 +12,7 @@ final class RegisterCommand implements CommandInterface
         public readonly string $firstname,
         public readonly string $lastname,
         public readonly string $password,
+        public readonly string $repeatPassword,
     ) {
     }
 
@@ -22,6 +23,7 @@ final class RegisterCommand implements CommandInterface
             $item['firstname'] ?? '',
             $item['lastname'] ?? '',
             $item['password'] ?? '',
+            $item['repeat_password'] ?? '',
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\Event\SharedUserWasChangedEvent;
 use App\Shared\Domain\Event\SharedUserWasCreatedEvent;
 use App\Shared\Domain\ValueObject\UserEmail;
 use App\Shared\Domain\ValueObject\UserFirstname;
@@ -36,6 +37,20 @@ final class SharedUser extends AggregateRoot
         ));
 
         return $user;
+    }
+
+    public function changeProfile(
+        UserFirstname $firstname,
+        UserLastname $lastname
+    ): void {
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+
+        $this->registerEvent(new SharedUserWasChangedEvent(
+            $this->id->value,
+            $this->firstname->value,
+            $this->lastname->value,
+        ));
     }
 
     public function getId(): UserId

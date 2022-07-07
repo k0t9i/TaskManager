@@ -4,42 +4,49 @@ declare(strict_types=1);
 namespace App\Users\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
+use App\Shared\Domain\Event\UserProfileWasChangedEvent;
 use App\Shared\Domain\Event\UserWasCreatedEvent;
 use App\Shared\Domain\ValueObject\UserEmail;
-use App\Shared\Domain\ValueObject\UserFirstname;
 use App\Shared\Domain\ValueObject\UserId;
-use App\Shared\Domain\ValueObject\UserLastname;
-use App\Users\Domain\ValueObject\UserPassword;
+use App\Users\Domain\ValueObject\UserProfile;
 
 final class User extends AggregateRoot
 {
     public function __construct(
         private UserId $id,
         private UserEmail $email,
-        private UserFirstname $firstname,
-        private UserLastname $lastname,
-        private UserPassword $password
+        private UserProfile $profile
     ) {
     }
 
     public static function create(
         UserId $id,
         UserEmail $email,
-        UserFirstname $firstname,
-        UserLastname $lastname,
-        UserPassword $password
+        UserProfile $profile
     ): self {
-        $user = new self($id, $email, $firstname, $lastname, $password);
+        $user = new self($id, $email, $profile);
 
         $user->registerEvent(new UserWasCreatedEvent(
             $user->id->value,
             $user->email->value,
-            $user->firstname->value,
-            $user->lastname->value,
-            $user->password->value,
+            $user->profile->firstname->value,
+            $user->profile->lastname->value,
+            $user->profile->password->value,
         ));
 
         return $user;
+    }
+
+    public function changeProfile(UserProfile $profile): void
+    {
+        $this->profile = $profile;
+
+        $this->registerEvent(new UserProfileWasChangedEvent(
+            $this->id->value,
+            $this->profile->firstname->value,
+            $this->profile->lastname->value,
+            $this->profile->password->value,
+        ));
     }
 
     public function getId(): UserId
@@ -52,18 +59,8 @@ final class User extends AggregateRoot
         return $this->email;
     }
 
-    public function getFirstname(): UserFirstname
+    public function getProfile(): UserProfile
     {
-        return $this->firstname;
-    }
-
-    public function getLastname(): UserLastname
-    {
-        return $this->lastname;
-    }
-
-    public function getPassword(): UserPassword
-    {
-        return $this->password;
+        return $this->profile;
     }
 }

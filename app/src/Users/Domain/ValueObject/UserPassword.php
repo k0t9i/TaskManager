@@ -9,5 +9,6 @@ final class UserPassword extends StringValueObject
 {
     protected function ensureIsValid(): void
     {
+        $this->ensureNotEmpty('Password');
     }
 }
