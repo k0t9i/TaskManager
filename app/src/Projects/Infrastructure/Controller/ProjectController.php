@@ -81,7 +81,7 @@ final class ProjectController
         return new JsonResponse();
     }
 
-    #[Route('/{id}/remove-participant/{participantId}/', name: 'leave', methods: ['PATCH'])]
+    #[Route('/{id}/remove-participant/{participantId}/', name: 'removeParticipant', methods: ['PATCH'])]
     public function removeParticipant(string $id, string $participantId): JsonResponse
     {
         $this->commandBus->dispatch(new RemoveProjectParticipantCommand($id, $participantId));

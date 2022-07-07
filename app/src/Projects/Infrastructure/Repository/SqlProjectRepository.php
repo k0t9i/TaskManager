@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
 
+use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
+use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -17,6 +21,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class SqlProjectRepository implements ProjectRepositoryInterface
 {
+    use OptimisticLockTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ProjectDbRetriever $dbRetriever
@@ -38,7 +44,10 @@ class SqlProjectRepository implements ProjectRepositoryInterface
             ->where('p.owner_id = ?')
             ->setParameters([$userId->value]);
 
-        return $this->dbRetriever->retrieveAll($builder);
+        return array_map(function (array $item) {
+            [$project] = $item;
+            return $project;
+        }, $this->dbRetriever->retrieveAll($builder));
     }
 
     /**
@@ -54,16 +63,71 @@ class SqlProjectRepository implements ProjectRepositoryInterface
             ->where('id = ?')
             ->setParameters([$id->value]);
 
-        return $this->dbRetriever->retrieveOne($builder);
+        /** @var Project $project */
+        [$project, $version] = $this->dbRetriever->retrieveOne($builder);
+        if ($project !== null) {
+            $this->saveVersion($project->getId()->value, $version);
+        }
+        return $project;
     }
 
     /**
      * @param Project $project
      * @throws Exception
+     * @throws OptimisticLockException
      */
     public function save(Project $project): void
     {
+        $version = $this->getVersion($project->getId());
+        $isExist = $version > 0;
+        $this->ensureIsVersionLesserThanPrevious($project->getId()->value, $version);
+        $version += 1;
+
         $participants = $project->getParticipants()->getInnerItems();
+        $this->insertParticipants($participants, $project->getId()->value);
+        $this->deleteParticipants($participants, $project->getId()->value);
+        $participants->flush();
+
+        $tasks = $project->getTasks()->getInnerItems();
+        $this->insertTasks($tasks, $project->getId()->value);
+        $this->updateTasks($tasks, $project->getId()->value);
+        $tasks->flush();
+
+        if ($isExist) {
+            $this->updateProject($project, $version);
+        } else {
+            $this->insertProject($project, $version);
+        }
+    }
+
+    /**
+     * @param ProjectId $id
+     * @return int
+     * @throws Exception
+     */
+    private function getVersion(ProjectId $id): int
+    {
+        $version = $this->queryBuilder()
+            ->select('version')
+            ->from('projects')
+            ->where('id = ?')
+            ->setParameters([$id->value])
+            ->fetchOne();
+        return $version ?: 0;
+    }
+
+    private function queryBuilder(): QueryBuilder
+    {
+        return $this->entityManager->getConnection()->createQueryBuilder();
+    }
+
+    /**
+     * @param UserIdCollection $participants
+     * @param string $projectId
+     * @throws Exception
+     */
+    private function insertParticipants(UserIdCollection $participants, string $projectId): void
+    {
         /** @var UserId $item */
         foreach ($participants->getAdded() as $item) {
             $this->queryBuilder()
@@ -73,27 +137,41 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     'user_id' => '?',
                 ])
                 ->setParameters([
-                    $project->getId()->value,
+                    $projectId,
                     $item->value
                 ])
                 ->executeStatement();
         }
+    }
 
+    /**
+     * @param UserIdCollection $participants
+     * @param string $projectId
+     * @throws Exception
+     */
+    private function deleteParticipants(UserIdCollection $participants, string $projectId): void
+    {
         $deleted = array_map(fn(UserId $id) => $id->value, $participants->getDeleted());
         $this->queryBuilder()
             ->delete('project_participants')
             ->where('project_id = ?')
             ->andWhere('user_id in (?)')
             ->setParameters([
-                $project->getId()->value,
+                $projectId,
                 $deleted
             ], [
                 1 => Connection::PARAM_STR_ARRAY
             ])
             ->executeStatement();
-        $participants->flush();
+    }
 
-        $tasks = $project->getTasks()->getInnerItems();
+    /**
+     * @param ProjectTaskCollection $tasks
+     * @param string $projectId
+     * @throws Exception
+     */
+    private function insertTasks(ProjectTaskCollection $tasks, string $projectId): void
+    {
         /** @var ProjectTask $item */
         foreach ($tasks->getAdded() as $item) {
             $this->queryBuilder()
@@ -109,7 +187,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ])
                 ->setParameters([
                     $item->getId()->value,
-                    $project->getId()->value,
+                    $projectId,
                     $item->getTaskId()->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getOwnerId()->value,
@@ -118,6 +196,15 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ])
                 ->executeStatement();
         }
+    }
+
+    /**
+     * @param ProjectTaskCollection $tasks
+     * @param string $projectId
+     * @throws Exception
+     */
+    private function updateTasks(ProjectTaskCollection $tasks, string $projectId): void
+    {
         /** @var ProjectTask $item */
         foreach ($tasks->getUpdated() as $item) {
             $this->queryBuilder()
@@ -130,7 +217,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ->set('finish_date', '?')
                 ->where('id = ?')
                 ->setParameters([
-                    $project->getId()->value,
+                    $projectId,
                     $item->getTaskId()->value,
                     TaskStatusFactory::scalarFromObject($item->getStatus()),
                     $item->getOwnerId()->value,
@@ -140,68 +227,63 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ])
                 ->executeStatement();
         }
-        $tasks->flush();
-
-
-        if (!$this->isExist($project->getId())) {
-            $this->queryBuilder()
-                ->insert('projects')
-                ->values([
-                    'id' => '?',
-                    'name' => '?',
-                    'description' => '?',
-                    'finish_date' => '?',
-                    'status' => '?',
-                    'owner_id' => '?',
-                ])
-                ->setParameters([
-                    $project->getId()->value,
-                    $project->getInformation()->name->value,
-                    $project->getInformation()->description->value,
-                    $project->getInformation()->finishDate->getValue(),
-                    ProjectStatusFactory::scalarFromObject($project->getStatus()),
-                    $project->getOwner()->userId->value,
-                ])
-                ->executeStatement();
-        } else {
-            $this->queryBuilder()
-                ->update('projects')
-                ->set('name', '?')
-                ->set('description', '?')
-                ->set('finish_date', '?')
-                ->set('status', '?')
-                ->set('owner_id', '?')
-                ->where('id = ?')
-                ->setParameters([
-                    $project->getInformation()->name->value,
-                    $project->getInformation()->description->value,
-                    $project->getInformation()->finishDate->getValue(),
-                    ProjectStatusFactory::scalarFromObject($project->getStatus()),
-                    $project->getOwner()->userId->value,
-                    $project->getId()->value,
-                ])
-                ->executeStatement();
-        }
     }
 
     /**
-     * @param ProjectId $id
-     * @return bool
+     * @param Project $project
+     * @param int $version
      * @throws Exception
      */
-    private function isExist(ProjectId $id): bool
+    private function updateProject(Project $project, int $version): void
     {
-        $count = $this->queryBuilder()
-            ->select('count(id)')
-            ->from('projects')
+        $this->queryBuilder()
+            ->update('projects')
+            ->set('name', '?')
+            ->set('description', '?')
+            ->set('finish_date', '?')
+            ->set('status', '?')
+            ->set('owner_id', '?')
+            ->set('version', '?')
             ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchOne();
-        return $count > 0;
+            ->setParameters([
+                $project->getInformation()->name->value,
+                $project->getInformation()->description->value,
+                $project->getInformation()->finishDate->getValue(),
+                ProjectStatusFactory::scalarFromObject($project->getStatus()),
+                $project->getOwner()->userId->value,
+                $version,
+                $project->getId()->value
+            ])
+            ->executeStatement();
     }
 
-    private function queryBuilder(): QueryBuilder
+    /**
+     * @param Project $project
+     * @param int $version
+     * @throws Exception
+     */
+    private function insertProject(Project $project, int $version): void
     {
-        return $this->entityManager->getConnection()->createQueryBuilder();
+        $this->queryBuilder()
+            ->insert('projects')
+            ->values([
+                'id' => '?',
+                'name' => '?',
+                'description' => '?',
+                'finish_date' => '?',
+                'status' => '?',
+                'owner_id' => '?',
+                'version' => '?'
+            ])
+            ->setParameters([
+                $project->getId()->value,
+                $project->getInformation()->name->value,
+                $project->getInformation()->description->value,
+                $project->getInformation()->finishDate->getValue(),
+                ProjectStatusFactory::scalarFromObject($project->getStatus()),
+                $project->getOwner()->userId->value,
+                $version
+            ])
+            ->executeStatement();
     }
 }

@@ -10,7 +10,6 @@ use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\DTO\TaskManagerDTO;
-use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Factory\TaskFactory;
 use App\Tasks\Domain\Factory\TaskManagerFactory;
 use App\Tasks\Domain\ValueObject\TaskLink;
@@ -27,7 +26,7 @@ final class TaskManagerDbRetriever
 
     /**
      * @param QueryBuilder $builder
-     * @return TaskManager[]
+     * @return array
      * @throws Exception
      */
     public function retrieveAll(QueryBuilder $builder): array
@@ -43,14 +42,14 @@ final class TaskManagerDbRetriever
 
     /**
      * @param QueryBuilder $builder
-     * @return TaskManager|null
+     * @return array
      * @throws Exception
      */
-    public function retrieveOne(QueryBuilder $builder): ?TaskManager
+    public function retrieveOne(QueryBuilder $builder): array
     {
         $rawManager = $builder->fetchAssociative();
         if ($rawManager === false) {
-            return null;
+            return [null, 0];
         }
 
         return $this->retrieve($builder, $rawManager);
@@ -59,15 +58,15 @@ final class TaskManagerDbRetriever
     /**
      * @param QueryBuilder $builder
      * @param array $rawManager
-     * @return TaskManager
+     * @return array
      * @throws Exception
      */
-    private function retrieve(QueryBuilder $builder, array $rawManager): TaskManager
+    private function retrieve(QueryBuilder $builder, array $rawManager): array
     {
         $rawManager['participant_ids'] = $this->retrieveParticipants($builder, $rawManager['id']);
         $rawManager['tasks'] = $this->retrieveTasks($builder, $rawManager['id']);
 
-        return $this->taskManagerFactory->create(TaskManagerDTO::create($rawManager));
+        return [$this->taskManagerFactory->create(TaskManagerDTO::create($rawManager)), $rawManager['version']];
     }
 
     /**

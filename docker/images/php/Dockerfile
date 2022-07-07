@@ -22,6 +22,7 @@ RUN touch $MESSENGER_WORKER_PATH && \
     echo "user=root" >> $MESSENGER_WORKER_PATH && \
     echo "numprocs=2" >> $MESSENGER_WORKER_PATH && \
     echo "autostart=true" >> $MESSENGER_WORKER_PATH && \
+    echo "autorestart=true" >> $MESSENGER_WORKER_PATH && \
     echo "process_name=%(program_name)s_%(process_num)02d" >> $MESSENGER_WORKER_PATH && \
     echo "environment=DATABASE_DB=${DATABASE_DB},APP_CACHE_DIR=${APP_CACHE_DIR},APP_LOG_DIR=${APP_LOG_DIR}" >> $MESSENGER_WORKER_PATH
 

@@ -7,6 +7,8 @@ use App\Shared\Domain\ValueObject\UserEmail;
 use App\Shared\Domain\ValueObject\UserFirstname;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Domain\ValueObject\UserLastname;
+use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserPassword;
@@ -16,6 +18,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class SqlUserRepository implements UserRepositoryInterface
 {
+    use OptimisticLockTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager
     ) {
@@ -64,48 +68,26 @@ class SqlUserRepository implements UserRepositoryInterface
     /**
      * @param User $user
      * @throws Exception
+     * @throws OptimisticLockException
      */
     public function save(User $user): void
     {
-        if (!$this->isExist($user->getId())) {
-            $this->queryBuilder()
-                ->insert('users')
-                ->values([
-                    'id' => '?',
-                    'email' => '?',
-                    'firstname' => '?',
-                    'lastname' => '?',
-                    'password' => '?'
-                ])
-                ->setParameters([
-                    $user->getId()->value,
-                    $user->getEmail()->value,
-                    $user->getFirstname()->value,
-                    $user->getLastname()->value,
-                    $user->getPassword()->value,
-                ])
-                ->executeStatement();
+        $version = $this->getVersion($user->getId());
+        $isExist = $version > 0;
+        $this->ensureIsVersionLesserThanPrevious($user->getId()->value, $version);
+        $version += 1;
+
+        if ($isExist) {
+            $this->updateUser($user, $version);
         } else {
-            $this->queryBuilder()
-                ->update('users')
-                ->set('email', '?')
-                ->set('firstname', '?')
-                ->set('lastname', '?')
-                ->set('password', '?')
-                ->where('id = ?')
-                ->setParameters([
-                    $user->getEmail()->value,
-                    $user->getFirstname()->value,
-                    $user->getLastname()->value,
-                    $user->getPassword()->value,
-                    $user->getId()->value,
-                ])
-                ->executeStatement();
+            $this->insertUser($user, $version);
         }
     }
 
     private function find(array $rawUser): ?User
     {
+        $this->saveVersion($rawUser['id'], $rawUser['version']);
+
         return new User(
             new UserId($rawUser['id']),
             new UserEmail($rawUser['email']),
@@ -117,22 +99,76 @@ class SqlUserRepository implements UserRepositoryInterface
 
     /**
      * @param UserId $id
-     * @return bool
+     * @return int
      * @throws Exception
      */
-    private function isExist(UserId $id): bool
+    private function getVersion(UserId $id): int
     {
-        $count = $this->queryBuilder()
-            ->select('count(id)')
+        $version = $this->queryBuilder()
+            ->select('version')
             ->from('users')
             ->where('id = ?')
             ->setParameters([$id->value])
             ->fetchOne();
-        return $count > 0;
+        return $version ?: 0;
     }
 
     private function queryBuilder(): QueryBuilder
     {
         return $this->entityManager->getConnection()->createQueryBuilder();
+    }
+
+    /**
+     * @param User $user
+     * @param int $version
+     * @throws Exception
+     */
+    private function updateUser(User $user, int $version): void
+    {
+        $this->queryBuilder()
+            ->update('users')
+            ->set('email', '?')
+            ->set('firstname', '?')
+            ->set('lastname', '?')
+            ->set('password', '?')
+            ->set('version', '?')
+            ->where('id = ?')
+            ->setParameters([
+                $user->getEmail()->value,
+                $user->getFirstname()->value,
+                $user->getLastname()->value,
+                $user->getPassword()->value,
+                $version,
+                $user->getId()->value,
+            ])
+            ->executeStatement();
+    }
+
+    /**
+     * @param User $user
+     * @param int $version
+     * @throws Exception
+     */
+    private function insertUser(User $user, int $version): void
+    {
+        $this->queryBuilder()
+            ->insert('users')
+            ->values([
+                'id' => '?',
+                'email' => '?',
+                'firstname' => '?',
+                'lastname' => '?',
+                'password' => '?',
+                'version' => '?'
+            ])
+            ->setParameters([
+                $user->getId()->value,
+                $user->getEmail()->value,
+                $user->getFirstname()->value,
+                $user->getLastname()->value,
+                $user->getPassword()->value,
+                $version
+            ])
+            ->executeStatement();
     }
 }

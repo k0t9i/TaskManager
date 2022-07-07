@@ -18,6 +18,8 @@ use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -25,6 +27,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
 {
+    use OptimisticLockTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestManagerFactory $requestManagerFactory,
@@ -76,111 +80,30 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
     /**
      * @param RequestManager $manager
      * @throws Exception
+     * @throws OptimisticLockException
      */
     public function save(RequestManager $manager): void
     {
-        $participants = $manager->getParticipantIds();
-        /** @var UserId $item */
-        foreach ($participants->getAdded() as $item) {
-            $this->queryBuilder()
-                ->insert('request_manager_participants')
-                ->values([
-                    'request_manager_id' => '?',
-                    'user_id' => '?',
-                ])
-                ->setParameters([
-                    $manager->getId()->value,
-                    $item->value
-                ])
-                ->executeStatement();
-        }
+        $version = $this->getVersion($manager->getId());
+        $isExist = $version > 0;
+        $this->ensureIsVersionLesserThanPrevious($manager->getId()->value, $version);
+        $version += 1;
 
-        $deleted = array_map(fn(UserId $id) => $id->value, $participants->getDeleted());
-        $this->queryBuilder()
-            ->delete('request_manager_participants')
-            ->where('request_manager_id = ?')
-            ->andWhere('user_id in (?)')
-            ->setParameters([
-                $manager->getId()->value,
-                $deleted
-            ], [
-                1 => Connection::PARAM_STR_ARRAY
-            ])
-            ->executeStatement();
+        $participants = $manager->getParticipantIds();
+        $this->insertParticipants($participants, $manager->getId()->value);
+        $this->deleteParticipants($participants, $manager->getId()->value);
         $participants->flush();
 
         $requests = $manager->getRequests();
-        /** @var Request $item */
-        foreach ($requests->getAdded() as $item) {
-            $this->queryBuilder()
-                ->insert('requests')
-                ->values([
-                    'id' => '?',
-                    'request_manager_id' => '?',
-                    'user_id' => '?',
-                    'status' => '?',
-                    'change_date' => '?'
-                ])
-                ->setParameters([
-                    $item->getId()->value,
-                    $manager->getId()->value,
-                    $item->getUserId()->value,
-                    RequestStatusFactory::scalarFromObject($item->getStatus()),
-                    $item->getChangeDate()->getValue()
-                ])
-                ->executeStatement();
-        }
-        /** @var Request $item */
-        foreach ($requests->getUpdated() as $item) {
-            $this->queryBuilder()
-                ->update('requests')
-                ->set('request_manager_id', '?')
-                ->set('user_id', '?')
-                ->set('status', '?')
-                ->set('change_date', '?')
-                ->where('id = ?')
-                ->setParameters([
-                    $manager->getId()->value,
-                    $item->getUserId()->value,
-                    RequestStatusFactory::scalarFromObject($item->getStatus()),
-                    $item->getChangeDate()->getValue(),
-                    $item->getId()->value,
-                ])
-                ->executeStatement();
-        }
+        $this->insertRequests($requests, $manager->getId()->value);
+        $this->updateRequests($requests, $manager->getId()->value);
         $requests->flush();
 
 
-        if (!$this->isExist($manager->getId())) {
-            $this->queryBuilder()
-                ->insert('request_managers')
-                ->values([
-                    'id' => '?',
-                    'project_id' => '?',
-                    'status' => '?',
-                    'owner_id' => '?',
-                ])
-                ->setParameters([
-                    $manager->getId()->value,
-                    $manager->getProjectId()->value,
-                    ProjectStatusFactory::scalarFromObject($manager->getStatus()),
-                    $manager->getOwnerId()->value,
-                ])
-                ->executeStatement();
+        if ($isExist) {
+            $this->updateManager($manager, $version);
         } else {
-            $this->queryBuilder()
-                ->update('request_managers')
-                ->set('project_id', '?')
-                ->set('status', '?')
-                ->set('owner_id', '?')
-                ->where('id = ?')
-                ->setParameters([
-                    $manager->getProjectId()->value,
-                    ProjectStatusFactory::scalarFromObject($manager->getStatus()),
-                    $manager->getOwnerId()->value,
-                    $manager->getId()->value,
-                ])
-                ->executeStatement();
+            $this->insertManager($manager, $version);
         }
     }
 
@@ -213,27 +136,179 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
             }, $rawRequests)
         );
 
+        $this->saveVersion($rawManager['id'], $rawManager['version']);
+
         return $this->requestManagerFactory->create(RequestManagerDTO::create($rawManager));
     }
 
     /**
      * @param RequestManagerId $id
-     * @return bool
+     * @return int
      * @throws Exception
      */
-    private function isExist(RequestManagerId $id): bool
+    private function getVersion(RequestManagerId $id): int
     {
-        $count = $this->queryBuilder()
-            ->select('count(id)')
+        $version = $this->queryBuilder()
+            ->select('version')
             ->from('request_managers')
             ->where('id = ?')
             ->setParameters([$id->value])
             ->fetchOne();
-        return $count > 0;
+        return $version ?: 0;
     }
 
     private function queryBuilder(): QueryBuilder
     {
         return $this->entityManager->getConnection()->createQueryBuilder();
+    }
+
+    /**
+     * @param UserIdCollection $participants
+     * @param string $managerId
+     * @throws Exception
+     */
+    private function insertParticipants(UserIdCollection $participants, string $managerId): void
+    {
+        /** @var UserId $item */
+        foreach ($participants->getAdded() as $item) {
+            $this->queryBuilder()
+                ->insert('request_manager_participants')
+                ->values([
+                    'request_manager_id' => '?',
+                    'user_id' => '?',
+                ])
+                ->setParameters([
+                    $managerId,
+                    $item->value
+                ])
+                ->executeStatement();
+        }
+    }
+
+    /**
+     * @param UserIdCollection $participants
+     * @param string $managerId
+     * @throws Exception
+     */
+    private function deleteParticipants(UserIdCollection $participants, string $managerId): void
+    {
+        $deleted = array_map(fn(UserId $id) => $id->value, $participants->getDeleted());
+        $this->queryBuilder()
+            ->delete('request_manager_participants')
+            ->where('request_manager_id = ?')
+            ->andWhere('user_id in (?)')
+            ->setParameters([
+                $managerId,
+                $deleted
+            ], [
+                1 => Connection::PARAM_STR_ARRAY
+            ])
+            ->executeStatement();
+    }
+
+    /**
+     * @param RequestCollection $requests
+     * @param string $managerId
+     * @throws Exception
+     */
+    private function insertRequests(RequestCollection $requests, string $managerId): void
+    {
+        /** @var Request $item */
+        foreach ($requests->getAdded() as $item) {
+            $this->queryBuilder()
+                ->insert('requests')
+                ->values([
+                    'id' => '?',
+                    'request_manager_id' => '?',
+                    'user_id' => '?',
+                    'status' => '?',
+                    'change_date' => '?'
+                ])
+                ->setParameters([
+                    $item->getId()->value,
+                    $managerId,
+                    $item->getUserId()->value,
+                    RequestStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getChangeDate()->getValue()
+                ])
+                ->executeStatement();
+        }
+    }
+
+    /**
+     * @param RequestCollection $requests
+     * @param string $managerId
+     * @throws Exception
+     */
+    private function updateRequests(RequestCollection $requests, string $managerId): void
+    {
+        /** @var Request $item */
+        foreach ($requests->getUpdated() as $item) {
+            $this->queryBuilder()
+                ->update('requests')
+                ->set('request_manager_id', '?')
+                ->set('user_id', '?')
+                ->set('status', '?')
+                ->set('change_date', '?')
+                ->where('id = ?')
+                ->setParameters([
+                    $managerId,
+                    $item->getUserId()->value,
+                    RequestStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getChangeDate()->getValue(),
+                    $item->getId()->value,
+                ])
+                ->executeStatement();
+        }
+    }
+
+    /**
+     * @param RequestManager $manager
+     * @param int $version
+     * @throws Exception
+     */
+    private function updateManager(RequestManager $manager, int $version): void
+    {
+        $this->queryBuilder()
+            ->update('request_managers')
+            ->set('project_id', '?')
+            ->set('status', '?')
+            ->set('owner_id', '?')
+            ->set('version', '?')
+            ->where('id = ?')
+            ->setParameters([
+                $manager->getProjectId()->value,
+                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getOwnerId()->value,
+                $version,
+                $manager->getId()->value,
+            ])
+            ->executeStatement();
+    }
+
+    /**
+     * @param RequestManager $manager
+     * @param int $version
+     * @throws Exception
+     */
+    private function insertManager(RequestManager $manager, int $version): void
+    {
+        $this->queryBuilder()
+            ->insert('request_managers')
+            ->values([
+                'id' => '?',
+                'project_id' => '?',
+                'status' => '?',
+                'owner_id' => '?',
+                'version' => '?',
+            ])
+            ->setParameters([
+                $manager->getId()->value,
+                $manager->getProjectId()->value,
+                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getOwnerId()->value,
+                $version
+            ])
+            ->executeStatement();
     }
 }

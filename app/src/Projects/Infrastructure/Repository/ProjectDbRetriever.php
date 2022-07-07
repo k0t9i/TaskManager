@@ -6,7 +6,6 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\DTO\ProjectDTO;
 use App\Projects\Domain\DTO\ProjectTaskDTO;
-use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Factory\ProjectFactory;
 use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Shared\Domain\Collection\UserIdCollection;
@@ -24,7 +23,7 @@ final class ProjectDbRetriever
 
     /**
      * @param QueryBuilder $builder
-     * @return Project[]
+     * @return array
      * @throws Exception
      */
     public function retrieveAll(QueryBuilder $builder): array
@@ -40,14 +39,14 @@ final class ProjectDbRetriever
 
     /**
      * @param QueryBuilder $builder
-     * @return Project|null
+     * @return array
      * @throws Exception
      */
-    public function retrieveOne(QueryBuilder $builder): ?Project
+    public function retrieveOne(QueryBuilder $builder): array
     {
         $rawProject = $builder->fetchAssociative();
         if ($rawProject === false) {
-            return null;
+            return [null, 0];
         }
 
         return $this->retrieve($builder, $rawProject);
@@ -56,15 +55,15 @@ final class ProjectDbRetriever
     /**
      * @param QueryBuilder $builder
      * @param array $rawProject
-     * @return Project
+     * @return array
      * @throws Exception
      */
-    private function retrieve(QueryBuilder $builder, array $rawProject): Project
+    private function retrieve(QueryBuilder $builder, array $rawProject): array
     {
         $rawProject['participant_ids'] = $this->retrieveParticipants($builder, $rawProject['id']);
         $rawProject['tasks'] = $this->retrieveTasks($builder, $rawProject['id']);
 
-        return $this->projectFactory->create(ProjectDTO::create($rawProject));
+        return [$this->projectFactory->create(ProjectDTO::create($rawProject)), $rawProject['version']];
     }
 
     /**
