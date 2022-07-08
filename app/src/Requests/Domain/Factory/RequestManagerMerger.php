@@ -19,9 +19,9 @@ final class RequestManagerMerger
             $dto->id ?? $source->getId()->value,
             $dto->projectId ?? $source->getProjectId()->value,
             $dto->status ?? $source->getStatus()->getScalar(),
-            $dto->ownerId ?? $source->getOwnerId()->value,
-            $dto->participantIds ?? $source->getParticipantIds(),
-            $dto->requests ?? $source->getRequests(),
+            $dto->ownerId ?? $source->getOwner()->userId->value,
+            $dto->participantIds ?? $source->getParticipants()->getInnerItems(),
+            $dto->requests ?? $source->getRequests()->getInnerItems(),
         ));
     }
 }

@@ -6,7 +6,10 @@ namespace App\Requests\Domain\Factory;
 use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\ValueObject\RequestManagerId;
+use App\Requests\Domain\ValueObject\Requests;
 use App\Shared\Domain\Factory\ProjectStatusFactory;
+use App\Shared\Domain\ValueObject\Owner;
+use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 
@@ -18,9 +21,9 @@ final class RequestManagerFactory
             new RequestManagerId($dto->id),
             new ProjectId($dto->projectId),
             ProjectStatusFactory::objectFromScalar($dto->status),
-            new UserId($dto->ownerId),
-            $dto->participantIds,
-            $dto->requests
+            new Owner(new UserId($dto->ownerId)),
+            new Participants($dto->participantIds),
+            new Requests($dto->requests)
         );
     }
 }

@@ -51,10 +51,10 @@ final class RequestManagerStateRecreator
 
     private function removeParticipant(RequestManager $source, ProjectParticipantWasRemovedEvent $event): RequestManager
     {
-        $participants = $source->getParticipantIds()->remove(new UserId($event->participantId));
+        $participants = $source->getParticipants()->remove(new UserId($event->participantId));
 
         return $this->managerMerger->merge($source, new RequestManagerMergeDTO(
-            participantIds: $participants
+            participantIds: $participants->getInnerItems()
         ));
     }
 }

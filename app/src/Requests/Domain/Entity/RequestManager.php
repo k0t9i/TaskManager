@@ -6,19 +6,16 @@ namespace App\Requests\Domain\Entity;
 use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\Event\RequestStatusWasChangedEvent;
 use App\Requests\Domain\Event\RequestWasCreatedEvent;
-use App\Requests\Domain\Exception\RequestNotExistsException;
-use App\Requests\Domain\Exception\UserAlreadyHasPendingRequestException;
 use App\Requests\Domain\ValueObject\PendingRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
+use App\Requests\Domain\ValueObject\Requests;
 use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
-use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
-use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
-use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\Owner;
+use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
@@ -29,9 +26,9 @@ final class RequestManager extends AggregateRoot
         private RequestManagerId  $id,
         private ProjectId         $projectId,
         private ProjectStatus     $status,
-        private UserId            $ownerId,
-        private UserIdCollection  $participantIds,
-        private RequestCollection $requests
+        private Owner             $owner,
+        private Participants      $participants,
+        private Requests          $requests
     ) {
     }
 
@@ -39,11 +36,14 @@ final class RequestManager extends AggregateRoot
         RequestId $id,
         UserId    $userId,
     ): Request {
+        $this->status->ensureAllowsModification();
+
         $status = new PendingRequestStatus();
         $changeDate = new DateTime();
         $request = new Request($id, $userId, $status, $changeDate);
 
-        $this->ensureCanAddRequest($request->getUserId());
+        $this->ensureIsUserAlreadyInProject($userId);
+        $this->requests->ensureUserDoesNotHavePendingRequest($userId, $this->projectId);
 
         $this->requests = $this->requests->add($request);
 
@@ -61,16 +61,17 @@ final class RequestManager extends AggregateRoot
         RequestStatus $status,
         UserId $currentUserId
     ): void {
-        $this->ensureCanChangeRequest($currentUserId);
-        if (!$this->requests->hashExists($id->getHash())) {
-            throw new RequestNotExistsException($id->value);
-        }
+        $this->status->ensureAllowsModification();
+        $this->owner->ensureIsOwner($currentUserId);
+        $this->requests->ensureRequestExists($id);
+
         /** @var Request $request */
-        $request = $this->requests->get($id->getHash());
+        $request = $this->requests->get($id);
         $request->changeStatus($status);
 
         if ($request->isConfirmed()) {
-            $this->addParticipantFromRequest($request->getUserId());
+            $this->ensureIsUserAlreadyInProject($request->getUserId());
+            $this->participants = $this->participants->add($request->getUserId());
             $this->registerEvent(new ProjectParticipantWasAddedEvent(
                 $this->id->value,
                 $this->projectId->value,
@@ -100,77 +101,30 @@ final class RequestManager extends AggregateRoot
         return $this->status;
     }
 
-    public function getOwnerId(): UserId
+    public function getOwner(): Owner
     {
-        return $this->ownerId;
+        return $this->owner;
     }
 
-    public function getParticipantIds(): UserIdCollection
+    public function getParticipants(): Participants
     {
-        return $this->participantIds;
+        return $this->participants;
     }
 
-    public function getRequests(): RequestCollection
+    public function getRequests(): Requests
     {
         return $this->requests;
     }
 
     public function getRequestsForOwner(UserId $userId): RequestCollection
     {
-        if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException($userId->value);
-        }
-        return $this->requests;
-    }
-
-    private function addParticipantFromRequest(UserId $participantId): void
-    {
-        $this->ensureIsUserAlreadyInProject($participantId);
-        $this->participantIds = $this->participantIds->add($participantId);
-    }
-
-    private function ensureCanAddRequest(UserId $userId): void
-    {
-        $this->status->ensureAllowsModification();
-        $this->ensureIsUserAlreadyInProject($userId);
-        $this->ensureUserDoesNotHavePendingRequest($userId);
-    }
-
-    private function ensureCanChangeRequest(UserId $userId): void
-    {
-        $this->status->ensureAllowsModification();
-        if (!$this->isOwner($userId)) {
-            throw new UserIsNotOwnerException($userId->value);
-        }
-    }
-
-    private function ensureUserDoesNotHavePendingRequest(UserId $userId): void
-    {
-        /** @var Request $request */
-        foreach ($this->requests as $request) {
-            if ($request->isPending() && $request->getUserId()->isEqual($userId)) {
-                throw new UserAlreadyHasPendingRequestException($userId->value, $this->projectId->value);
-            }
-        }
+        $this->owner->ensureIsNotOwner($userId);
+        return $this->requests->getInnerItems();
     }
 
     private function ensureIsUserAlreadyInProject(UserId $userId): void
     {
-        if ($this->isParticipant($userId)) {
-            throw new UserIsAlreadyParticipantException($userId->value);
-        }
-        if ($this->isOwner($userId)) {
-            throw new UserIsAlreadyOwnerException($userId->value);
-        }
-    }
-
-    private function isOwner(UserId $userId): bool
-    {
-        return $this->ownerId->isEqual($userId);
-    }
-
-    private function isParticipant(UserId $userId): bool
-    {
-        return $this->participantIds->exists($userId);
+        $this->participants->ensureIsNotParticipant($userId);
+        $this->owner->ensureIsNotOwner($userId);
     }
 }

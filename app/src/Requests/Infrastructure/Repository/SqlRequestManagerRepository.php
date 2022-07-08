@@ -87,12 +87,12 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
         $this->ensureIsVersionLesserThanPrevious($manager->getId()->value, $version);
         $version += 1;
 
-        $participants = $manager->getParticipantIds();
+        $participants = $manager->getParticipants()->getInnerItems();
         $this->insertParticipants($participants, $manager->getId()->value);
         $this->deleteParticipants($participants, $manager->getId()->value);
         $participants->flush();
 
-        $requests = $manager->getRequests();
+        $requests = $manager->getRequests()->getInnerItems();
         $this->insertRequests($requests, $manager->getId()->value);
         $this->updateRequests($requests, $manager->getId()->value);
         $requests->flush();
@@ -277,7 +277,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
             ->setParameters([
                 $manager->getProjectId()->value,
                 $manager->getStatus()->getScalar(),
-                $manager->getOwnerId()->value,
+                $manager->getOwner()->userId->value,
                 $version,
                 $manager->getId()->value,
             ])
@@ -304,7 +304,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
                 $manager->getId()->value,
                 $manager->getProjectId()->value,
                 $manager->getStatus()->getScalar(),
-                $manager->getOwnerId()->value,
+                $manager->getOwner()->userId->value,
                 $version
             ])
             ->executeStatement();
