@@ -6,15 +6,20 @@ namespace App\Tasks\Application\Subscriber;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Event\ProjectWasCreatedEvent;
-use App\Tasks\Application\Service\TaskManagerCreator;
+use App\Shared\Domain\Service\UuidGeneratorInterface;
+use App\Tasks\Domain\Collection\TaskCollection;
+use App\Tasks\Domain\DTO\TaskManagerDTO;
+use App\Tasks\Domain\Factory\TaskManagerFactory;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
 final class CreateOnProjectCreated implements EventSubscriberInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
-        private readonly TaskManagerCreator $managerCreator,
+        private readonly TaskManagerFactory $managerFactory,
+        private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus
     ) {
     }
@@ -29,12 +34,15 @@ final class CreateOnProjectCreated implements EventSubscriberInterface
 
     public function __invoke(ProjectWasCreatedEvent $event): void
     {
-        $manager = $this->managerCreator->create(
+        $manager = $this->managerFactory->create(new TaskManagerDTO(
+            $this->uuidGenerator->generate(),
             $event->aggregateId,
             (int) $event->status,
             $event->ownerId,
-            $event->finishDate
-        );
+            $event->finishDate,
+            new UserIdCollection(),
+            new TaskCollection()
+        ));
 
         $this->managerRepository->save($manager);
         $this->eventBus->dispatch(...$manager->releaseEvents());

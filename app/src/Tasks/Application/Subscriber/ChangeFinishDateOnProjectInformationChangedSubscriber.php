@@ -4,22 +4,12 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Tasks\Application\Service\TaskManagerFinishDateChanger;
-use App\Tasks\Domain\Exception\TaskManagerNotExistException;
-use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
 final class ChangeFinishDateOnProjectInformationChangedSubscriber implements EventSubscriberInterface
 {
-    public function __construct(
-        private readonly TaskManagerRepositoryInterface $managerRepository,
-        private readonly TaskManagerFinishDateChanger $finishDateChanger,
-        private readonly EventBusInterface $eventBus
-    ) {
-    }
+    use TaskManagerSubscriberTrait;
 
     /**
      * @return DomainEvent[]
@@ -31,14 +21,6 @@ final class ChangeFinishDateOnProjectInformationChangedSubscriber implements Eve
 
     public function __invoke(ProjectInformationWasChangedEvent $event): void
     {
-        $manager = $this->managerRepository->findByProjectId(new ProjectId($event->aggregateId));
-        if ($manager === null) {
-            throw new TaskManagerNotExistException();
-        }
-
-        $newManager = $this->finishDateChanger->changeOwner($manager, $event->finishDate);
-
-        $this->managerRepository->save($newManager);
-        $this->eventBus->dispatch(...$newManager->releaseEvents());
+        $this->doInvoke($event->aggregateId, $event);
     }
 }
