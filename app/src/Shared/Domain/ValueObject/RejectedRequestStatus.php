@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
 final class RejectedRequestStatus extends RequestStatus
 {

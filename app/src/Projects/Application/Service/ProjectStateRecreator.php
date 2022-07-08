@@ -12,10 +12,12 @@ use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Projects\Domain\Factory\ProjectTaskMerger;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
+use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\TaskInformationWasChangedEvent;
 use App\Shared\Domain\Event\TaskStatusWasChangedEvent;
 use App\Shared\Domain\Event\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\LogicException;
+use App\Shared\Domain\Factory\RequestStatusFactory;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -36,14 +38,14 @@ final class ProjectStateRecreator
         if ($event instanceof TaskWasCreatedEvent) {
             return $this->createTask($source, $event);
         }
-        if ($event instanceof ProjectParticipantWasAddedEvent) {
-            return $this->addParticipant($source, $event);
-        }
         if ($event instanceof TaskInformationWasChangedEvent) {
             return $this->changeTaskDates($source, $event);
         }
         if ($event instanceof TaskStatusWasChangedEvent) {
             return $this->changeTaskStatus($source, $event);
+        }
+        if ($event instanceof RequestStatusWasChangedEvent) {
+            return $this->tryToAddParticipant($source, $event);
         }
 
         throw new LogicException(sprintf('Invalid domain event "%s"', get_class($event)));
@@ -65,15 +67,6 @@ final class ProjectStateRecreator
 
         return $this->projectMerger->merge($source, new ProjectMergeDTO(
             tasks: $tasks->getInnerItems()
-        ));
-    }
-
-    private function addParticipant(Project $source, ProjectParticipantWasAddedEvent $event): Project
-    {
-        $participants = $source->getParticipants()->add(new UserId($event->participantId));
-
-        return $this->projectMerger->merge($source, new ProjectMergeDTO(
-            participantIds: $participants->getInnerItems()
         ));
     }
 
@@ -114,5 +107,24 @@ final class ProjectStateRecreator
         return $this->projectMerger->merge($source, new ProjectMergeDTO(
             tasks: $tasks->getInnerItems()
         ));
+    }
+
+    private function tryToAddParticipant(Project $source, RequestStatusWasChangedEvent $event): Project
+    {
+        $status = RequestStatusFactory::objectFromScalar((int)$event->status);
+        if (!$status->whetherToAddUser()) {
+            return $source;
+        }
+
+        $participants = $source->getParticipants()->add(new UserId($event->userId));
+
+        $project = $this->projectMerger->merge($source, new ProjectMergeDTO(
+            participantIds: $participants->getInnerItems()
+        ));
+        $project->registerEvent(new ProjectParticipantWasAddedEvent(
+            $project->getId()->value,
+            $event->userId
+        ));
+        return $project;
     }
 }

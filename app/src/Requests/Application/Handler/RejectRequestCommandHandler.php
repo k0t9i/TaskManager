@@ -6,11 +6,11 @@ namespace App\Requests\Application\Handler;
 use App\Requests\Application\Command\RejectRequestCommand;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
-use App\Requests\Domain\ValueObject\RejectedRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
+use App\Shared\Domain\ValueObject\RejectedRequestStatus;
 
 final class RejectRequestCommandHandler implements CommandHandlerInterface
 {

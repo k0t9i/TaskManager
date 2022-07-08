@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace App\Projects\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\TaskInformationWasChangedEvent;
+use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
 
-final class ChangeTaskDatesOnTaskInformationChangedSubscriber implements EventSubscriberInterface
+final class AddParticipantOnRequestConfirmedSubscriber implements EventSubscriberInterface
 {
     use ProjectSubscriberTrait;
 
     public function subscribeTo(): array
     {
-        return [TaskInformationWasChangedEvent::class];
+        return [RequestStatusWasChangedEvent::class];
     }
 
-    public function __invoke(TaskInformationWasChangedEvent $event): void
+    public function __invoke(RequestStatusWasChangedEvent $event): void
     {
         $this->doInvoke($event->projectId, $event);
     }

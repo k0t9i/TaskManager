@@ -8,6 +8,7 @@ use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestManagerMerger;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Event\ProjectOwnerWasChangedEvent;
+use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Exception\LogicException;
@@ -31,6 +32,9 @@ final class RequestManagerStateRecreator
         if ($event instanceof ProjectParticipantWasRemovedEvent) {
             return $this->removeParticipant($source, $event);
         }
+        if ($event instanceof ProjectParticipantWasAddedEvent) {
+            return $this->addParticipant($source, $event);
+        }
 
         throw new LogicException(sprintf('Invalid domain event "%s"', get_class($event)));
     }
@@ -52,6 +56,15 @@ final class RequestManagerStateRecreator
     private function removeParticipant(RequestManager $source, ProjectParticipantWasRemovedEvent $event): RequestManager
     {
         $participants = $source->getParticipants()->remove(new UserId($event->participantId));
+
+        return $this->managerMerger->merge($source, new RequestManagerMergeDTO(
+            participantIds: $participants->getInnerItems()
+        ));
+    }
+
+    private function addParticipant(RequestManager $source, ProjectParticipantWasAddedEvent $event): RequestManager
+    {
+        $participants = $source->getParticipants()->add(new UserId($event->participantId));
 
         return $this->managerMerger->merge($source, new RequestManagerMergeDTO(
             participantIds: $participants->getInnerItems()

@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 namespace App\Requests\Domain\Entity;
 
-use App\Requests\Domain\ValueObject\ConfirmedRequestStatus;
-use App\Requests\Domain\ValueObject\PendingRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
-use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\PendingRequestStatus;
+use App\Shared\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class Request implements Hashable
@@ -65,11 +64,6 @@ final class Request implements Hashable
             $this->userId->isEqual($other->userId) &&
             $this->status->isEqual($other->status) &&
             $this->changeDate->isEqual($other->changeDate);
-    }
-
-    public function isConfirmed(): bool
-    {
-        return $this->status instanceof ConfirmedRequestStatus;
     }
 
     public function isPending(): bool

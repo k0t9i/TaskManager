@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Domain\Factory;
+namespace App\Shared\Domain\Factory;
 
-use App\Requests\Domain\ValueObject\ConfirmedRequestStatus;
-use App\Requests\Domain\ValueObject\PendingRequestStatus;
-use App\Requests\Domain\ValueObject\RejectedRequestStatus;
-use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Exception\LogicException;
+use App\Shared\Domain\ValueObject\ConfirmedRequestStatus;
+use App\Shared\Domain\ValueObject\PendingRequestStatus;
+use App\Shared\Domain\ValueObject\RejectedRequestStatus;
+use App\Shared\Domain\ValueObject\RequestStatus;
 
 final class RequestStatusFactory
 {

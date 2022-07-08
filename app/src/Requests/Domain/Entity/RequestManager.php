@@ -4,20 +4,19 @@ declare(strict_types=1);
 namespace App\Requests\Domain\Entity;
 
 use App\Requests\Domain\Collection\RequestCollection;
-use App\Requests\Domain\Event\RequestStatusWasChangedEvent;
 use App\Requests\Domain\Event\RequestWasCreatedEvent;
-use App\Requests\Domain\ValueObject\PendingRequestStatus;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
-use App\Requests\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
+use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
+use App\Shared\Domain\ValueObject\PendingRequestStatus;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
+use App\Shared\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManager extends AggregateRoot
@@ -69,19 +68,11 @@ final class RequestManager extends AggregateRoot
         $request = $this->requests->get($id);
         $request->changeStatus($status);
 
-        if ($request->isConfirmed()) {
-            $this->ensureIsUserAlreadyInProject($request->getUserId());
-            $this->participants = $this->participants->add($request->getUserId());
-            $this->registerEvent(new ProjectParticipantWasAddedEvent(
-                $this->id->value,
-                $this->projectId->value,
-                $request->getUserId()->value
-            ));
-        }
-
         $this->registerEvent(new RequestStatusWasChangedEvent(
             $this->id->value,
+            $this->projectId->value,
             $request->getId()->value,
+            $request->getUserId()->value,
             (string) $this->status->getScalar()
         ));
     }

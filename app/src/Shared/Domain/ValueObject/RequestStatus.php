@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject;
 
-use App\Requests\Domain\Factory\RequestStatusFactory;
-use App\Shared\Domain\ValueObject\Status;
+use App\Shared\Domain\Factory\RequestStatusFactory;
 
 abstract class RequestStatus extends Status
 {
@@ -16,5 +15,10 @@ abstract class RequestStatus extends Status
     public function getScalar(): int
     {
         return RequestStatusFactory::scalarFromObject($this);
+    }
+
+    public function whetherToAddUser(): bool
+    {
+        return false;
     }
 }
