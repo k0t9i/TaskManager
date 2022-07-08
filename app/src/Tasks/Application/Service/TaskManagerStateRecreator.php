@@ -13,22 +13,20 @@ use App\Shared\Domain\Event\ProjectTaskFinishDateWasChangedEvent;
 use App\Shared\Domain\Event\ProjectTaskStartDateWasChangedEvent;
 use App\Shared\Domain\Event\ProjectTaskStatusWasChangedEvent;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
-use App\Tasks\Domain\DTO\TaskDTO;
-use App\Tasks\Domain\DTO\TaskManagerDTO;
+use App\Tasks\Domain\DTO\TaskManagerMergeDTO;
+use App\Tasks\Domain\DTO\TaskMergeDTO;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Entity\TaskManager;
-use App\Tasks\Domain\Factory\TaskFactory;
-use App\Tasks\Domain\Factory\TaskManagerFactory;
+use App\Tasks\Domain\Factory\TaskManagerMerger;
+use App\Tasks\Domain\Factory\TaskMerger;
 
 final class TaskManagerStateRecreator
 {
     public function __construct(
-        private readonly TaskManagerFactory $managerFactory,
-        private readonly TaskFactory $taskFactory
+        private readonly TaskManagerMerger $managerMerger,
+        private readonly TaskMerger $taskMerger
     ) {
     }
 
@@ -64,46 +62,41 @@ final class TaskManagerStateRecreator
 
     private function changeStatus(TaskManager $source, ProjectStatusWasChangedEvent $event): TaskManager
     {
-        $dto = $this->createManagerDTO($source, [
-            'status' => $event->status
-        ]);
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            status: (int) $event->status
+        ));
     }
 
     private function changeOwner(TaskManager $source, ProjectOwnerWasChangedEvent $event): TaskManager
     {
-        $dto = $this->createManagerDTO($source, [
-            'ownerId' => $event->ownerId
-        ]);
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            ownerId: $event->ownerId
+        ));
     }
 
     private function removeParticipant(TaskManager $source, ProjectParticipantWasRemovedEvent $event): TaskManager
     {
         $participants = $source->getParticipants()->remove(new UserId($event->participantId));
-        $dto = $this->createManagerDTO($source, [
-            'participantIds' => $participants->getInnerItems()
-        ]);
 
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            participantIds: $participants->getInnerItems()
+        ));
     }
 
     private function addParticipant(TaskManager $source, ProjectParticipantWasAddedEvent $event): TaskManager
     {
         $participants = $source->getParticipants()->add(new UserId($event->participantId));
-        $dto = $this->createManagerDTO($source, [
-            'participantIds' => $participants->getInnerItems()
-        ]);
 
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            participantIds: $participants->getInnerItems()
+        ));
     }
 
     private function changeFinishDate(TaskManager $source, ProjectInformationWasChangedEvent $event): TaskManager
     {
-        $dto = $this->createManagerDTO($source, [
-            'finishDate' => $event->finishDate
-        ]);
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            finishDate: $event->finishDate
+        ));
     }
 
     private function changeTaskStartDate(TaskManager $source, ProjectTaskStartDateWasChangedEvent $event): TaskManager
@@ -115,17 +108,15 @@ final class TaskManagerStateRecreator
             return $source;
         }
 
-        $taskDto = $this->createTaskDTO($task, [
-            'startDate' => $event->startDate
-        ]);
         $tasks = $source->getTasks()->add(
-            $this->taskFactory->create($taskDto)
+            $this->taskMerger->merge($task, new TaskMergeDTO(
+                startDate: $event->startDate
+            ))
         );
 
-        $dto = $this->createManagerDTO($source, [
-            'tasks' => $tasks->getInnerItems()
-        ]);
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            tasks: $tasks->getInnerItems()
+        ));
     }
 
     private function changeTaskFinishDate(TaskManager $source, ProjectTaskFinishDateWasChangedEvent $event): TaskManager
@@ -137,17 +128,15 @@ final class TaskManagerStateRecreator
             return $source;
         }
 
-        $taskDto = $this->createTaskDTO($task, [
-            'finishDate' => $event->finishDate
-        ]);
         $tasks = $source->getTasks()->add(
-            $this->taskFactory->create($taskDto)
+            $this->taskMerger->merge($task, new TaskMergeDTO(
+                finishDate: $event->finishDate
+            ))
         );
 
-        $dto = $this->createManagerDTO($source, [
-            'tasks' => $tasks->getInnerItems()
-        ]);
-        return $this->managerFactory->create($dto);
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            tasks: $tasks->getInnerItems()
+        ));
     }
 
     private function changeTaskStatus(TaskManager $source, ProjectTaskStatusWasChangedEvent $event): TaskManager
@@ -159,44 +148,14 @@ final class TaskManagerStateRecreator
             return $source;
         }
 
-        $taskDto = $this->createTaskDTO($task, [
-            'status' => $event->status
-        ]);
         $tasks = $source->getTasks()->add(
-            $this->taskFactory->create($taskDto)
+            $this->taskMerger->merge($task, new TaskMergeDTO(
+                status: (int) $event->status
+            ))
         );
 
-        $dto = $this->createManagerDTO($source, [
-            'tasks' => $tasks->getInnerItems()
-        ]);
-        return $this->managerFactory->create($dto);
-    }
-
-    private function createManagerDTO(TaskManager $source, array $attributes): TaskManagerDTO
-    {
-        return new TaskManagerDTO(
-            $attributes['id'] ?? $source->getId()->value,
-            $attributes['projectId'] ?? $source->getProjectId()->value,
-            (int) $attributes['status'] ?? ProjectStatusFactory::scalarFromObject($source->getStatus()),
-            $attributes['ownerId'] ?? $source->getOwner()->userId->value,
-            $attributes['finishDate'] ?? $source->getFinishDate()->getValue(),
-            $attributes['participantIds'] ?? $source->getParticipants()->getInnerItems(),
-            $attributes['tasks'] ?? $source->getTasks()->getInnerItems()
-        );
-    }
-
-    private function createTaskDTO(Task $source, array $attributes): TaskDTO
-    {
-        return new TaskDTO(
-            $attributes['id'] ?? $source->getId()->value,
-            $attributes['name'] ?? $source->getInformation()->name->value,
-            $attributes['brief'] ?? $source->getInformation()->brief->value,
-            $attributes['description'] ?? $source->getInformation()->description->value,
-            $attributes['startDate'] ?? $source->getInformation()->startDate->getValue(),
-            $attributes['finishDate'] ?? $source->getInformation()->finishDate->getValue(),
-            $attributes['ownerId'] ?? $source->getOwnerId()->value,
-            (int) $attributes['status'] ?? TaskStatusFactory::scalarFromObject($source->getStatus()),
-            $attributes['links'] ?? $source->getLinks()
-        );
+        return $this->managerMerger->merge($source, new TaskManagerMergeDTO(
+            tasks: $tasks->getInnerItems()
+        ));
     }
 }

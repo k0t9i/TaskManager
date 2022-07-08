@@ -10,12 +10,10 @@ use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestFactory;
 use App\Requests\Domain\Factory\RequestManagerFactory;
-use App\Requests\Domain\Factory\RequestStatusFactory;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
@@ -228,7 +226,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
                     $item->getId()->value,
                     $managerId,
                     $item->getUserId()->value,
-                    RequestStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getStatus()->getScalar(),
                     $item->getChangeDate()->getValue()
                 ])
                 ->executeStatement();
@@ -254,7 +252,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
                 ->setParameters([
                     $managerId,
                     $item->getUserId()->value,
-                    RequestStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getStatus()->getScalar(),
                     $item->getChangeDate()->getValue(),
                     $item->getId()->value,
                 ])
@@ -278,7 +276,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
             ->where('id = ?')
             ->setParameters([
                 $manager->getProjectId()->value,
-                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getStatus()->getScalar(),
                 $manager->getOwnerId()->value,
                 $version,
                 $manager->getId()->value,
@@ -305,7 +303,7 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
             ->setParameters([
                 $manager->getId()->value,
                 $manager->getProjectId()->value,
-                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getStatus()->getScalar(),
                 $manager->getOwnerId()->value,
                 $version
             ])

@@ -8,8 +8,6 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
@@ -189,7 +187,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     $item->getId()->value,
                     $projectId,
                     $item->getTaskId()->value,
-                    TaskStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getStatus()->getScalar(),
                     $item->getOwnerId()->value,
                     $item->getStartDate()->getValue(),
                     $item->getFinishDate()->getValue()
@@ -219,7 +217,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ->setParameters([
                     $projectId,
                     $item->getTaskId()->value,
-                    TaskStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getStatus()->getScalar(),
                     $item->getOwnerId()->value,
                     $item->getStartDate()->getValue(),
                     $item->getFinishDate()->getValue(),
@@ -249,7 +247,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 $project->getInformation()->name->value,
                 $project->getInformation()->description->value,
                 $project->getInformation()->finishDate->getValue(),
-                ProjectStatusFactory::scalarFromObject($project->getStatus()),
+                $project->getStatus()->getScalar(),
                 $project->getOwner()->userId->value,
                 $version,
                 $project->getId()->value
@@ -280,7 +278,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 $project->getInformation()->name->value,
                 $project->getInformation()->description->value,
                 $project->getInformation()->finishDate->getValue(),
-                ProjectStatusFactory::scalarFromObject($project->getStatus()),
+                $project->getStatus()->getScalar(),
                 $project->getOwner()->userId->value,
                 $version
             ])

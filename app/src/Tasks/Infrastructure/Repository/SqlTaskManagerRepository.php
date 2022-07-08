@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Tasks\Infrastructure\Repository;
 
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\UserId;
@@ -213,7 +211,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
                     $item->getOwnerId()->value,
-                    TaskStatusFactory::scalarFromObject($item->getStatus())
+                    $item->getStatus()->getScalar()
                 ])
                 ->executeStatement();
         }
@@ -247,7 +245,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
                     $item->getInformation()->startDate->getValue(),
                     $item->getInformation()->finishDate->getValue(),
                     $item->getOwnerId()->value,
-                    TaskStatusFactory::scalarFromObject($item->getStatus()),
+                    $item->getStatus()->getScalar(),
                     $item->getId()->value,
                 ])
                 ->executeStatement();
@@ -313,7 +311,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
             ->where('id = ?')
             ->setParameters([
                 $manager->getProjectId()->value,
-                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getStatus()->getScalar(),
                 $manager->getOwner()->userId->value,
                 $manager->getFinishDate()->getValue(),
                 $version,
@@ -342,7 +340,7 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
             ->setParameters([
                 $manager->getId()->value,
                 $manager->getProjectId()->value,
-                ProjectStatusFactory::scalarFromObject($manager->getStatus()),
+                $manager->getStatus()->getScalar(),
                 $manager->getOwner()->userId->value,
                 $manager->getFinishDate()->getValue(),
                 $version
