@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Tasks\Domain\ValueObject;
 
 final class ClosedTaskStatus extends TaskStatus
 {

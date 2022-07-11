@@ -4,18 +4,18 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
 use App\Tasks\Domain\Exception\TaskLinkNotExistException;
 use App\Tasks\Domain\Exception\TasksOfTaskLinkAreEqualException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
+use App\Tasks\Domain\ValueObject\ClosedTaskStatus;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskLink;
+use App\Tasks\Domain\ValueObject\TaskStatus;
 
 final class Task implements Hashable
 {

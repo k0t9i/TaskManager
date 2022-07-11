@@ -6,11 +6,11 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\ClosedTaskStatus;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Tasks\Application\Command\CloseTaskCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
+use App\Tasks\Domain\ValueObject\ClosedTaskStatus;
 
 class CloseTaskCommandHandler implements CommandHandlerInterface
 {

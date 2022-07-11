@@ -7,14 +7,12 @@ use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\TaskInformationWasChangedEvent;
 use App\Shared\Domain\Event\TaskStatusWasChangedEvent;
 use App\Shared\Domain\Event\TaskWasCreatedEvent;
-use App\Shared\Domain\ValueObject\ActiveTaskStatus;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
 use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
@@ -22,9 +20,11 @@ use App\Tasks\Domain\Event\TaskLinkWasAddedEvent;
 use App\Tasks\Domain\Event\TaskLinkWasDeletedEvent;
 use App\Tasks\Domain\Exception\InsufficientPermissionsToChangeTaskException;
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
+use App\Tasks\Domain\ValueObject\ActiveTaskStatus;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
 use App\Tasks\Domain\ValueObject\Tasks;
+use App\Tasks\Domain\ValueObject\TaskStatus;
 
 final class TaskManager extends AggregateRoot
 {
