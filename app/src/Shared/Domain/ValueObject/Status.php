@@ -38,4 +38,8 @@ abstract class Status
      * @return string[]
      */
     abstract protected function getNextStatuses(): array;
+
+    abstract public function getScalar(): int;
+
+    abstract public static function createFromScalar(int $status): static;
 }

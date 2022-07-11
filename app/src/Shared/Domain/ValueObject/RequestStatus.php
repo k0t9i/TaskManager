@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use App\Shared\Domain\Factory\RequestStatusFactory;
+use App\Shared\Domain\Exception\LogicException;
 
 abstract class RequestStatus extends Status
 {
+    private const STATUS_PENDING = 0;
+    private const STATUS_CONFIRMED = 1;
+    private const STATUS_REJECTED = 2;
+
     public function allowsModification(): bool
     {
         return true;
@@ -14,11 +18,36 @@ abstract class RequestStatus extends Status
 
     public function getScalar(): int
     {
-        return RequestStatusFactory::scalarFromObject($this);
+        if ($this instanceof PendingRequestStatus) {
+            return self::STATUS_PENDING;
+        }
+        if ($this instanceof ConfirmedRequestStatus) {
+            return self::STATUS_CONFIRMED;
+        }
+        if ($this instanceof RejectedRequestStatus) {
+            return self::STATUS_REJECTED;
+        }
+
+        throw new LogicException(sprintf('Invalid type "%s" of project request status', gettype($this)));
     }
 
-    public function whetherToAddUser(): bool
+    public static function createFromScalar(int $status): static
     {
-        return false;
+        if ($status === self::STATUS_PENDING) {
+            return new PendingRequestStatus();
+        }
+        if ($status === self::STATUS_CONFIRMED) {
+            return new ConfirmedRequestStatus();
+        }
+        if ($status === self::STATUS_REJECTED) {
+            return new RejectedRequestStatus();
+        }
+
+        throw new LogicException(sprintf('Invalid project request status "%s"', gettype($status)));
+    }
+
+    public function isConfirmed(): bool
+    {
+        return $this->getScalar() === self::STATUS_CONFIRMED;
     }
 }

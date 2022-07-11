@@ -10,9 +10,8 @@ use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
-use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\DTO\TaskManagerMergeDTO;
 use App\Tasks\Domain\Entity\Task;
@@ -49,7 +48,8 @@ final class TaskManagerStateRecreator
 
     private function changeStatus(TaskManager $source, ProjectStatusWasChangedEvent $event): TaskManager
     {
-        if (ProjectStatusFactory::objectFromScalar((int) $event->status) instanceof ClosedProjectStatus) {
+        $status = ProjectStatus::createFromScalar((int) $event->status);
+        if ($status->isClosed()) {
             /** @var Task $task */
             foreach ($source->getTasks()->getInnerItems() as $task) {
                 $task->closeIfCan();

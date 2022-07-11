@@ -7,10 +7,10 @@ use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestManagerFactory
@@ -20,7 +20,7 @@ final class RequestManagerFactory
         return new RequestManager(
             new RequestManagerId($dto->id),
             new ProjectId($dto->projectId),
-            ProjectStatusFactory::objectFromScalar($dto->status),
+            ProjectStatus::createFromScalar($dto->status),
             new Owner(new UserId($dto->ownerId)),
             new Participants($dto->participantIds),
             new Requests($dto->requests)

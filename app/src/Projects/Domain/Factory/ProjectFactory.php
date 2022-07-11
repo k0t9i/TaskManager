@@ -9,11 +9,11 @@ use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Projects\Domain\ValueObject\ProjectTasks;
-use App\Shared\Domain\Factory\ProjectStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\ProjectStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectFactory
@@ -26,7 +26,7 @@ final class ProjectFactory
                 new ProjectDescription($dto->description),
                 new DateTime($dto->finishDate),
             ),
-            ProjectStatusFactory::objectFromScalar($dto->status),
+            ProjectStatus::createFromScalar($dto->status),
             new Owner(
                 new UserId($dto->ownerId)
             ),

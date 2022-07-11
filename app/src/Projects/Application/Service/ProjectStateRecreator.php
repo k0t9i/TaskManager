@@ -13,8 +13,8 @@ use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\Factory\RequestStatusFactory;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
+use App\Shared\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class ProjectStateRecreator
@@ -57,8 +57,8 @@ final class ProjectStateRecreator
 
     private function tryToAddParticipant(Project $source, RequestStatusWasChangedEvent $event): Project
     {
-        $status = RequestStatusFactory::objectFromScalar((int)$event->status);
-        if (!$status->whetherToAddUser()) {
+        $status = RequestStatus::createFromScalar((int)$event->status);
+        if (!$status->isConfirmed()) {
             return $source;
         }
 

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Tasks\Domain\Factory;
 
-use App\Shared\Domain\Factory\TaskStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
+use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\Entity\Task;
@@ -28,7 +28,7 @@ final class TaskFactory
                 new DateTime($dto->finishDate),
             ),
             new UserId($dto->ownerId),
-            TaskStatusFactory::objectFromScalar($dto->status),
+            TaskStatus::createFromScalar($dto->status),
             $dto->links
         );
     }

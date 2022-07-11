@@ -6,8 +6,8 @@ namespace App\Requests\Domain\Factory;
 use App\Requests\Domain\DTO\RequestDTO;
 use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\ValueObject\RequestId;
-use App\Shared\Domain\Factory\RequestStatusFactory;
 use App\Shared\Domain\ValueObject\DateTime;
+use App\Shared\Domain\ValueObject\RequestStatus;
 use App\Shared\Domain\ValueObject\UserId;
 
 final class RequestFactory
@@ -17,7 +17,7 @@ final class RequestFactory
         return new Request(
             new RequestId($dto->id),
             new UserId($dto->userId),
-            RequestStatusFactory::objectFromScalar($dto->status),
+            RequestStatus::createFromScalar($dto->status),
             new DateTime($dto->changeDate),
         );
     }

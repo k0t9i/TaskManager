@@ -9,9 +9,4 @@ final class ConfirmedRequestStatus extends RequestStatus
     {
         return [];
     }
-
-    public function whetherToAddUser(): bool
-    {
-        return true;
-    }
 }
