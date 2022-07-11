@@ -1,19 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\Event;
+namespace App\Shared\Domain\Event\Requests;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 
-final class ProjectWasCreatedEvent extends DomainEvent
+final class RequestStatusWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
-        public readonly string $name,
-        public readonly string $description,
-        public readonly string $finishDate,
+        public readonly string $projectId,
+        public readonly string $requestId,
+        public readonly string $userId,
         public readonly string $status,
-        public readonly string $ownerId,
         string $occurredOn = null
     ) {
         parent::__construct($id, $occurredOn);
@@ -21,18 +20,17 @@ final class ProjectWasCreatedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'project.created';
+        return 'request.statusChanged';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
         return new self(
             $aggregateId,
-            $body['name'],
-            $body['description'],
-            $body['finishDate'],
+            $body['projectId'],
+            $body['requestId'],
+            $body['userId'],
             $body['status'],
-            $body['ownerId'],
             $occurredOn
         );
     }
@@ -40,11 +38,10 @@ final class ProjectWasCreatedEvent extends DomainEvent
     public function toPrimitives(): array
     {
         return [
-            'name' => $this->name,
-            'description' => $this->description,
-            'finishDate' => $this->finishDate,
+            'projectId' => $this->projectId,
+            'requestId' => $this->requestId,
+            'userId' => $this->userId,
             'status' => $this->status,
-            'ownerId' => $this->ownerId,
         ];
     }
 }

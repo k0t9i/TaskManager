@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\TaskWasCreatedEvent;
+use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 
 final class CreateTaskOnTaskCreatedSubscriber implements EventSubscriberInterface
 {

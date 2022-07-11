@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
 
 final class ChangeFinishDateOnProjectInformationChangedSubscriber implements EventSubscriberInterface
 {

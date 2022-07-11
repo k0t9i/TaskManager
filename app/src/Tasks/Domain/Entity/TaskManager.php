@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Event\TaskInformationWasChangedEvent;
-use App\Shared\Domain\Event\TaskStatusWasChangedEvent;
-use App\Shared\Domain\Event\TaskWasCreatedEvent;
+use App\Shared\Domain\Event\Tasks\TaskInformationWasChangedEvent;
+use App\Shared\Domain\Event\Tasks\TaskStatusWasChangedEvent;
+use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;

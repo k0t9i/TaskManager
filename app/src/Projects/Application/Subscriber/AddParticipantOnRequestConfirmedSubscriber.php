@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
+use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 
 final class AddParticipantOnRequestConfirmedSubscriber implements EventSubscriberInterface
 {

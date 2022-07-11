@@ -5,7 +5,7 @@ namespace App\Shared\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\UserProfileWasChangedEvent;
+use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\UserFirstname;

@@ -5,7 +5,7 @@ namespace App\Tasks\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 
 final class AddParticipantOnProjectParticipantAddedSubscriber implements EventSubscriberInterface
 {

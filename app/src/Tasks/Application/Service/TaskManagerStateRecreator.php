@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Service;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
-use App\Shared\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Shared\Domain\Event\ProjectParticipantWasAddedEvent;
-use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
+use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\ProjectStatus;

@@ -7,7 +7,7 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\Event\ProjectWasCreatedEvent;
+use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\DTO\TaskManagerDTO;

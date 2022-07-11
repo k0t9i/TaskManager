@@ -9,7 +9,7 @@ use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Event\RequestStatusWasChangedEvent;
+use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;

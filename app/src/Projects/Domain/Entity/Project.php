@@ -7,11 +7,11 @@ use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticip
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Event\ProjectInformationWasChangedEvent;
-use App\Shared\Domain\Event\ProjectOwnerWasChangedEvent;
-use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
-use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
-use App\Shared\Domain\Event\ProjectWasCreatedEvent;
+use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
+use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;

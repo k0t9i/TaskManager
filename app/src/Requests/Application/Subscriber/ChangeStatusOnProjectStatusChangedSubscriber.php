@@ -5,7 +5,7 @@ namespace App\Requests\Application\Subscriber;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 
 final class ChangeStatusOnProjectStatusChangedSubscriber implements EventSubscriberInterface
 {

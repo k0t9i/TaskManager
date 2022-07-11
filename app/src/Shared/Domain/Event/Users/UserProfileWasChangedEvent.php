@@ -1,15 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\Event;
+namespace App\Shared\Domain\Event\Users;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 
-final class UserWasCreatedEvent extends DomainEvent
+final class UserProfileWasChangedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
-        public readonly string $email,
         public readonly string $firstname,
         public readonly string $lastname,
         public readonly string $password,
@@ -20,14 +19,13 @@ final class UserWasCreatedEvent extends DomainEvent
 
     public static function getEventName(): string
     {
-        return 'user.created';
+        return 'user.profileChanged';
     }
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
         return new self(
             $aggregateId,
-            $body['email'],
             $body['firstname'],
             $body['lastname'],
             $body['password'],
@@ -38,7 +36,6 @@ final class UserWasCreatedEvent extends DomainEvent
     public function toPrimitives(): array
     {
         return [
-            'email' => $this->email,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'password' => $this->password,
