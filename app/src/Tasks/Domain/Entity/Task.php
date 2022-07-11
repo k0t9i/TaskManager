@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\ValueObject\ClosedTaskStatus;
+use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\TaskId;
 use App\Shared\Domain\ValueObject\TaskStatus;
 use App\Shared\Domain\ValueObject\UserId;
@@ -54,6 +56,33 @@ final class Task implements Hashable
         $taskLink = new TaskLink($taskId);
         $this->ensureLinkExists($taskLink);
         $this->links = $this->links->remove($taskLink);
+    }
+
+    public function closeIfCan(): void
+    {
+        $newStatus = new ClosedTaskStatus();
+        if ($this->status->canBeChangedTo($newStatus)) {
+            $this->status = $newStatus;
+        }
+    }
+
+    public function limitDatesIfNeed(DateTime $date): void
+    {
+        $newStartDate = $this->information->startDate;
+        if ($this->information->startDate->isGreaterThan($date)) {
+            $newStartDate = $date;
+        }
+        $newFinishDate = $this->information->startDate;
+        if ($this->information->finishDate->isGreaterThan($date)) {
+            $newFinishDate = $date;
+        }
+        $this->information = new TaskInformation(
+            $this->information->name,
+            $this->information->brief,
+            $this->information->description,
+            $newStartDate,
+            $newFinishDate,
+        );
     }
 
     public function getId(): TaskId

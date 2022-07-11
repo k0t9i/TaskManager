@@ -13,7 +13,6 @@ use App\Shared\Domain\Event\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Event\ProjectWasCreatedEvent;
 use App\Shared\Domain\ValueObject\ActiveProjectStatus;
-use App\Shared\Domain\ValueObject\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\ProjectId;
@@ -69,8 +68,6 @@ final class Project extends AggregateRoot
 
         $this->information = $information;
 
-        $this->tasks->limitDatesOfAllTasksByProjectFinishDate($this);
-
         $this->registerEvent(new ProjectInformationWasChangedEvent(
             $this->id->value,
             $information->name->value,
@@ -88,9 +85,6 @@ final class Project extends AggregateRoot
         $this->owner->ensureIsOwner($currentUserId);
 
         $this->status = $status;
-        if ($this->status instanceof ClosedProjectStatus) {
-            $this->tasks->closeAllTasksIfActive($this);
-        }
 
         $this->registerEvent(new ProjectStatusWasChangedEvent(
             $this->id->value,

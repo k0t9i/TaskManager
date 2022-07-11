@@ -178,19 +178,13 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                     'id' => '?',
                     'project_id' => '?',
                     'task_id' => '?',
-                    'status' => '?',
                     'owner_id' => '?',
-                    'start_date' => '?',
-                    'finish_date' => '?',
                 ])
                 ->setParameters([
                     $item->getId()->value,
                     $projectId,
                     $item->getTaskId()->value,
-                    $item->getStatus()->getScalar(),
-                    $item->getOwnerId()->value,
-                    $item->getStartDate()->getValue(),
-                    $item->getFinishDate()->getValue()
+                    $item->getOwnerId()->value
                 ])
                 ->executeStatement();
         }
@@ -209,18 +203,12 @@ class SqlProjectRepository implements ProjectRepositoryInterface
                 ->update('project_tasks')
                 ->set('project_id', '?')
                 ->set('task_id', '?')
-                ->set('status', '?')
                 ->set('owner_id', '?')
-                ->set('start_date', '?')
-                ->set('finish_date', '?')
                 ->where('id = ?')
                 ->setParameters([
                     $projectId,
                     $item->getTaskId()->value,
-                    $item->getStatus()->getScalar(),
                     $item->getOwnerId()->value,
-                    $item->getStartDate()->getValue(),
-                    $item->getFinishDate()->getValue(),
                     $item->getId()->value
                 ])
                 ->executeStatement();

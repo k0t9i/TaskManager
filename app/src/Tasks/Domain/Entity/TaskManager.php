@@ -57,13 +57,12 @@ final class TaskManager extends AggregateRoot
         );
 
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
-        $this->tasks->ensureIsFinishDateGreaterThanTaskDates($task->getId(), $this->finishDate);
-
         if (!$this->owner->isOwner($ownerId) && !$this->participants->isParticipant($ownerId)) {
             throw new TaskUserNotExistException($ownerId->value);
         }
 
         $this->tasks = $this->tasks->add($task);
+        $this->tasks->ensureIsFinishDateGreaterThanTaskDates($task->getId(), $this->finishDate);
 
         $this->registerEvent(new TaskWasCreatedEvent(
             $this->id->value,
@@ -92,9 +91,9 @@ final class TaskManager extends AggregateRoot
         /** @var Task $task */
         $task = $this->tasks->get($taskId);
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
-        $this->tasks->ensureIsFinishDateGreaterThanTaskDates($task->getId(), $this->finishDate);
 
         $task->changeInformation($information);
+        $this->tasks->ensureIsFinishDateGreaterThanTaskDates($task->getId(), $this->finishDate);
 
         $this->registerEvent(new TaskInformationWasChangedEvent(
             $this->id->value,

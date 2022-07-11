@@ -7,10 +7,7 @@ final class ProjectTaskDTO
 {
     public function __construct(
         public readonly string $taskId,
-        public readonly int $status,
-        public readonly string $ownerId,
-        public readonly string $startDate,
-        public readonly string $finishDate
+        public readonly string $ownerId
     ) {
     }
 
@@ -18,10 +15,7 @@ final class ProjectTaskDTO
     {
         return new self(
             $item['task_id'],
-            $item['status'],
-            $item['owner_id'],
-            $item['start_date'],
-            $item['finish_date']
+            $item['owner_id']
         );
     }
 }

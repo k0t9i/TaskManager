@@ -40,7 +40,7 @@ final class Tasks
         }
 
         $startDate = $task->getInformation()->startDate;
-        if ($startDate->startDate->isGreaterThan($date)) {
+        if ($startDate->isGreaterThan($date)) {
             throw new TaskStartDateGreaterThanProjectFinishDateException(
                 $date->getValue(),
                 $startDate->getValue()
