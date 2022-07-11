@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject\Requests;
 
 final class ConfirmedRequestStatus extends RequestStatus
 {

@@ -15,7 +15,7 @@ use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 final class CreateProjectCommandHandler implements CommandHandlerInterface
 {

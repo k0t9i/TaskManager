@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\TaskId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
 
 final class TaskLink implements Hashable
 {

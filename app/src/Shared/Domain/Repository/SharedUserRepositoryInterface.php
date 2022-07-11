@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Domain\Repository;
 
 use App\Shared\Domain\Entity\SharedUser;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 interface SharedUserRepositoryInterface
 {

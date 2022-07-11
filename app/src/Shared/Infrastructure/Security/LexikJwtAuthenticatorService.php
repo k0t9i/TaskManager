@@ -8,7 +8,7 @@ use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\AuthUser;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Security\ValueObject\SymfonySecurityUser;
 use ErrorException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;

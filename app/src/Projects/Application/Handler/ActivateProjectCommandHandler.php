@@ -9,8 +9,8 @@ use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\ActiveProjectStatus;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ActiveProjectStatus;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 final class ActivateProjectCommandHandler implements CommandHandlerInterface
 {

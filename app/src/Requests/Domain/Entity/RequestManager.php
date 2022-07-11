@@ -13,11 +13,11 @@ use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
-use App\Shared\Domain\ValueObject\PendingRequestStatus;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\ProjectStatus;
-use App\Shared\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
+use App\Shared\Domain\ValueObject\Requests\PendingRequestStatus;
+use App\Shared\Domain\ValueObject\Requests\RequestStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class RequestManager extends AggregateRoot
 {

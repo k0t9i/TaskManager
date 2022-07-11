@@ -8,7 +8,7 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 trait ProjectSubscriberTrait
 {

@@ -6,8 +6,8 @@ namespace App\Users\Domain\Entity;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 use App\Shared\Domain\Event\Users\UserWasCreatedEvent;
-use App\Shared\Domain\ValueObject\UserEmail;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Users\UserEmail;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Users\Domain\ValueObject\UserProfile;
 
 final class User extends AggregateRoot

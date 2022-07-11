@@ -12,7 +12,7 @@ use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class RequestManagerStateRecreator
 {

@@ -6,6 +6,7 @@ namespace App\Shared\Domain\ValueObject;
 use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class Participants
 {

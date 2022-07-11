@@ -6,8 +6,8 @@ namespace App\Projects\Domain\Factory;
 use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class ProjectTaskFactory
 {

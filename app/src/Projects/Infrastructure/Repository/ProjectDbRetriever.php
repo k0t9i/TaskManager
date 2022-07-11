@@ -9,7 +9,7 @@ use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Factory\ProjectFactory;
 use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 

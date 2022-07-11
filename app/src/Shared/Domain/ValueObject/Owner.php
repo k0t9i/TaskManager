@@ -6,6 +6,7 @@ namespace App\Shared\Domain\ValueObject;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\UserIsAlreadyOwnerException;
 use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class Owner implements Hashable
 {

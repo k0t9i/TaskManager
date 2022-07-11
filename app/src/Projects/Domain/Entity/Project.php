@@ -12,12 +12,12 @@ use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
-use App\Shared\Domain\ValueObject\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\ProjectStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ActiveProjectStatus;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
 final class Project extends AggregateRoot

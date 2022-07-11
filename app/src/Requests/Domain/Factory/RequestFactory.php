@@ -7,8 +7,8 @@ use App\Requests\Domain\DTO\RequestDTO;
 use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Requests\RequestStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class RequestFactory
 {

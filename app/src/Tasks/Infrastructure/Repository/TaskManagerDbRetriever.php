@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Tasks\Infrastructure\Repository;
 
 use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\DTO\TaskDTO;

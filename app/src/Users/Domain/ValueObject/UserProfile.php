@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Domain\ValueObject;
 
-use App\Shared\Domain\ValueObject\UserFirstname;
-use App\Shared\Domain\ValueObject\UserLastname;
+use App\Shared\Domain\ValueObject\Users\UserFirstname;
+use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Users\Domain\Exception\PasswordAndRepeatPasswordDoNotMatchException;
 
 final class UserProfile

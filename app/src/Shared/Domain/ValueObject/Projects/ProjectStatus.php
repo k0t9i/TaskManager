@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject\Projects;
 
 use App\Shared\Domain\Exception\LogicException;
+use App\Shared\Domain\ValueObject\Status;
 
 abstract class ProjectStatus extends Status
 {

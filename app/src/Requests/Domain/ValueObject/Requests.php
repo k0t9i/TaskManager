@@ -8,8 +8,8 @@ use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\Exception\RequestNotExistsException;
 use App\Requests\Domain\Exception\UserAlreadyHasPendingRequestException;
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class Requests
 {

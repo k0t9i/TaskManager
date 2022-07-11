@@ -5,7 +5,7 @@ namespace App\Requests\Domain\Repository;
 
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\ValueObject\RequestId;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 interface RequestManagerRepositoryInterface
 {

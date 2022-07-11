@@ -9,8 +9,8 @@ use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
 final class RemoveProjectParticipantCommandHandler implements CommandHandlerInterface

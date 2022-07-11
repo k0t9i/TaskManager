@@ -5,7 +5,7 @@ namespace App\Tasks\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\TaskId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDateException;

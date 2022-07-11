@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Shared\Domain\ValueObject\UserEmail;
-use App\Shared\Domain\ValueObject\UserFirstname;
-use App\Shared\Domain\ValueObject\UserId;
-use App\Shared\Domain\ValueObject\UserLastname;
+use App\Shared\Domain\ValueObject\Users\UserEmail;
+use App\Shared\Domain\ValueObject\Users\UserFirstname;
+use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Users\Domain\Entity\User;

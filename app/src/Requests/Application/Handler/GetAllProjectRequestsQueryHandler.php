@@ -11,7 +11,7 @@ use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 final class GetAllProjectRequestsQueryHandler implements QueryHandlerInterface
 {

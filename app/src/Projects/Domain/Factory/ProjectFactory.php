@@ -12,9 +12,9 @@ use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\ProjectStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class ProjectFactory
 {

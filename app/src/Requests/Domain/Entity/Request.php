@@ -6,9 +6,9 @@ namespace App\Requests\Domain\Entity;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\PendingRequestStatus;
-use App\Shared\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Requests\PendingRequestStatus;
+use App\Shared\Domain\ValueObject\Requests\RequestStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class Request implements Hashable
 {

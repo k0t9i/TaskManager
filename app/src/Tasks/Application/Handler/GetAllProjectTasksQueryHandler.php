@@ -6,7 +6,7 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\ProjectId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Tasks\Application\Query\GetAllProjectTasksQuery;
 use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
 use App\Tasks\Application\Query\TaskResponse;

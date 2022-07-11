@@ -8,9 +8,9 @@ use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\Domain\ValueObject\UserFirstname;
-use App\Shared\Domain\ValueObject\UserId;
-use App\Shared\Domain\ValueObject\UserLastname;
+use App\Shared\Domain\ValueObject\Users\UserFirstname;
+use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Domain\ValueObject\Users\UserLastname;
 
 final class ChangeSharedUserOnUserProfileChangedSubscriber implements EventSubscriberInterface
 {

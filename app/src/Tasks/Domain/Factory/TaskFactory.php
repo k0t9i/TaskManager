@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Factory;
 
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Tasks\Domain\DTO\TaskDTO;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\ValueObject\TaskBrief;

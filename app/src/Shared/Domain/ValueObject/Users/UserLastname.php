@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject\Users;
+
+use App\Shared\Domain\ValueObject\StringValueObject;
 
 final class UserLastname extends StringValueObject
 {

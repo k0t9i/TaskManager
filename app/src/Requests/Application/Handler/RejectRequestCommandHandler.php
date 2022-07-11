@@ -10,7 +10,7 @@ use App\Requests\Domain\ValueObject\RequestId;
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\RejectedRequestStatus;
+use App\Shared\Domain\ValueObject\Requests\RejectedRequestStatus;
 
 final class RejectRequestCommandHandler implements CommandHandlerInterface
 {

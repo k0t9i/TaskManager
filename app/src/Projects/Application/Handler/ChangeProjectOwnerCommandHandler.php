@@ -12,8 +12,8 @@ use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Owner;
-use App\Shared\Domain\ValueObject\ProjectId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
 final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface

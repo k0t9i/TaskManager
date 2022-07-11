@@ -14,8 +14,8 @@ use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
-use App\Shared\Domain\ValueObject\RequestStatus;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Requests\RequestStatus;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class ProjectStateRecreator
 {

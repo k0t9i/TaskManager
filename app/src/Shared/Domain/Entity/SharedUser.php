@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Shared\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\ValueObject\UserEmail;
-use App\Shared\Domain\ValueObject\UserFirstname;
-use App\Shared\Domain\ValueObject\UserId;
-use App\Shared\Domain\ValueObject\UserLastname;
+use App\Shared\Domain\ValueObject\Users\UserEmail;
+use App\Shared\Domain\ValueObject\Users\UserFirstname;
+use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Domain\ValueObject\Users\UserLastname;
 
 final class SharedUser extends AggregateRoot
 {

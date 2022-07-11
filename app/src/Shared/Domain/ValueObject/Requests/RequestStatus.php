@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Shared\Domain\ValueObject\Requests;
 
 use App\Shared\Domain\Exception\LogicException;
+use App\Shared\Domain\ValueObject\Status;
 
 abstract class RequestStatus extends Status
 {

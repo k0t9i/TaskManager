@@ -5,8 +5,8 @@ namespace App\Projects\Domain\Entity;
 
 use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class ProjectTask implements Hashable
 {

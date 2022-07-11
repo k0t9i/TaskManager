@@ -7,8 +7,8 @@ use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\Exception\UserHasProjectTaskException;
 use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
 final class ProjectTasks

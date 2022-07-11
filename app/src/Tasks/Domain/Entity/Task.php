@@ -5,8 +5,8 @@ namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\TaskId;
-use App\Shared\Domain\ValueObject\UserId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
+use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
 use App\Tasks\Domain\Exception\TaskLinkNotExistException;
