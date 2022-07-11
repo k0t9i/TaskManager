@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\Requests\Domain\Entity;
 
 use App\Requests\Domain\Collection\RequestCollection;
-use App\Requests\Domain\Event\RequestWasCreatedEvent;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
+use App\Shared\Domain\Event\Requests\RequestWasCreatedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
@@ -48,6 +48,7 @@ final class RequestManager extends AggregateRoot
 
         $this->registerEvent(new RequestWasCreatedEvent(
             $this->id->value,
+            $this->projectId->value,
             $request->getId()->value,
             $userId->value,
         ));

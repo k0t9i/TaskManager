@@ -18,6 +18,7 @@ framework:
                         users: ~
                         requests: ~
                         tasks: ~
+                        projections: ~
             sync: 'sync://'
 
         routing:

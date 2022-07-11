@@ -32,14 +32,14 @@ class Kernel extends BaseKernel
 
     protected function configureContainer(ContainerConfigurator $container): void
     {
-        $this->configureContainerInDir($container, 'app');
         $this->configureContainerInDir($container, 'shared');
+        $this->configureContainerInDir($container, 'app');
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $this->configureRoutesInDir($routes, 'app');
         $this->configureRoutesInDir($routes, 'shared');
+        $this->configureRoutesInDir($routes, 'app');
     }
 
     /**

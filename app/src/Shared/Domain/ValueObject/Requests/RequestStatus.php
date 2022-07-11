@@ -47,6 +47,11 @@ abstract class RequestStatus extends Status
         throw new LogicException(sprintf('Invalid project request status "%s"', gettype($status)));
     }
 
+    public function isPending(): bool
+    {
+        return $this->getScalar() === self::STATUS_PENDING;
+    }
+
     public function isConfirmed(): bool
     {
         return $this->getScalar() === self::STATUS_CONFIRMED;

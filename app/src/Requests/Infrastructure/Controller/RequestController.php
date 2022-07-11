@@ -5,6 +5,7 @@ namespace App\Requests\Infrastructure\Controller;
 
 use App\Requests\Application\Command\ConfirmRequestCommand;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
+use App\Requests\Application\Command\RejectRequestCommand;
 use App\Requests\Application\Query\GetAllProjectRequestsQuery;
 use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
@@ -40,7 +41,7 @@ final class RequestController
     #[Route('/{id}/reject/', name: 'reject', methods: ['PATCH'])]
     public function reject(string $id): JsonResponse
     {
-        $this->commandBus->dispatch(new ConfirmRequestCommand($id));
+        $this->commandBus->dispatch(new RejectRequestCommand($id));
 
         return new JsonResponse();
     }
