@@ -4,21 +4,22 @@ declare(strict_types=1);
 namespace App\Tasks\Application\Query;
 
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Tasks\Domain\DTO\TaskListResponseDTO;
 
-final class GetAllProjectTasksQueryResponse implements QueryResponseInterface
+final class GetProjectTasksQueryResponse implements QueryResponseInterface
 {
     /**
-     * @var TaskResponse[]
+     * @var TaskListResponseDTO[]
      */
     private readonly array $tasks;
 
-    public function __construct(TaskResponse... $tasks)
+    public function __construct(TaskListResponseDTO... $tasks)
     {
         $this->tasks = $tasks;
     }
 
     /**
-     * @return TaskResponse[]
+     * @return TaskListResponseDTO[]
      */
     public function getTasks(): array
     {

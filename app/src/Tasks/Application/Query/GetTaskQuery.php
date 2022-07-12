@@ -5,9 +5,9 @@ namespace App\Tasks\Application\Query;
 
 use App\Shared\Domain\Bus\Query\QueryInterface;
 
-final class GetAllProjectTasksQuery implements QueryInterface
+final class GetTaskQuery implements QueryInterface
 {
-    public function __construct(public readonly string $projectId)
+    public function __construct(public readonly string $id)
     {
     }
 }

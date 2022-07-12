@@ -15,5 +15,6 @@ interface ProjectQueryRepositoryInterface
      * @return ProjectListResponseDTO[]
      */
     public function findAllByUserId(UserId $userId): array;
+    //TODO by criteria
     public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO;
 }

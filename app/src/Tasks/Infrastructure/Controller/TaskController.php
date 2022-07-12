@@ -11,8 +11,10 @@ use App\Tasks\Application\Command\CloseTaskCommand;
 use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Tasks\Application\Command\DeleteLinkCommand;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
-use App\Tasks\Application\Query\GetAllProjectTasksQuery;
-use App\Tasks\Application\Query\GetAllProjectTasksQueryResponse;
+use App\Tasks\Application\Query\GetProjectTasksQuery;
+use App\Tasks\Application\Query\GetProjectTasksQueryResponse;
+use App\Tasks\Application\Query\GetTaskQuery;
+use App\Tasks\Application\Query\GetTaskQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,9 +107,18 @@ final class TaskController
     public function getAllInProject(string $projectId): JsonResponse
     {
         //TODO add paginator and ordering
-        /** @var GetAllProjectTasksQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetAllProjectTasksQuery($projectId));
+        /** @var GetProjectTasksQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetProjectTasksQuery($projectId));
 
         return new JsonResponse($envelope->getTasks());
+    }
+
+    #[Route('/{id}/', name: 'get', methods: ['GET'])]
+    public function get(string $id): JsonResponse
+    {
+        /** @var GetTaskQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetTaskQuery($id));
+
+        return new JsonResponse($envelope->getTask());
     }
 }
