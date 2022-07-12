@@ -10,12 +10,10 @@ use App\Requests\Domain\ValueObject\Requests;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\Requests\RequestWasCreatedEvent;
-use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
-use App\Shared\Domain\ValueObject\Requests\PendingRequestStatus;
 use App\Shared\Domain\ValueObject\Requests\RequestStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
 
@@ -37,9 +35,7 @@ final class RequestManager extends AggregateRoot
     ): Request {
         $this->status->ensureAllowsModification();
 
-        $status = new PendingRequestStatus();
-        $changeDate = new DateTime();
-        $request = new Request($id, $userId, $status, $changeDate);
+        $request = Request::create($id, $userId);
 
         $this->ensureIsUserAlreadyInProject($userId);
         $this->requests->ensureUserDoesNotHavePendingRequest($userId, $this->projectId);

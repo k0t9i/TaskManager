@@ -20,10 +20,18 @@ final class Request implements Hashable
     ) {
     }
 
+    public static function create(RequestId $id, UserId $userId): self
+    {
+        $status = new PendingRequestStatus();
+        $changeDate = new DateTime();
+        return new Request($id, $userId, $status, $changeDate);
+    }
+
     public function changeStatus(RequestStatus $status): void
     {
         $this->status->ensureCanBeChangedTo($status);
         $this->status = $status;
+        $this->changeDate = new DateTime();
     }
 
     public function getId(): RequestId
