@@ -13,6 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
+    private const CONNECTION = 'read';
+
     public function __construct(
         private readonly ManagerRegistry $managerRegistry
     ) {
@@ -27,7 +29,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
     {
         $rawItems = $this->queryBuilder()
             ->select('*')
-            ->from('project_projection')
+            ->from('project_projections')
             ->where('user_id = ?')
             ->setParameters([$userId->value])
             ->fetchAllAssociative();
@@ -43,7 +45,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
     private function queryBuilder(): QueryBuilder
     {
         /** @var Connection $connection */
-        $connection = $this->managerRegistry->getConnection('read');
+        $connection = $this->managerRegistry->getConnection(self::CONNECTION);
         return $connection->createQueryBuilder();
     }
 }

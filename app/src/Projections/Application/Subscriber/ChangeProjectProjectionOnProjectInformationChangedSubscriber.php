@@ -7,6 +7,8 @@ use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
+use DateTime;
+use Exception;
 
 final class ChangeProjectProjectionOnProjectInformationChangedSubscriber implements EventSubscriberInterface
 {
@@ -23,12 +25,19 @@ final class ChangeProjectProjectionOnProjectInformationChangedSubscriber impleme
         return [ProjectInformationWasChangedEvent::class];
     }
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(ProjectInformationWasChangedEvent $event): void
     {
         $projections = $this->projectionRepository->findAllById($event->aggregateId);
 
         foreach ($projections as $projection) {
-            $projection->updateInformation($event->name, $event->finishDate);
+            $projection->updateInformation(
+                $event->name,
+                $event->description,
+                new DateTime($event->finishDate)
+            );
             $this->projectionRepository->save($projection);
         }
     }

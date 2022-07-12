@@ -10,6 +10,8 @@ use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use DateTime;
+use Exception;
 
 final class CreateProjectProjectionOnProjectCreated implements EventSubscriberInterface
 {
@@ -27,6 +29,9 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
         return [ProjectWasCreatedEvent::class];
     }
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(ProjectWasCreatedEvent $event): void
     {
         $user = $this->userRepository->findById(new UserId($event->ownerId));
@@ -35,7 +40,8 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
             $event->aggregateId,
             $event->ownerId,
             $event->name,
-            $event->finishDate,
+            $event->description,
+            new DateTime($event->finishDate),
             (int) $event->status,
             $event->ownerId,
             $user ? $user->getFirstname()->value : '',

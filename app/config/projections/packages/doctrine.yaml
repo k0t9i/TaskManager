@@ -6,9 +6,8 @@ doctrine:
         auto_mapping: false
         mappings:
             Projections:
-                #TODO: change to xml
-                type: attribute
-                dir: '%kernel.project_dir%/../src/Projections/Domain/Entity'
+                type: xml
+                dir: '%kernel.project_dir%/../src/Projections/Infrastructure/Persistence/Doctrine'
                 is_bundle: false
                 prefix: App\Projections\Domain\Entity
                 alias: Projections

@@ -3,40 +3,23 @@ declare(strict_types=1);
 
 namespace App\Projections\Domain\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\Id;
+use DateTime;
 
-#[Entity]
 final class ProjectProjection
 {
     public function __construct(
-        #[Id]
-        #[Column(type: Types::STRING)]
         private string $id,
-        #[Id]
-        #[Column(type: Types::STRING)]
         private string $userId,
-        #[Column(type: Types::STRING)]
         private string $name,
-        #[Column(type: Types::STRING)]
-        private string $finishDate,
-        #[Column(type: Types::INTEGER)]
+        private string $description,
+        private DateTime $finishDate,
         private int $status,
-        #[Column(type: Types::STRING)]
         private string $ownerId,
-        #[Column(type: Types::STRING)]
         private string $ownerFirstname,
-        #[Column(type: Types::STRING)]
         private string $ownerLastname,
-        #[Column(type: Types::STRING)]
         private string $ownerEmail,
-        #[Column(type: Types::INTEGER)]
         private int $tasksCount = 0,
-        #[Column(type: Types::INTEGER)]
         private int $pendingRequestsCount = 0,
-        #[Column(type: Types::INTEGER)]
         private int $participantsCount = 0
     ) {
     }
@@ -47,6 +30,7 @@ final class ProjectProjection
             $this->id,
             $userId,
             $this->name,
+            $this->description,
             $this->finishDate,
             $this->status,
             $this->ownerId,
@@ -59,9 +43,10 @@ final class ProjectProjection
         );
     }
 
-    public function updateInformation(string $name, $finishDate): void
+    public function updateInformation(string $name, string $description, DateTime $finishDate): void
     {
         $this->name = $name;
+        $this->description = $description;
         $this->finishDate = $finishDate;
     }
 
