@@ -5,6 +5,8 @@ namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Tasks\TaskInformationWasChangedEvent;
+use App\Shared\Domain\Event\Tasks\TaskLinkWasAddedEvent;
+use App\Shared\Domain\Event\Tasks\TaskLinkWasDeletedEvent;
 use App\Shared\Domain\Event\Tasks\TaskStatusWasChangedEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\ValueObject\DateTime;
@@ -16,8 +18,6 @@ use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
-use App\Tasks\Domain\Event\TaskLinkWasAddedEvent;
-use App\Tasks\Domain\Event\TaskLinkWasDeletedEvent;
 use App\Tasks\Domain\Exception\InsufficientPermissionsToChangeTaskException;
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
 use App\Tasks\Domain\ValueObject\ActiveTaskStatus;

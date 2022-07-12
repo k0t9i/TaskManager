@@ -5,13 +5,13 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Exception\TaskNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
-use App\Tasks\Domain\Exception\TaskNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;

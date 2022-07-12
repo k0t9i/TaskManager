@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Event;
+namespace App\Shared\Domain\Event\Tasks;
 
 use App\Shared\Domain\Bus\Event\DomainEvent;
 
@@ -9,6 +9,7 @@ final class TaskLinkWasAddedEvent extends DomainEvent
 {
     public function __construct(
         string $id,
+        public readonly string $fromTaskId,
         public readonly string $toTaskId,
         string $occurredOn = null
     ) {
@@ -22,12 +23,13 @@ final class TaskLinkWasAddedEvent extends DomainEvent
 
     public static function fromPrimitives(string $aggregateId, array $body, string $occurredOn): static
     {
-        return new self($aggregateId, $body['toTaskId'], $occurredOn);
+        return new self($aggregateId, $body['fromTaskId'], $body['toTaskId'], $occurredOn);
     }
 
     public function toPrimitives(): array
     {
         return [
+            'fromTaskId' => $this->fromTaskId,
             'toTaskId' => $this->toTaskId,
         ];
     }

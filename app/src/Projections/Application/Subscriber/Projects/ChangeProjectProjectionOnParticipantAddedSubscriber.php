@@ -1,16 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projections\Application\Subscriber;
+namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
-use DateTime;
-use Exception;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 
-final class ChangeProjectProjectionOnProjectInformationChangedSubscriber implements EventSubscriberInterface
+final class ChangeProjectProjectionOnParticipantAddedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ProjectProjectionRepositoryInterface $projectionRepository,
@@ -22,23 +20,21 @@ final class ChangeProjectProjectionOnProjectInformationChangedSubscriber impleme
      */
     public function subscribeTo(): array
     {
-        return [ProjectInformationWasChangedEvent::class];
+        return [ProjectParticipantWasAddedEvent::class];
     }
 
-    /**
-     * @throws Exception
-     */
-    public function __invoke(ProjectInformationWasChangedEvent $event): void
+    public function __invoke(ProjectParticipantWasAddedEvent $event): void
     {
         $projections = $this->projectionRepository->findAllById($event->aggregateId);
 
+        $first = true;
         foreach ($projections as $projection) {
-            $projection->updateInformation(
-                $event->name,
-                $event->description,
-                new DateTime($event->finishDate)
-            );
+            $projection->incrementParticipantsCount();
             $this->projectionRepository->save($projection);
+            if ($first) {
+                $this->projectionRepository->save($projection->createCopyForUser($event->participantId));
+                $first = false;
+            }
         }
     }
 }

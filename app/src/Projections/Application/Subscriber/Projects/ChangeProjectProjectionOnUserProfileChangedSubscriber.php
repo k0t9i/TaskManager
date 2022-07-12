@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projections\Application\Subscriber;
+namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Shared\Domain\Bus\Event\DomainEvent;

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Projections\Domain\Entity\TaskProjection" table="task_projections">
+        <id name="id" length="36" />
+        <field name="projectId" length="36" />
+        <field name="name" length="255" />
+        <field name="brief" type="text" />
+        <field name="description" type="text" />
+        <field name="startDate" type="date" />
+        <field name="finishDate" type="date" />
+        <field name="status" type="integer" />
+        <field name="ownerId" length="36" />
+        <field name="ownerFirstname" length="255" />
+        <field name="ownerLastname" length="255" />
+        <field name="ownerEmail" length="255" />
+        <field name="linksCount" type="integer" />
+        <indexes>
+            <index columns="project_id" />
+            <index columns="owner_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

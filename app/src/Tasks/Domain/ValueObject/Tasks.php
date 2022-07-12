@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\ValueObject;
 
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\Exception\TaskNotExistException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Exception\TaskFinishDateGreaterThanProjectFinishDateException;
-use App\Tasks\Domain\Exception\TaskNotExistException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanProjectFinishDateException;
 
 final class Tasks
