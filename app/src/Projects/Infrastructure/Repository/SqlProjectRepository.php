@@ -28,27 +28,6 @@ class SqlProjectRepository implements ProjectRepositoryInterface
     }
 
     /**
-     * @param UserId $userId
-     * @return Project[]
-     * @throws Exception
-     */
-    public function findAllByUserId(UserId $userId): array
-    {
-        $builder = $this->queryBuilder()
-            ->select('p.*')
-            ->distinct()
-            ->from('projects', 'p')
-            ->leftJoin('p', 'project_participants', 'pp', 'p.id = pp.project_id')
-            ->where('p.owner_id = ?')
-            ->setParameters([$userId->value]);
-
-        return array_map(function (array $item) {
-            [$project] = $item;
-            return $project;
-        }, $this->dbRetriever->retrieveAll($builder));
-    }
-
-    /**
      * @param ProjectId $id
      * @return Project|null
      * @throws Exception

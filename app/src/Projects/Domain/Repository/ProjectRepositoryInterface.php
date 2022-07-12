@@ -5,7 +5,6 @@ namespace App\Projects\Domain\Repository;
 
 use App\Projects\Domain\Entity\Project;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Users\UserId;
 
 interface ProjectRepositoryInterface
 {
@@ -13,7 +12,6 @@ interface ProjectRepositoryInterface
      * @param ProjectId $id
      * @return Project[]
      */
-    public function findAllByUserId(UserId $userId): array;
     public function findById(ProjectId $id): ?Project;
     public function save(Project $project): void;
 }
