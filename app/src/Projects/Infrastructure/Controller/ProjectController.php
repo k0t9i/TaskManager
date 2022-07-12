@@ -12,6 +12,8 @@ use App\Projects\Application\Command\RemoveProjectParticipantCommand;
 use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
+use App\Projects\Application\Query\GetProjectQuery;
+use App\Projects\Application\Query\GetProjectQueryResponse;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -97,5 +99,14 @@ final class ProjectController
         $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery());
 
         return new JsonResponse($envelope->getProjects());
+    }
+
+    #[Route('/{id}/', name: 'get', methods: ['GET'])]
+    public function get(string $id): JsonResponse
+    {
+        /** @var GetProjectQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(new GetProjectQuery($id));
+
+        return new JsonResponse($envelope->getProject());
     }
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Repository;
 
 use App\Projects\Domain\DTO\ProjectListResponseDTO;
+use App\Projects\Domain\DTO\ProjectResponseDTO;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
+use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -40,6 +42,25 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         }
 
         return $result;
+    }
+
+    public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO
+    {
+        $rawItem = $this->queryBuilder()
+            ->select('*')
+            ->from('project_projections')
+            ->where('id = ?')
+            ->andWhere('user_id = ?')
+            ->setParameters([
+                $id->value,
+                $userId->value
+            ])
+            ->fetchAssociative();
+        if ($rawItem === false) {
+            return null;
+        }
+
+        return ProjectResponseDTO::create($rawItem);
     }
 
     private function queryBuilder(): QueryBuilder
