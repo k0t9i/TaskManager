@@ -5,8 +5,7 @@ namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
-use App\Projects\Application\Query\ProjectResponse;
-use App\Projects\Domain\Repository\ProjectRepositoryInterface;
+use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
@@ -14,7 +13,7 @@ use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
 {
     public function __construct(
-        private readonly ProjectRepositoryInterface $projectRepository,
+        private readonly ProjectQueryRepositoryInterface $projectRepository,
         private readonly AuthenticatorServiceInterface $authenticatorService
     ) {
     }
@@ -27,10 +26,6 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $projects = $this->projectRepository->findAllByUserId($userId);
-        $result = [];
-        foreach ($projects as $project) {
-            $result[] = ProjectResponse::createFromEntity($project);
-        }
-        return new GetAllOwnProjectsQueryResponse(...$result);
+        return new GetAllOwnProjectsQueryResponse(...$projects);
     }
 }
