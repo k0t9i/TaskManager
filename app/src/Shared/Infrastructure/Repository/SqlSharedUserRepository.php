@@ -5,10 +5,12 @@ namespace App\Shared\Infrastructure\Repository;
 
 use App\Shared\Domain\Entity\SharedUser;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
+use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +18,8 @@ use Doctrine\ORM\EntityManagerInterface;
 final class SqlSharedUserRepository implements SharedUserRepositoryInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly StorageSaverInterface $storageSaver
     ) {
     }
 
@@ -56,36 +59,11 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function save(SharedUser $user): void
     {
-        if (!$this->isExist($user->getId())) {
-            $this->queryBuilder()
-                ->insert($this->getUserTable())
-                ->values([
-                    'id' => '?',
-                    'email' => '?',
-                    'firstname' => '?',
-                    'lastname' => '?',
-                ])
-                ->setParameters([
-                    $user->getId()->value,
-                    $user->getEmail()->value,
-                    $user->getFirstname()->value,
-                    $user->getLastname()->value,
-                ])
-                ->executeStatement();
+        $metadata = new SharedUserStorageMetadata();
+        if ($this->isExist($user->getId())) {
+            $this->storageSaver->update($user, $metadata);
         } else {
-            $this->queryBuilder()
-                ->update($this->getUserTable())
-                ->set('email', '?')
-                ->set('firstname', '?')
-                ->set('lastname', '?')
-                ->where('id = ?')
-                ->setParameters([
-                    $user->getEmail()->value,
-                    $user->getFirstname()->value,
-                    $user->getLastname()->value,
-                    $user->getId()->value,
-                ])
-                ->executeStatement();
+            $this->storageSaver->insert($user, $metadata);
         }
     }
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
+use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
@@ -13,6 +14,7 @@ use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserPassword;
 use App\Users\Domain\ValueObject\UserProfile;
+use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserStorageMetadata;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +24,8 @@ class SqlUserRepository implements UserRepositoryInterface
     use OptimisticLockTrait;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly StorageSaverInterface $storageSaver
     ) {
     }
 
@@ -73,21 +76,19 @@ class SqlUserRepository implements UserRepositoryInterface
      */
     public function save(User $user): void
     {
-        $version = $this->getVersion($user->getId());
-        $isExist = $version > 0;
-        $this->ensureIsVersionLesserThanPrevious($user->getId()->value, $version);
-        $version += 1;
+        $prevVersion = $this->getVersion($user->getId()->value);
 
-        if ($isExist) {
-            $this->updateUser($user, $version);
+        $metadata = new UserStorageMetadata();
+        if ($prevVersion > 0) {
+            $this->storageSaver->update($user, $metadata, $prevVersion);
         } else {
-            $this->insertUser($user, $version);
+            $this->storageSaver->insert($user, $metadata);
         }
     }
 
     private function find(array $rawUser): ?User
     {
-        $this->saveVersion($rawUser['id'], $rawUser['version']);
+        $this->setVersion($rawUser['id'], $rawUser['version']);
 
         return new User(
             new UserId($rawUser['id']),
@@ -100,78 +101,8 @@ class SqlUserRepository implements UserRepositoryInterface
         );
     }
 
-    /**
-     * @param UserId $id
-     * @return int
-     * @throws Exception
-     */
-    private function getVersion(UserId $id): int
-    {
-        $version = $this->queryBuilder()
-            ->select('version')
-            ->from('users')
-            ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchOne();
-        return $version ?: 0;
-    }
-
     private function queryBuilder(): QueryBuilder
     {
         return $this->entityManager->getConnection()->createQueryBuilder();
-    }
-
-    /**
-     * @param User $user
-     * @param int $version
-     * @throws Exception
-     */
-    private function updateUser(User $user, int $version): void
-    {
-        $this->queryBuilder()
-            ->update('users')
-            ->set('email', '?')
-            ->set('firstname', '?')
-            ->set('lastname', '?')
-            ->set('password', '?')
-            ->set('version', '?')
-            ->where('id = ?')
-            ->setParameters([
-                $user->getEmail()->value,
-                $user->getProfile()->firstname->value,
-                $user->getProfile()->lastname->value,
-                $user->getProfile()->password->value,
-                $version,
-                $user->getId()->value,
-            ])
-            ->executeStatement();
-    }
-
-    /**
-     * @param User $user
-     * @param int $version
-     * @throws Exception
-     */
-    private function insertUser(User $user, int $version): void
-    {
-        $this->queryBuilder()
-            ->insert('users')
-            ->values([
-                'id' => '?',
-                'email' => '?',
-                'firstname' => '?',
-                'lastname' => '?',
-                'password' => '?',
-                'version' => '?'
-            ])
-            ->setParameters([
-                $user->getId()->value,
-                $user->getEmail()->value,
-                $user->getProfile()->firstname->value,
-                $user->getProfile()->lastname->value,
-                $user->getProfile()->password->value,
-                $version
-            ])
-            ->executeStatement();
     }
 }

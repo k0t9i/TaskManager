@@ -11,10 +11,6 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField
 
 final class TaskLinkStorageMetadata extends StorageMetadata
 {
-    public function __construct()
-    {
-    }
-
     public function getStorageName(): string
     {
         return 'task_links';

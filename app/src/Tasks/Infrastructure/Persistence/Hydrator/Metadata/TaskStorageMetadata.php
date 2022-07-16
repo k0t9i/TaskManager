@@ -14,10 +14,6 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField
 
 final class TaskStorageMetadata extends StorageMetadata
 {
-    public function __construct()
-    {
-    }
-
     public function getStorageName(): string
     {
         return 'tasks';

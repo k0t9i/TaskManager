@@ -13,10 +13,6 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField
 
 final class RequestManagerStorageMetadata extends StorageMetadata
 {
-    public function __construct()
-    {
-    }
-
     public function getStorageName(): string
     {
         return 'request_managers';

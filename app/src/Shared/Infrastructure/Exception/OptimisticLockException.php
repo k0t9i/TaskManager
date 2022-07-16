@@ -7,11 +7,11 @@ use Exception;
 
 final class OptimisticLockException extends Exception
 {
-    public function __construct(string $aggregateRootId, int $actualVersion, int $expectedVersion)
+    public function __construct(int $actualVersion, int $expectedVersion)
     {
         $message = sprintf(
-            'The optimistic lock failed for aggregate root %s, version %s was expected, but is actually %s',
-            $aggregateRootId, $expectedVersion, $actualVersion
+            'The optimistic lock failed, version %s was expected, but is actually %s',
+            $expectedVersion, $actualVersion
         );
         parent::__construct($message);
     }
