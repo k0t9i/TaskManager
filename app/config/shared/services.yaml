@@ -25,6 +25,8 @@ services:
             - '../../src/**/Domain/ValueObject/*'
             - '../../src/**/Domain/Event/*'
             - '../../src/**/Infrastructure/Exception/*'
+            - '../../src/**/Infrastructure/Persistence/Hydrator/Accessor/*'
+            - '../../src/**/Infrastructure/Persistence/Hydrator/Metadata/*'
             - '../../src/Shared/Infrastructure/**/ValueObject/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
 
