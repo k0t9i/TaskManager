@@ -12,26 +12,22 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInter
 
 class Rehydrator
 {
-    private ?RehydratorEntityDTO $root = null;
     private array $added = [];
     private array $updated = [];
     private array $deleted = [];
+    private array $originalCollections = [];
 
     /**
      * @param AggregateRoot $aggregateRoot
      * @param StorageMetadataInterface $metadata
      * @return RehydratorEntityDTO[]
      */
-    public function loadFromAggregateRoot(AggregateRoot $aggregateRoot, StorageMetadataInterface $metadata): RehydratorEntityDTO
-    {
-        $this->root = null;
-        $this->added = [];
-        $this->updated = [];
-        $this->deleted = [];
-
-        $this->root = $this->loadFromRecursive($aggregateRoot, $metadata);
-
-        return $this->root;
+    public function loadFromAggregateRoot(
+        AggregateRoot $aggregateRoot,
+        StorageMetadataInterface $metadata
+    ): RehydratorEntityDTO {
+        $this->reset();
+        return $this->loadFromRecursive($aggregateRoot, $metadata);
     }
 
     private function loadFromRecursive(
@@ -58,12 +54,20 @@ class Rehydrator
             $metadata->getStorageName(),
             $metadata->getPrimaryKey(),
             $result,
-            $parent === null ? new RehydratorCollectionDTO($this->added, $this->updated, $this->deleted) : null
+            $parent === null ?
+                new RehydratorCollectionDTO(
+                    $this->added,
+                    $this->updated,
+                    $this->deleted,
+                    $this->originalCollections
+                ) :
+                null
         );
     }
 
     private function loadFromCollection(object $parent, StorageMetadataField $metadataField): void
     {
+        /** @var CollectionInterface $collection */
         $collection = $metadataField->valueAccessor->getValue($parent);
 
         $added = $this->loadFromCollectionPartially($collection->getAdded(), $metadataField->metadata, $parent);
@@ -73,6 +77,7 @@ class Rehydrator
         $this->added = array_merge($this->added, $added);
         $this->updated = array_merge($this->updated, $updated);
         $this->deleted = array_merge($this->deleted, $deleted);
+        $this->originalCollections[] = $collection;
     }
 
     private function loadFromCollectionPartially(
@@ -82,10 +87,18 @@ class Rehydrator
     : array {
         $result = [];
 
-        foreach ($items as $key => $object) {
+        foreach ($items as $object) {
             $result[] = $this->loadFromRecursive($object, $metadata, $parent);
         }
 
         return $result;
+    }
+
+    private function reset(): void
+    {
+        $this->added = [];
+        $this->updated = [];
+        $this->deleted = [];
+        $this->originalCollections = [];
     }
 }
