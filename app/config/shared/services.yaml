@@ -27,6 +27,7 @@ services:
             - '../../src/**/Infrastructure/Exception/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Accessor/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Metadata/*'
+            - '../../src/**/Infrastructure/Persistence/Hydrator/DTO/*'
             - '../../src/Shared/Infrastructure/**/ValueObject/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
 
