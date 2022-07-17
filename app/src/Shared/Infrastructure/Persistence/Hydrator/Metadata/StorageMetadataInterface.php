@@ -5,6 +5,7 @@ namespace App\Shared\Infrastructure\Persistence\Hydrator\Metadata;
 
 interface StorageMetadataInterface
 {
+    public function getClassName(): string;
     public function getStorageName(): string;
     public function getPrimaryKey(): array;
 

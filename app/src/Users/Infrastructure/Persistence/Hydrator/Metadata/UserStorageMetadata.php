@@ -9,12 +9,22 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\StringValueAccessor;
 use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\UuidValueAccessor;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadata;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
+use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\ChainValueMutator;
+use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\PropertyValueMutator;
+use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\StringValueMutator;
+use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\UuidValueMutator;
+use App\Users\Domain\Entity\User;
 
 final class UserStorageMetadata extends StorageMetadata
 {
     public function getStorageName(): string
     {
         return 'users';
+    }
+
+    public function getClassName(): string
+    {
+        return User::class;
     }
 
     /**
@@ -26,11 +36,13 @@ final class UserStorageMetadata extends StorageMetadata
             new StorageMetadataField(
                 'id',
                 new UuidValueAccessor('id'),
+                new UuidValueMutator('id'),
                 isPrimaryKey: true
             ),
             new StorageMetadataField(
                 'email',
-                new StringValueAccessor('email')
+                new StringValueAccessor('email'),
+                new StringValueMutator('email')
             ),
             new StorageMetadataField(
                 'firstname',
@@ -38,6 +50,10 @@ final class UserStorageMetadata extends StorageMetadata
                     new PropertyValueAccessor('profile'),
                     new StringValueAccessor('firstname')
                 ),
+                new ChainValueMutator(
+                    new PropertyValueMutator('profile'),
+                    new StringValueMutator('firstname')
+                )
             ),
             new StorageMetadataField(
                 'lastname',
@@ -45,6 +61,10 @@ final class UserStorageMetadata extends StorageMetadata
                     new PropertyValueAccessor('profile'),
                     new StringValueAccessor('lastname')
                 ),
+                new ChainValueMutator(
+                    new PropertyValueMutator('profile'),
+                    new StringValueMutator('lastname')
+                )
             ),
             new StorageMetadataField(
                 'password',
@@ -52,6 +72,10 @@ final class UserStorageMetadata extends StorageMetadata
                     new PropertyValueAccessor('profile'),
                     new StringValueAccessor('password')
                 ),
+                new ChainValueMutator(
+                    new PropertyValueMutator('profile'),
+                    new StringValueMutator('password')
+                )
             )
         ];
     }

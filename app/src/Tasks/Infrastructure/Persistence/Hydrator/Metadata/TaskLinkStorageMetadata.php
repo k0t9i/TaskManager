@@ -8,12 +8,19 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ConstValueAccessor;
 use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\UuidValueAccessor;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadata;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
+use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\UuidValueMutator;
+use App\Tasks\Domain\ValueObject\TaskLink;
 
 final class TaskLinkStorageMetadata extends StorageMetadata
 {
     public function getStorageName(): string
     {
         return 'task_links';
+    }
+
+    public function getClassName(): string
+    {
+        return TaskLink::class;
     }
 
     /**
@@ -25,6 +32,7 @@ final class TaskLinkStorageMetadata extends StorageMetadata
             new StorageMetadataField(
                 'to_task_id',
                 new UuidValueAccessor('toTaskId'),
+                new UuidValueMutator('toTaskId'),
                 isPrimaryKey: true
             ),
             new StorageMetadataField(
@@ -33,7 +41,8 @@ final class TaskLinkStorageMetadata extends StorageMetadata
                     new ConstValueAccessor($parentObject),
                     new UuidValueAccessor('id')
                 ),
-                isPrimaryKey: true
+                isPrimaryKey: true,
+                parentColumn: 'id'
             )
         ];
     }
