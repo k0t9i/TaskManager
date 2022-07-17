@@ -7,11 +7,6 @@ trait OptimisticLockTrait
 {
     private array $versions = [];
 
-    public static function versionColumnName(): string
-    {
-        return 'version';
-    }
-
     private function setVersion(string $entityId, int $version): void
     {
         $this->versions[$entityId] = $version;

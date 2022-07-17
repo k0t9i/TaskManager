@@ -67,7 +67,7 @@ final class SqlStorageSaver implements StorageSaverInterface
     {
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
-        $queryBuilder->select(OptimisticLockTrait::versionColumnName())
+        $queryBuilder->select('version')
             ->from($dto->table);
 
         foreach ($dto->primaryKey as $item) {
@@ -142,7 +142,7 @@ final class SqlStorageSaver implements StorageSaverInterface
                     ->setParameter($name, $value);
             }
             if ($version !== null) {
-                $columnName = OptimisticLockTrait::versionColumnName();
+                $columnName = 'version';
                 $queryBuilder->set($columnName, ':' . $columnName)
                     ->setParameter($columnName, $version);
             }
@@ -168,7 +168,7 @@ final class SqlStorageSaver implements StorageSaverInterface
             }
 
             if ($version !== null) {
-                $columnName = OptimisticLockTrait::versionColumnName();
+                $columnName = 'version';
                 $queryBuilder->setValue($columnName, ':' . $columnName)
                     ->setParameter($columnName, $version);
             }
