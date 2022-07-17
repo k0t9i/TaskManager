@@ -38,8 +38,6 @@ final class Rehydrator implements RehydratorInterface
             $propertyValue = $metadataField->valueAccessor->getValue($object);
             if ($propertyValue instanceof CollectionInterface) {
                 $this->loadFromCollection($object, $metadataField);
-            } elseif ($metadataField->metadata !== null) {
-                $result = $this->loadRecursive($propertyValue, $metadataField->metadata, $object);
             } else {
                 $result[$metadataField->name] = $propertyValue;
             }
