@@ -29,6 +29,7 @@ services:
             - '../../src/**/Infrastructure/Persistence/Hydrator/Mutator/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Metadata/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/DTO/*'
+            - '../../src/**/Infrastructure/Persistence/Finder/*'
             - '../../src/Shared/Infrastructure/**/ValueObject/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
 

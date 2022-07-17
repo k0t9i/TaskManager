@@ -3,20 +3,16 @@ declare(strict_types=1);
 
 namespace App\Requests\Infrastructure\Repository;
 
-use App\Requests\Domain\Collection\RequestCollection;
-use App\Requests\Domain\DTO\RequestDTO;
-use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Entity\RequestManager;
-use App\Requests\Domain\Factory\RequestFactory;
-use App\Requests\Domain\Factory\RequestManagerFactory;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Infrastructure\Persistence\Hydrator\Metadata\RequestManagerStorageMetadata;
-use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
+use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -26,12 +22,14 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
 {
     use OptimisticLockTrait;
 
+    private readonly StorageMetadataInterface $metadata;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly RequestManagerFactory $requestManagerFactory,
-        private readonly RequestFactory $requestFactory,
-        private readonly StorageSaverInterface $storageSaver
+        private readonly StorageSaverInterface $storageSaver,
+        private readonly StorageLoaderInterface $storageLoader
     ) {
+        $this->metadata = new RequestManagerStorageMetadata();
     }
 
     /**
@@ -41,17 +39,12 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
      */
     public function findByProjectId(ProjectId $id): ?RequestManager
     {
-        $rawManager = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from('request_managers')
             ->where('project_id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawManager === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return $this->find($rawManager);
+        return $this->find($builder);
     }
 
     /**
@@ -61,18 +54,14 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
      */
     public function findByRequestId(RequestId $id): ?RequestManager
     {
-        $rawManager = $this->queryBuilder()
-            ->select('rm.*')
-            ->from('request_managers', 'rm')
-            ->leftJoin('rm', 'requests', 'r', 'r.request_manager_id = rm.id')
+        $alias = 'rm';
+        $builder = $this->queryBuilder()
+            ->select($alias . '.*')
+            ->leftJoin($alias, 'requests', 'r', 'r.request_manager_id = ' . $alias . '.id')
             ->where('r.id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawManager === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return $this->find($rawManager);
+        return $this->find($builder, 'rm');
     }
 
     /**
@@ -84,46 +73,24 @@ class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
     {
         $prevVersion = $this->getVersion($manager->getId()->value);
 
-        $metadata = new RequestManagerStorageMetadata();
         if ($prevVersion > 0) {
-            $this->storageSaver->update($manager, $metadata, $prevVersion);
+            $this->storageSaver->update($manager, $this->metadata, $prevVersion);
         } else {
-            $this->storageSaver->insert($manager, $metadata);
+            $this->storageSaver->insert($manager, $this->metadata);
         }
     }
 
-    /**
-     * @param array $rawManager
-     * @return RequestManager|null
-     * @throws Exception
-     */
-    private function find(array $rawManager): ?RequestManager
+    private function find(QueryBuilder $builder, ?string $alias = null): ?RequestManager
     {
-        $rawParticipants = $this->queryBuilder()
-            ->select('user_id')
-            ->from('request_manager_participants')
-            ->where('request_manager_id = ?')
-            ->setParameters([$rawManager['id']])
-            ->fetchFirstColumn();
-        $rawManager['participant_ids'] = new UserIdCollection(
-            array_map(fn(string $id) => new UserId($id), $rawParticipants)
+        /** @var RequestManager $manager */
+        [$manager, $version] = $this->storageLoader->load(
+            new SqlStorageFinder($builder, $alias),
+            $this->metadata
         );
-
-        $rawRequests = $this->queryBuilder()
-            ->select('*')
-            ->from('requests')
-            ->where('request_manager_id = ?')
-            ->setParameters([$rawManager['id']])
-            ->fetchAllAssociative();
-        $rawManager['requests'] = new RequestCollection(
-            array_map(function (array $item) {
-                return $this->requestFactory->create(RequestDTO::create($item));
-            }, $rawRequests)
-        );
-
-        $this->setVersion($rawManager['id'], $rawManager['version']);
-
-        return $this->requestManagerFactory->create(RequestManagerDTO::create($rawManager));
+        if ($manager !== null) {
+            $this->setVersion($manager->getId()->value, $version);
+        }
+        return $manager;
     }
 
     private function queryBuilder(): QueryBuilder

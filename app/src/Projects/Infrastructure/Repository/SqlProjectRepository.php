@@ -8,7 +8,10 @@ use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectStorageMetadata;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
+use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -18,11 +21,14 @@ class SqlProjectRepository implements ProjectRepositoryInterface
 {
     use OptimisticLockTrait;
 
+    private readonly StorageMetadataInterface $metadata;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProjectDbRetriever $dbRetriever,
-        private readonly StorageSaverInterface $storageSaver
+        private readonly StorageSaverInterface $storageSaver,
+        private readonly StorageLoaderInterface $storageLoader
     ) {
+        $this->metadata = new ProjectStorageMetadata();
     }
 
     /**
@@ -34,12 +40,11 @@ class SqlProjectRepository implements ProjectRepositoryInterface
     {
         $builder = $this->queryBuilder()
             ->select('*')
-            ->from('projects')
             ->where('id = ?')
             ->setParameters([$id->value]);
 
         /** @var Project $project */
-        [$project, $version] = $this->dbRetriever->retrieveOne($builder);
+        [$project, $version] = $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata);
         if ($project !== null) {
             $this->setVersion($project->getId()->value, $version);
         }
@@ -55,11 +60,10 @@ class SqlProjectRepository implements ProjectRepositoryInterface
     {
         $prevVersion = $this->getVersion($project->getId()->value);
 
-        $metadata = new ProjectStorageMetadata();
         if ($prevVersion > 0) {
-            $this->storageSaver->update($project, $metadata, $prevVersion);
+            $this->storageSaver->update($project, $this->metadata, $prevVersion);
         } else {
-            $this->storageSaver->insert($project, $metadata);
+            $this->storageSaver->insert($project, $this->metadata);
         }
     }
 

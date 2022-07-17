@@ -4,16 +4,15 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Repository;
 
 use App\Shared\Domain\ValueObject\Users\UserEmail;
-use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
+use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Domain\ValueObject\UserPassword;
-use App\Users\Domain\ValueObject\UserProfile;
 use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserStorageMetadata;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -23,10 +22,14 @@ class SqlUserRepository implements UserRepositoryInterface
 {
     use OptimisticLockTrait;
 
+    private readonly StorageMetadataInterface $metadata;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly StorageSaverInterface $storageSaver
+        private readonly StorageSaverInterface $storageSaver,
+        private readonly StorageLoaderInterface $storageLoader
     ) {
+        $this->metadata = new UserStorageMetadata();
     }
 
     /**
@@ -36,17 +39,12 @@ class SqlUserRepository implements UserRepositoryInterface
      */
     public function findById(UserId $id): ?User
     {
-        $rawUser = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from('users')
             ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawUser === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return $this->find($rawUser);
+        return $this->find($builder);
     }
 
     /**
@@ -56,17 +54,12 @@ class SqlUserRepository implements UserRepositoryInterface
      */
     public function findByEmail(UserEmail $email): ?User
     {
-        $rawUser = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from('users')
             ->where('email = ?')
-            ->setParameters([$email->value])
-            ->fetchAssociative();
-        if ($rawUser === false) {
-            return null;
-        }
+            ->setParameters([$email->value]);
 
-        return $this->find($rawUser);
+        return $this->find($builder);
     }
 
     /**
@@ -78,27 +71,24 @@ class SqlUserRepository implements UserRepositoryInterface
     {
         $prevVersion = $this->getVersion($user->getId()->value);
 
-        $metadata = new UserStorageMetadata();
         if ($prevVersion > 0) {
-            $this->storageSaver->update($user, $metadata, $prevVersion);
+            $this->storageSaver->update($user, $this->metadata, $prevVersion);
         } else {
-            $this->storageSaver->insert($user, $metadata);
+            $this->storageSaver->insert($user, $this->metadata);
         }
     }
 
-    private function find(array $rawUser): ?User
+    private function find(QueryBuilder $builder): ?User
     {
-        $this->setVersion($rawUser['id'], $rawUser['version']);
-
-        return new User(
-            new UserId($rawUser['id']),
-            new UserEmail($rawUser['email']),
-            new UserProfile(
-                new UserFirstname($rawUser['firstname']),
-                new UserLastname($rawUser['lastname']),
-                new UserPassword($rawUser['password'])
-            )
+        /** @var User $user */
+        [$user, $version] = $this->storageLoader->load(
+            new SqlStorageFinder($builder),
+            $this->metadata
         );
+        if ($user !== null) {
+            $this->setVersion($user->getId()->value, $version);
+        }
+        return $user;
     }
 
     private function queryBuilder(): QueryBuilder

@@ -5,11 +5,11 @@ namespace App\Shared\Infrastructure\Repository;
 
 use App\Shared\Domain\Entity\SharedUser;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\Domain\ValueObject\Users\UserEmail;
-use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Domain\ValueObject\Users\UserLastname;
+use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -17,15 +17,14 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class SqlSharedUserRepository implements SharedUserRepositoryInterface
 {
+    private readonly StorageMetadataInterface $metadata;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly StorageSaverInterface $storageSaver
+        private readonly StorageSaverInterface $storageSaver,
+        private readonly StorageLoaderInterface $storageLoader
     ) {
-    }
-
-    public function getUserTable(): string
-    {
-        return 'shared_users';
+        $this->metadata = new SharedUserStorageMetadata();
     }
 
     /**
@@ -35,22 +34,14 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function findById(UserId $id): ?SharedUser
     {
-        $rawUser = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from($this->getUserTable())
             ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchAssociative();
-        if ($rawUser === false) {
-            return null;
-        }
+            ->setParameters([$id->value]);
 
-        return new SharedUser(
-            new UserId($rawUser['id']),
-            new UserEmail($rawUser['email']),
-            new UserFirstname($rawUser['firstname']),
-            new UserLastname($rawUser['lastname']),
-        );
+        /** @var SharedUser $user */
+        [$user] = $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata);
+        return $user;
     }
 
     /**
@@ -59,11 +50,10 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function save(SharedUser $user): void
     {
-        $metadata = new SharedUserStorageMetadata();
         if ($this->isExist($user->getId())) {
-            $this->storageSaver->update($user, $metadata);
+            $this->storageSaver->update($user, $this->metadata);
         } else {
-            $this->storageSaver->insert($user, $metadata);
+            $this->storageSaver->insert($user, $this->metadata);
         }
     }
 
@@ -76,7 +66,7 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
     {
         $count = $this->queryBuilder()
             ->select('count(id)')
-            ->from($this->getUserTable())
+            ->from($this->metadata->getStorageName())
             ->where('id = ?')
             ->setParameters([$id->value])
             ->fetchOne();
