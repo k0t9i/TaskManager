@@ -8,14 +8,14 @@ use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\Hydrator\DTO\RehydratorCollectionDTO;
 use App\Shared\Infrastructure\Persistence\Hydrator\DTO\RehydratorEntityDTO;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Infrastructure\Persistence\Hydrator\Rehydrator;
+use App\Shared\Infrastructure\Persistence\Hydrator\RehydratorInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class SqlStorageSaver implements StorageSaverInterface
 {
     public function __construct(
-        private readonly Rehydrator $rehydrator,
+        private readonly RehydratorInterface $rehydrator,
         private readonly EntityManagerInterface $entityManager
     ) {
     }

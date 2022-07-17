@@ -10,27 +10,22 @@ use App\Shared\Infrastructure\Persistence\Hydrator\DTO\RehydratorEntityDTO;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 
-class Rehydrator
+final class Rehydrator implements RehydratorInterface
 {
     private array $added = [];
     private array $updated = [];
     private array $deleted = [];
     private array $originalCollections = [];
 
-    /**
-     * @param AggregateRoot $aggregateRoot
-     * @param StorageMetadataInterface $metadata
-     * @return RehydratorEntityDTO[]
-     */
     public function loadFromAggregateRoot(
         AggregateRoot $aggregateRoot,
         StorageMetadataInterface $metadata
     ): RehydratorEntityDTO {
         $this->reset();
-        return $this->loadFromRecursive($aggregateRoot, $metadata);
+        return $this->loadRecursive($aggregateRoot, $metadata);
     }
 
-    private function loadFromRecursive(
+    private function loadRecursive(
         object $object,
         StorageMetadataInterface $metadata,
         ?object $parent = null
@@ -44,7 +39,7 @@ class Rehydrator
             if ($propertyValue instanceof CollectionInterface) {
                 $this->loadFromCollection($object, $metadataField);
             } elseif ($metadataField->metadata !== null) {
-                $result = $this->loadFromRecursive($propertyValue, $metadataField->metadata, $object);
+                $result = $this->loadRecursive($propertyValue, $metadataField->metadata, $object);
             } else {
                 $result[$metadataField->name] = $propertyValue;
             }
@@ -88,7 +83,7 @@ class Rehydrator
         $result = [];
 
         foreach ($items as $object) {
-            $result[] = $this->loadFromRecursive($object, $metadata, $parent);
+            $result[] = $this->loadRecursive($object, $metadata, $parent);
         }
 
         return $result;
