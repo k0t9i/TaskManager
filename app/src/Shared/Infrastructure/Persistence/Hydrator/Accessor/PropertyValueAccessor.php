@@ -19,6 +19,8 @@ final class PropertyValueAccessor implements ValueAccessorInterface
     public function getValue(?object $object = null): mixed
     {
         $reflection = new ReflectionObject($object);
-        return $reflection->getProperty($this->propertyName)->getValue($object);
+        $property = $reflection->getProperty($this->propertyName);
+        $property->setAccessible(true);
+        return $property->getValue($object);
     }
 }

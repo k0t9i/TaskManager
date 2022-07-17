@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\Hydrator\Accessor;
 
-class StringValueAccessor implements ValueAccessorInterface
+final class StringValueAccessor implements ValueAccessorInterface
 {
     private readonly ValueAccessorInterface $chainValueAccessor;
 

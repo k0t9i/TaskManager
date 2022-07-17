@@ -19,6 +19,8 @@ final class MethodValueAccessor implements ValueAccessorInterface
     public function getValue(?object $object = null): mixed
     {
         $reflection = new ReflectionObject($object);
-        return $reflection->getMethod($this->methodName)->invoke($object);
+        $method = $reflection->getMethod($this->methodName);
+        $method->setAccessible(true);
+        return $method->invoke($object);
     }
 }

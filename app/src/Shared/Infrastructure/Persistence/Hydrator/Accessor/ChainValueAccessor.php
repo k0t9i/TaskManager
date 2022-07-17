@@ -18,8 +18,8 @@ final class ChainValueAccessor implements ValueAccessorInterface
     public function getValue(?object $object = null): mixed
     {
         $currentObject = $object;
-        foreach ($this->accessors as $accessors) {
-            $currentObject = $accessors->getValue($currentObject);
+        foreach ($this->accessors as $accessor) {
+            $currentObject = $accessor->getValue($currentObject);
         }
         return $currentObject;
     }
