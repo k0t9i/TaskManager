@@ -1,23 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Repository;
+namespace App\Shared\Infrastructure\Persistence;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\Hydrator\DTO\RehydratorCollectionDTO;
 use App\Shared\Infrastructure\Persistence\Hydrator\DTO\RehydratorEntityDTO;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\Hydrator\Rehydrator;
-use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class SqlStorageSaver implements StorageSaverInterface
 {
     public function __construct(
-        private readonly Rehydrator $dehydrator,
+        private readonly Rehydrator $rehydrator,
         private readonly EntityManagerInterface $entityManager
     ) {
     }
@@ -29,7 +27,7 @@ final class SqlStorageSaver implements StorageSaverInterface
      */
     public function insert(AggregateRoot $object, StorageMetadataInterface $metadata): void
     {
-        $dto = $this->dehydrator->loadFromAggregateRoot($object, $metadata);
+        $dto = $this->rehydrator->loadFromAggregateRoot($object, $metadata);
 
         $this->innerInsert($dto, 1);
     }
@@ -42,7 +40,7 @@ final class SqlStorageSaver implements StorageSaverInterface
      */
     public function update(AggregateRoot $object, StorageMetadataInterface $metadata, ?int $prevVersion = null): void
     {
-        $dto = $this->dehydrator->loadFromAggregateRoot($object, $metadata);
+        $dto = $this->rehydrator->loadFromAggregateRoot($object, $metadata);
         if ($prevVersion !== null) {
             $version = $this->getVersion($dto);
             if ($version > $prevVersion) {

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
+use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserPassword;

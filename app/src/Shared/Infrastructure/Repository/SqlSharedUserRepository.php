@@ -5,12 +5,12 @@ namespace App\Shared\Infrastructure\Repository;
 
 use App\Shared\Domain\Entity\SharedUser;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
+use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;

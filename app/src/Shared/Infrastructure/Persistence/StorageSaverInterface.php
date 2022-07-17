@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\Repository;
+namespace App\Shared\Infrastructure\Persistence;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;

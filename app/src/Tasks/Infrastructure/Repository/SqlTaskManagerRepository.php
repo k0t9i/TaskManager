@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
-use App\Shared\Domain\Repository\StorageSaverInterface;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
+use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskManagerStorageMetadata;
