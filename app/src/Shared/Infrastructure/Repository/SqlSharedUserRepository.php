@@ -53,7 +53,7 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
         if ($this->isExist($user->getId())) {
             $this->storageSaver->update($user, $this->metadata);
         } else {
-            $this->storageSaver->insert($user, $this->metadata);
+            $this->storageSaver->insert($user, $this->metadata, false);
         }
     }
 

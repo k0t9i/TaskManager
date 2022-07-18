@@ -26,7 +26,7 @@ final class ProjectProjection
 
     public function createCopyForUser(string $userId): self
     {
-        return new ProjectProjection(
+        return new self(
             $this->id,
             $userId,
             $this->name,

@@ -23,13 +23,14 @@ final class SqlStorageSaver implements StorageSaverInterface
     /**
      * @param AggregateRoot $object
      * @param StorageMetadataInterface $metadata
+     * @param bool $isVersioned
      * @throws Exception
      */
-    public function insert(AggregateRoot $object, StorageMetadataInterface $metadata): void
+    public function insert(AggregateRoot $object, StorageMetadataInterface $metadata, bool $isVersioned = true): void
     {
         $dto = $this->rehydrator->loadFromAggregateRoot($object, $metadata);
 
-        $this->innerInsert($dto, 1);
+        $this->innerInsert($dto, $isVersioned ? 1 : null);
     }
 
     /**
@@ -41,11 +42,13 @@ final class SqlStorageSaver implements StorageSaverInterface
     public function update(AggregateRoot $object, StorageMetadataInterface $metadata, ?int $prevVersion = null): void
     {
         $dto = $this->rehydrator->loadFromAggregateRoot($object, $metadata);
+        $newVersion = null;
         if ($prevVersion !== null) {
             $version = $this->getVersion($dto);
             if ($version > $prevVersion) {
                 throw new OptimisticLockException($version, $prevVersion);
             }
+            $newVersion = $prevVersion + 1;
         }
 
         if ($dto->children !== null) {
@@ -54,7 +57,7 @@ final class SqlStorageSaver implements StorageSaverInterface
             $this->deleteCollection($dto->children);
             $this->flushCollections($dto->children);
         }
-        $this->innerUpdate($dto, ++$prevVersion);
+        $this->innerUpdate($dto, $newVersion);
     }
 
     /**

@@ -8,6 +8,6 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInter
 
 interface StorageSaverInterface
 {
-    public function insert(AggregateRoot $object, StorageMetadataInterface $metadata): void;
+    public function insert(AggregateRoot $object, StorageMetadataInterface $metadata, bool $isVersioned = true): void;
     public function update(AggregateRoot $object, StorageMetadataInterface $metadata, ?int $prevVersion = null): void;
 }
