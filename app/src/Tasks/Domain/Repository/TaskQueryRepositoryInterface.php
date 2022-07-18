@@ -19,4 +19,5 @@ interface TaskQueryRepositoryInterface
     public function findAllByProjectIdAndUserId(ProjectId $projectId, UserId $userId): array;
     //TODO by criteria
     public function findByIdAndUserId(TaskId $id, UserId $userId): ?TaskResponseDTO;
+    public function findById(TaskId $id): ?TaskResponseDTO;
 }

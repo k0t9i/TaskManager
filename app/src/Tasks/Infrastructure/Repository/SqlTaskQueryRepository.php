@@ -52,6 +52,12 @@ class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
         return $result;
     }
 
+    /**
+     * @param TaskId $id
+     * @param UserId $userId
+     * @return TaskResponseDTO|null
+     * @throws Exception
+     */
     public function findByIdAndUserId(TaskId $id, UserId $userId): ?TaskResponseDTO
     {
         $rawItem = $this->queryBuilder()
@@ -64,6 +70,28 @@ class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
             ->setParameters([
                 $id->value,
                 $userId->value
+            ])
+            ->fetchAssociative();
+        if ($rawItem === false) {
+            return null;
+        }
+
+        return TaskResponseDTO::create($rawItem);
+    }
+
+    /**
+     * @param TaskId $id
+     * @return TaskResponseDTO|null
+     * @throws Exception
+     */
+    public function findById(TaskId $id): ?TaskResponseDTO
+    {
+        $rawItem = $this->queryBuilder()
+            ->select('*')
+            ->from('task_projections')
+            ->where('id = ?')
+            ->setParameters([
+                $id->value
             ])
             ->fetchAssociative();
         if ($rawItem === false) {

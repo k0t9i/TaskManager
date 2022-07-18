@@ -6,6 +6,7 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Exception\TaskNotExistException;
+use App\Shared\Domain\Exception\UserIsNotOwnerException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Tasks\Application\Query\GetTaskQuery;
@@ -27,12 +28,19 @@ final class GetTaskQueryHandler implements QueryHandlerInterface
     public function __invoke(GetTaskQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
+        $task = $this->taskRepository->findById(
+            new TaskId($query->id)
+        );
+        if ($task === null) {
+            throw new TaskNotExistException($query->id);
+        }
+
         $task = $this->taskRepository->findByIdAndUserId(
             new TaskId($query->id),
             $userId
         );
         if ($task === null) {
-            throw new TaskNotExistException($query->id);
+            throw new UserIsNotOwnerException($userId->value);
         }
 
         return new GetTaskQueryResponse($task);

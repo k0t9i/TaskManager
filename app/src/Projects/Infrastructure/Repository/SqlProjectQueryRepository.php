@@ -44,6 +44,12 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         return $result;
     }
 
+    /**
+     * @param ProjectId $id
+     * @param UserId $userId
+     * @return ProjectResponseDTO|null
+     * @throws Exception
+     */
     public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO
     {
         $rawItem = $this->queryBuilder()
@@ -54,6 +60,28 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
             ->setParameters([
                 $id->value,
                 $userId->value
+            ])
+            ->fetchAssociative();
+        if ($rawItem === false) {
+            return null;
+        }
+
+        return ProjectResponseDTO::create($rawItem);
+    }
+
+    /**
+     * @param ProjectId $id
+     * @return ProjectResponseDTO|null
+     * @throws Exception
+     */
+    public function findById(ProjectId $id): ?ProjectResponseDTO
+    {
+        $rawItem = $this->queryBuilder()
+            ->select('*')
+            ->from('project_projections')
+            ->where('id = ?')
+            ->setParameters([
+                $id->value
             ])
             ->fetchAssociative();
         if ($rawItem === false) {

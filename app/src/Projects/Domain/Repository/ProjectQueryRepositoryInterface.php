@@ -17,4 +17,5 @@ interface ProjectQueryRepositoryInterface
     public function findAllByUserId(UserId $userId): array;
     //TODO by criteria
     public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO;
+    public function findById(ProjectId $id): ?ProjectResponseDTO;
 }
