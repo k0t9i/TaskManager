@@ -1,0 +1,4 @@
+services:
+    App\Tasks\Domain\:
+        resource: '../../src/Tasks/Domain'
+        autowire: false

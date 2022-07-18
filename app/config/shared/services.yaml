@@ -19,11 +19,6 @@ services:
         exclude:
             - '../../src/**/Application/Command/*'
             - '../../src/**/Application/Query/*'
-            - '../../src/**/Domain/DTO/*'
-            - '../../src/**/Domain/Entity/*'
-            - '../../src/**/Domain/Exception/*'
-            - '../../src/**/Domain/ValueObject/*'
-            - '../../src/**/Domain/Event/*'
             - '../../src/**/Infrastructure/Exception/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Accessor/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Mutator/*'
@@ -32,6 +27,9 @@ services:
             - '../../src/**/Infrastructure/Persistence/Finder/*'
             - '../../src/Shared/Infrastructure/**/ValueObject/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
+    App\Shared\Domain\:
+        resource: '../../src/Shared/Domain'
+        autowire: false
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

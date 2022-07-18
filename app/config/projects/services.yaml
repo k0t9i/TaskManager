@@ -1,0 +1,4 @@
+services:
+    App\Projects\Domain\:
+        resource: '../../src/Projects/Domain'
+        autowire: false

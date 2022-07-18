@@ -1,0 +1,4 @@
+services:
+    App\Requests\Domain\:
+        resource: '../../src/Requests/Domain'
+        autowire: false

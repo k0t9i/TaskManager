@@ -7,7 +7,7 @@ use App\Shared\Domain\Bus\Event\DomainEvent;
 use App\Shared\Domain\Bus\Event\EventBusInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class InMemoryEventBus implements EventBusInterface
+class SymfonyEventBus implements EventBusInterface
 {
     public function __construct(private readonly MessageBusInterface $eventBus)
     {

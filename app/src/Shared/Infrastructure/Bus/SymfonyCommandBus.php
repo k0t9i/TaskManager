@@ -8,7 +8,7 @@ use App\Shared\Domain\Bus\Command\CommandInterface;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class InMemoryCommandBus implements CommandBusInterface
+class SymfonyCommandBus implements CommandBusInterface
 {
     use HandleTrait;
 
