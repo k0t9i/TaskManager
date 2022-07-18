@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
+use App\Shared\Domain\Bus\Query\QueryBusInterface;
 use App\Users\Application\Command\UpdateProfileCommand;
+use App\Users\Application\Query\GetProjectUsersQuery;
+use App\Users\Application\Query\GetProjectUsersQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,8 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/users', name: 'security.')]
 final class UserController
 {
-    public function __construct(private CommandBusInterface $commandBus)
-    {
+    public function __construct(
+        private readonly CommandBusInterface $commandBus,
+        private readonly QueryBusInterface $queryBus,
+    ) {
     }
 
     #[Route('/update-profile/', name: 'updateProfile', methods: ['PATCH'])]
@@ -23,5 +28,13 @@ final class UserController
 
         $this->commandBus->dispatch(UpdateProfileCommand::createFromRequest($parameters));
         return new JsonResponse();
+    }
+
+    #[Route('/in-project/{id}/', name: 'getAllInProject', methods: ['GET'])]
+    public function getAllInProject(string $id): JsonResponse
+    {
+        /** @var GetProjectUsersQueryResponse $envelop */
+        $envelop = $this->queryBus->dispatch(new GetProjectUsersQuery($id));
+        return new JsonResponse($envelop->getUsers());
     }
 }
