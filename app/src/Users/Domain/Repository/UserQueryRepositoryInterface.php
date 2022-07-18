@@ -5,6 +5,7 @@ namespace App\Users\Domain\Repository;
 
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Users\Domain\DTO\ProfileResponseDTO;
 use App\Users\Domain\DTO\UserListResponseDTO;
 
 interface UserQueryRepositoryInterface
@@ -14,4 +15,5 @@ interface UserQueryRepositoryInterface
      */
     public function findAllByProjectId(ProjectId $projectId): array;
     public function findByProjectIdAndUserId(ProjectId $projectId, UserId $userId): ?UserListResponseDTO;
+    public function findProfile(UserId $userId): ?ProfileResponseDTO;
 }

@@ -5,6 +5,7 @@ namespace App\Users\Infrastructure\Repository;
 
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Users\Domain\DTO\ProfileResponseDTO;
 use App\Users\Domain\DTO\UserListResponseDTO;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;
 use Doctrine\DBAL\Connection;
@@ -66,6 +67,29 @@ class SqlUserQueryRepository implements UserQueryRepositoryInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param UserId $userId
+     * @return ProfileResponseDTO|null
+     * @throws Exception
+     */
+    public function findProfile(UserId $userId): ?ProfileResponseDTO
+    {
+        $rawItem = $this->queryBuilder()
+            ->select('*')
+            ->from('user_projections')
+            ->where('user_id = ?')
+            ->setParameters([
+                $userId->value
+            ])
+            ->fetchAssociative();
+
+        if ($rawItem === false) {
+            return null;
+        }
+
+        return ProfileResponseDTO::create($rawItem);
     }
 
     private function queryBuilder(): QueryBuilder
