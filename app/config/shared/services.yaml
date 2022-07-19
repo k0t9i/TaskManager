@@ -23,9 +23,9 @@ services:
             - '../../src/**/Infrastructure/Persistence/Hydrator/Accessor/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Mutator/*'
             - '../../src/**/Infrastructure/Persistence/Hydrator/Metadata/*'
-            - '../../src/**/Infrastructure/Persistence/Hydrator/DTO/*'
             - '../../src/**/Infrastructure/Persistence/Finder/*'
-            - '../../src/Shared/Infrastructure/**/ValueObject/*'
+            - '../../src/**/ValueObject/*'
+            - '../../src/**/DTO/*'
             - '../../src/Shared/Infrastructure/Kernel.php'
     App\Shared\Domain\:
         resource: '../../src/Shared/Domain'
