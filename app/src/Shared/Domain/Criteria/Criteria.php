@@ -39,7 +39,11 @@ final class Criteria
     public function loadScalarFilters(array $filters): self
     {
         foreach ($filters as $name => $value) {
-            $this->expression->andOperand(new ExpressionOperand($name, '=', $value));
+            $operator = '=';
+            if (is_array($value)) {
+                $operator = 'IN';
+            }
+            $this->expression->andOperand(new ExpressionOperand($name, $operator, $value));
         }
         return $this;
     }
