@@ -16,6 +16,8 @@ use App\Projects\Application\Query\GetProjectQuery;
 use App\Projects\Application\Query\GetProjectQueryResponse;
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Infrastructure\Service\PaginationResponseFormatterInterface;
+use App\Shared\Infrastructure\Service\RequestCriteriaBuilderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +28,9 @@ final class ProjectController
 {
     public function __construct(
         private readonly CommandBusInterface $commandBus,
-        private readonly QueryBusInterface $queryBus
+        private readonly QueryBusInterface $queryBus,
+        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
+        private readonly PaginationResponseFormatterInterface $responseFormatter,
     ) {
     }
 
@@ -92,13 +96,18 @@ final class ProjectController
     }
 
     #[Route('/', name: 'getAll', methods: ['GET'])]
-    public function getAll(): JsonResponse
+    public function getAll(Request $request): JsonResponse
     {
-        //TODO add paginator and ordering
         /** @var GetAllOwnProjectsQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery());
+        $envelope = $this->queryBus->dispatch(
+            new GetAllOwnProjectsQuery(
+                $this->criteriaBuilder->build($request->query->all())
+            )
+        );
 
-        return new JsonResponse($envelope->getProjects());
+        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+
+        return new JsonResponse($response);
     }
 
     #[Route('/{id}/', name: 'get', methods: ['GET'])]

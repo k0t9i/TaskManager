@@ -6,8 +6,10 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\DTO\ProjectListResponseDTO;
 use App\Projects\Domain\DTO\ProjectResponseDTO;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
+use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -18,30 +20,50 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
     private const CONNECTION = 'read';
 
     public function __construct(
-        private readonly ManagerRegistry $managerRegistry
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly CriteriaToQueryBuilderConverter $converter,
     ) {
     }
 
     /**
-     * @param UserId $userId
+     * @param Criteria $criteria
      * @return ProjectListResponseDTO[]
      * @throws Exception
      */
-    public function findAllByUserId(UserId $userId): array
+    public function findAllByCriteria(Criteria $criteria): array
     {
-        $rawItems = $this->queryBuilder()
+        $queryBuilder = $this->queryBuilder()
             ->select('*')
-            ->from('project_projections')
-            ->where('user_id = ?')
-            ->setParameters([$userId->value])
-            ->fetchAllAssociative();
+            ->from('project_projections');
 
+        $this->converter->convert($queryBuilder, $criteria);
+
+        $rawItems = $queryBuilder->fetchAllAssociative();
         $result = [];
         foreach ($rawItems as $rawItem) {
             $result[] = ProjectListResponseDTO::create($rawItem);
         }
 
         return $result;
+    }
+
+    /**
+     * @param Criteria $criteria
+     * @return int
+     * @throws Exception
+     */
+    public function findCountByCriteria(Criteria $criteria): int
+    {
+        $queryBuilder = $this->queryBuilder()
+            ->select('count(*)')
+            ->from('project_projections');
+
+        $this->converter->convert($queryBuilder, $criteria);
+
+        $queryBuilder->setFirstResult(0);
+        $queryBuilder->setMaxResults(null);
+
+        return $queryBuilder->fetchOne();
     }
 
     /**
