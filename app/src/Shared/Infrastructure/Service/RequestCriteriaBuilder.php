@@ -17,10 +17,12 @@ final class RequestCriteriaBuilder implements RequestCriteriaBuilderInterface
 
         $rawOrders = $request[self::PARAM_ORDER] ?? [];
         $orders = [];
-        foreach ($rawOrders as $rawOrder) {
-            $first = substr($rawOrder, 0, 1);
-            $name = in_array($first, ['-', '+']) ? substr($rawOrder, 1) : $rawOrder;
-            $orders[$name] = $first !== '-';
+        if (is_array($rawOrders)) {
+            foreach ($rawOrders as $rawOrder) {
+                $first = substr($rawOrder, 0, 1);
+                $name = in_array($first, ['-', '+']) ? substr($rawOrder, 1) : $rawOrder;
+                $orders[$name] = $first !== '-';
+            }
         }
 
         $page = (int) ($request[self::PARAM_PAGE] ?? 1);
