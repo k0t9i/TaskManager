@@ -3,93 +3,57 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use App\Users\Domain\DTO\ProfileResponseDTO;
-use App\Users\Domain\DTO\UserListResponseDTO;
+use App\Users\Domain\DTO\UserResponseDTO;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;
+use App\Users\Infrastructure\Persistence\Hydrator\Metadata\ProfileResponseStorageMetadata;
+use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserResponseStorageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 
 class SqlUserQueryRepository implements UserQueryRepositoryInterface
 {
+    use SqlCriteriaRepositoryTrait;
+
     private const CONNECTION = 'read';
 
-    public function __construct(
-        private readonly ManagerRegistry $managerRegistry
-    ) {
+    private readonly StorageMetadataInterface $userMetadata;
+    private readonly StorageMetadataInterface $profileMetadata;
+
+    /**
+     * @param Criteria $criteria
+     * @return UserResponseDTO[]
+     */
+    public function findAllByCriteria(Criteria $criteria): array
+    {
+        return $this->findAllByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
+    }
+
+    /**
+     * @param Criteria $criteria
+     * @return int
+     * @throws Exception
+     */
+    public function findCountByCriteria(Criteria $criteria): int
+    {
+        return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
+    }
+
+    public function findByCriteria(Criteria $criteria): ?UserResponseDTO
+    {
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
     }
 
     /**
      * @throws Exception
      */
-    public function findByProjectIdAndUserId(ProjectId $projectId, UserId $userId): ?UserListResponseDTO
+    public function findProfileByCriteria(Criteria $criteria): ?ProfileResponseDTO
     {
-        $rawItem = $this->queryBuilder()
-            ->select('*')
-            ->from('user_projections')
-            ->where('project_id = ?')
-            ->andWhere('user_id = ?')
-            ->setParameters([
-                $projectId->value,
-                $userId->value
-            ])
-            ->fetchAssociative();
-
-        if ($rawItem === false) {
-            return null;
-        }
-
-        return UserListResponseDTO::create($rawItem);
-    }
-
-    /**
-     * @param ProjectId $projectId
-     * @return UserListResponseDTO[]
-     * @throws Exception
-     */
-    public function findAllByProjectId(ProjectId $projectId): array
-    {
-        $rawItems = $this->queryBuilder()
-            ->select('*')
-            ->from('user_projections')
-            ->where('project_id = ?')
-            ->setParameters([
-                $projectId->value,
-            ])
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($rawItems as $rawItem) {
-            $result[] = UserListResponseDTO::create($rawItem);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param UserId $userId
-     * @return ProfileResponseDTO|null
-     * @throws Exception
-     */
-    public function findProfile(UserId $userId): ?ProfileResponseDTO
-    {
-        $rawItem = $this->queryBuilder()
-            ->select('*')
-            ->from('user_projections')
-            ->where('user_id = ?')
-            ->setParameters([
-                $userId->value
-            ])
-            ->fetchAssociative();
-
-        if ($rawItem === false) {
-            return null;
-        }
-
-        return ProfileResponseDTO::create($rawItem);
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->profileMetadata);
     }
 
     private function queryBuilder(): QueryBuilder
@@ -97,5 +61,11 @@ class SqlUserQueryRepository implements UserQueryRepositoryInterface
         /** @var Connection $connection */
         $connection = $this->managerRegistry->getConnection(self::CONNECTION);
         return $connection->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->userMetadata = new UserResponseStorageMetadata();
+        $this->profileMetadata = new ProfileResponseStorageMetadata();
     }
 }

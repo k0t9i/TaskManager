@@ -5,6 +5,8 @@ namespace App\Users\Application\Handler;
 
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Users\Application\Query\GetProfileQuery;
@@ -26,7 +28,9 @@ final class GetProfileQueryHandler implements QueryHandlerInterface
     public function __invoke(GetProfileQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
-        $user = $this->userRepository->findProfile($userId);
+        $user = $this->userRepository->findProfileByCriteria(new Criteria([
+            new ExpressionOperand('user_id', '=', $userId->value)
+        ]));
         if ($user === null) {
             throw new UserNotExistException($userId->value);
         }
