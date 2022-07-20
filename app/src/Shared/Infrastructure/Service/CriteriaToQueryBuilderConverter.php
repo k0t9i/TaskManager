@@ -19,7 +19,6 @@ final class CriteriaToQueryBuilderConverter
         foreach ($criteria->getExpression()->getOperands() as $key => [$type, $operand]) {
             $fullName = $operand->field;
 
-
             $parameter = 'param' . $key;
             $queryParameter = ':' . $parameter;
             if (is_array($operand->value)) {

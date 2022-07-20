@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
 
+use App\Shared\Application\DTO\PaginationDTO;
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\UserIsNotInProjectException;
+use App\Shared\Domain\Pagination\Pagination;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Users\Application\Query\GetProjectUsersQuery;
 use App\Users\Application\Query\GetProjectUsersQueryResponse;
@@ -36,10 +38,23 @@ final class GetProjectUsersQueryHandler implements QueryHandlerInterface
             throw new UserIsNotInProjectException($userId->value, $query->projectId);
         }
 
-        $users = $this->userRepository->findAllByCriteria(new Criteria([
+        $criteria = new Criteria([
             new ExpressionOperand('project_id', '=', $query->projectId)
-        ]));
+        ]);
+        $criteria->loadScalarFilters($query->criteria->filters);
+        $count = $this->userRepository->findCountByCriteria($criteria);
 
-        return new GetProjectUsersQueryResponse(...$users);
+        $pagination = new Pagination(
+            $count,
+            $query->criteria->page
+        );
+        $criteria->loadScalarOrders($query->criteria->orders)
+            ->loadOffsetAndLimit(...$pagination->getOffsetAndLimit());
+        $users = $this->userRepository->findAllByCriteria($criteria);
+
+        return new GetProjectUsersQueryResponse(
+            PaginationDTO::createFromPagination($pagination),
+            ...$users
+        );
     }
 }

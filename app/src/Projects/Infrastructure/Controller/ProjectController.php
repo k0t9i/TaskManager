@@ -30,7 +30,7 @@ final class ProjectController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
-        private readonly PaginationResponseFormatterInterface $responseFormatter,
+        private readonly PaginationResponseFormatterInterface $responseFormatter
     ) {
     }
 

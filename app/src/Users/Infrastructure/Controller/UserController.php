@@ -5,6 +5,8 @@ namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Domain\Bus\Command\CommandBusInterface;
 use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Infrastructure\Service\PaginationResponseFormatterInterface;
+use App\Shared\Infrastructure\Service\RequestCriteriaBuilderInterface;
 use App\Users\Application\Command\UpdateProfileCommand;
 use App\Users\Application\Query\GetProfileQuery;
 use App\Users\Application\Query\GetProfileQueryResponse;
@@ -20,6 +22,8 @@ final class UserController
     public function __construct(
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
+        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
+        private readonly PaginationResponseFormatterInterface $responseFormatter
     ) {
     }
 
@@ -41,10 +45,18 @@ final class UserController
     }
 
     #[Route('/in-project/{id}/', name: 'getAllInProject', methods: ['GET'])]
-    public function getAllInProject(string $id): JsonResponse
+    public function getAllInProject(string $id, Request $request): JsonResponse
     {
-        /** @var GetProjectUsersQueryResponse $envelop */
-        $envelop = $this->queryBus->dispatch(new GetProjectUsersQuery($id));
-        return new JsonResponse($envelop->getUsers());
+        /** @var GetProjectUsersQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(
+            new GetProjectUsersQuery(
+                $id,
+                $this->criteriaBuilder->build($request->query->all())
+            )
+        );
+
+        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+
+        return new JsonResponse($response);
     }
 }
