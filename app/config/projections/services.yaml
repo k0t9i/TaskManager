@@ -1,4 +1,4 @@
 services:
     App\Projections\Domain\:
-        resource: '../../src/Tasks/Domain'
+        resource: '../../src/Projections/Domain'
         autowire: false
