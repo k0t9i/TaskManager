@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\ValueObject;
+namespace App\Shared\Infrastructure\Service\ValueObject;
 
 use App\Shared\Application\Service\AuthUserInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
