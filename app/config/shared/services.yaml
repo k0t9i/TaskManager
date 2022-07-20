@@ -44,7 +44,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onException }
 
-    App\Shared\Infrastructure\Security\LexikJwtAuthenticatorService:
+    App\Shared\Infrastructure\Service\LexikJwtAuthenticatorService:
         arguments:
             $path: '^/api/(?!.*(security)).*$'
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Security;
+namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\AuthenticationException;
@@ -9,7 +9,7 @@ use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\AuthUser;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Infrastructure\Security\ValueObject\SymfonySecurityUser;
+use App\Shared\Infrastructure\Service\ValueObject\SymfonySecurityUser;
 use ErrorException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;

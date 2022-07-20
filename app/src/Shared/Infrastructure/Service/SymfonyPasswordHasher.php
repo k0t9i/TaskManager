@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Security;
+namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Application\Service\PasswordHasherInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface as SymfonyPasswordHasherInterface;

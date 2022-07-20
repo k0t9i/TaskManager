@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Security\ValueObject;
+namespace App\Shared\Infrastructure\Service\ValueObject;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
