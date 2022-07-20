@@ -5,7 +5,7 @@ namespace App\Users\Application\Handler;
 
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
-use App\Shared\Domain\Service\UuidGeneratorInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;

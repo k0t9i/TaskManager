@@ -9,11 +9,11 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Factory\ProjectMerger;
 use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\Requests\RequestStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
 

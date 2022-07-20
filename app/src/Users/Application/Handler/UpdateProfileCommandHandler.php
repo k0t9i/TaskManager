@@ -5,8 +5,8 @@ namespace App\Users\Application\Handler;
 
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Users\Application\Command\UpdateProfileCommand;

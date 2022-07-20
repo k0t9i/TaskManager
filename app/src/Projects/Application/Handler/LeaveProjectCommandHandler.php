@@ -7,8 +7,8 @@ use App\Projects\Application\Command\LeaveProjectCommand;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use Exception;
 

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Service;
 
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Domain\ValueObject\UserPassword;

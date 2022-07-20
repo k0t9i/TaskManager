@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Security;
 
-use App\Shared\Domain\Security\PasswordHasherInterface;
+use App\Shared\Application\Service\PasswordHasherInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface as SymfonyPasswordHasherInterface;
 
 class SymfonyPasswordHasher implements PasswordHasherInterface

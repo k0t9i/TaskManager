@@ -9,10 +9,10 @@ use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Application\Service\Pagination;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 
 final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
 {

@@ -11,8 +11,8 @@ use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 

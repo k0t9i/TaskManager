@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
 
-use App\Shared\Domain\Security\AuthUserInterface;
+use App\Shared\Application\Service\AuthUserInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
 
 final class AuthUser implements AuthUserInterface

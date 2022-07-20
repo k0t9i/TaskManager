@@ -5,10 +5,10 @@ namespace App\Users\Application\Handler;
 
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Users\Application\Query\GetProfileQuery;
 use App\Users\Application\Query\GetProfileQueryResponse;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;

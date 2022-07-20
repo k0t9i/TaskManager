@@ -6,9 +6,9 @@ namespace App\Projections\Application\Subscriber\Users;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Service\UuidGeneratorInterface;
 
 final class ChangeUserProjectionOnParticipantAddedSubscriber implements EventSubscriberInterface
 {

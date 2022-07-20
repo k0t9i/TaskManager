@@ -5,10 +5,10 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;

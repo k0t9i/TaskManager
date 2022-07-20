@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Service;
 
-use App\Shared\Domain\Security\PasswordHasherInterface;
+use App\Shared\Application\Service\PasswordHasherInterface;
 use App\Users\Domain\ValueObject\UserPassword;
 
 final class UserPasswordHasher

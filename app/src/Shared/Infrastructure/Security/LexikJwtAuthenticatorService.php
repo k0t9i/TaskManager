@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Security;
 
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\AuthenticationException;
 use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\AuthUser;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Security\ValueObject\SymfonySecurityUser;

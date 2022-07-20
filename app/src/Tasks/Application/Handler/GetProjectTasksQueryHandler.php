@@ -5,9 +5,9 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
-use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Tasks\Application\Query\GetProjectTasksQuery;
 use App\Tasks\Application\Query\GetProjectTasksQueryResponse;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;

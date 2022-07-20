@@ -7,8 +7,8 @@ use App\Projections\Domain\Entity\UserProjection;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Event\Users\UserWasCreatedEvent;
-use App\Shared\Domain\Service\UuidGeneratorInterface;
 use Exception;
 
 final class CreateUserProjectionOnUserCreated implements EventSubscriberInterface
