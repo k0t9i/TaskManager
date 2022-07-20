@@ -5,8 +5,8 @@ namespace App\Projects\Application\Subscriber;
 
 use App\Projects\Application\Service\ProjectStateRecreator;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventBusInterface;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 

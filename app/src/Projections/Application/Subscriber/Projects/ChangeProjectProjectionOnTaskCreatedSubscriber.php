@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
-use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 
 final class ChangeProjectProjectionOnTaskCreatedSubscriber implements EventSubscriberInterface

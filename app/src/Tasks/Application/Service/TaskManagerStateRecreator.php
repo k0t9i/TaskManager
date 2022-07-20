@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Service;
 
-use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;

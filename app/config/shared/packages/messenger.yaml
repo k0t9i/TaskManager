@@ -22,9 +22,9 @@ framework:
             sync: 'sync://'
 
         routing:
-            'App\Shared\Domain\Bus\Event\DomainEvent': async
-            'App\Shared\Domain\Bus\Command\CommandInterface': sync
-            'App\Shared\Domain\Bus\Query\QueryInterface': sync
+            'App\Shared\Domain\Event\DomainEvent': async
+            'App\Shared\Application\Bus\Command\CommandInterface': sync
+            'App\Shared\Application\Bus\Query\QueryInterface': sync
 
 
 # when@test:

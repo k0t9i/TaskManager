@@ -22,6 +22,7 @@ services:
             - '../../src/**/Application/Hydrator/Accessor/*'
             - '../../src/**/Application/Hydrator/Mutator/*'
             - '../../src/**/Application/Hydrator/Metadata/*'
+            - '../../src/**/Infrastructure/Persistence/*'
             - '../../src/**/Infrastructure/Exception/*'
             - '../../src/**/ValueObject/*'
             - '../../src/**/DTO/*'

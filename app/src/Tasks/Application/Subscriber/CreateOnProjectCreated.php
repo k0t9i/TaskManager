@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Subscriber;
 
-use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\DTO\TaskManagerDTO;

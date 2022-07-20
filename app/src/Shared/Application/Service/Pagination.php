@@ -10,8 +10,8 @@ final class Pagination
     public const PAGE_SIZE = 10;
 
     public function __construct(
-        private readonly int $totalCount,
-        private readonly int $currentPage
+        private readonly int $totalCount = 0,
+        private readonly int $currentPage = 0
     ) {
         $this->ensureIsValidCurrentPage();
     }

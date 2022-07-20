@@ -5,8 +5,8 @@ namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Entity\ProjectProjection;
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
-use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;

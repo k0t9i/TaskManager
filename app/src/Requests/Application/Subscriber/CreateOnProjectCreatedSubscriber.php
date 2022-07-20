@@ -7,11 +7,11 @@ use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\DTO\RequestManagerDTO;
 use App\Requests\Domain\Factory\RequestManagerFactory;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
-use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 
 final class CreateOnProjectCreatedSubscriber implements EventSubscriberInterface
