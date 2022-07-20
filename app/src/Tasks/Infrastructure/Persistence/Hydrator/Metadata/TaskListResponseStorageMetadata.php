@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Hydrator\Metadata;
 
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\ResponseStorageMetadata;
+use App\Shared\Application\Hydrator\Metadata\ResponseStorageMetadata;
 use App\Tasks\Domain\DTO\TaskListResponseDTO;
 
 final class TaskListResponseStorageMetadata extends ResponseStorageMetadata

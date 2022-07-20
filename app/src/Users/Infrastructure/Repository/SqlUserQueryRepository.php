@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use App\Users\Domain\DTO\ProfileResponseDTO;
 use App\Users\Domain\DTO\UserResponseDTO;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Projects\Domain\DTO\ProjectResponseDTO;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\ResponseStorageMetadata;
+use App\Shared\Application\Hydrator\Metadata\ResponseStorageMetadata;
 
 final class ProjectResponseStorageMetadata extends ResponseStorageMetadata
 {

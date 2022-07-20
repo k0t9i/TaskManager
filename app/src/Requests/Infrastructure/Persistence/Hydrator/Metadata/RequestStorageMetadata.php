@@ -4,16 +4,16 @@ declare(strict_types=1);
 namespace App\Requests\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Requests\Domain\Entity\Request;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ChainValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ConstValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\DateValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\StatusValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\UuidValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadata;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\DateValueMutator;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\StatusValueMutator;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\UuidValueMutator;
+use App\Shared\Application\Hydrator\Accessor\ChainValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\ConstValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\DateValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\StatusValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\UuidValueAccessor;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadata;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataField;
+use App\Shared\Application\Hydrator\Mutator\DateValueMutator;
+use App\Shared\Application\Hydrator\Mutator\StatusValueMutator;
+use App\Shared\Application\Hydrator\Mutator\UuidValueMutator;
 
 final class RequestStorageMetadata extends StorageMetadata
 {

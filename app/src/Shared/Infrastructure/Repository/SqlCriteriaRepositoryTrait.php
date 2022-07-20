@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Repository;
 
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Storage\StorageLoaderInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
+use App\Shared\Infrastructure\Storage\SqlStorageFinder;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

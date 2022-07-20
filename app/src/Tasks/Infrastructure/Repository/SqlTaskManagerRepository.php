@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Storage\StorageLoaderInterface;
+use App\Shared\Application\Storage\StorageSaverInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
-use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
-use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;

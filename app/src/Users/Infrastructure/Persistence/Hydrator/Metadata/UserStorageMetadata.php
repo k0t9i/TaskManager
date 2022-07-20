@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Persistence\Hydrator\Metadata;
 
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ChainValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\PropertyValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\StringValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\UuidValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadata;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\ChainValueMutator;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\PropertyValueMutator;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\StringValueMutator;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\UuidValueMutator;
+use App\Shared\Application\Hydrator\Accessor\ChainValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\PropertyValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\StringValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\UuidValueAccessor;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadata;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataField;
+use App\Shared\Application\Hydrator\Mutator\ChainValueMutator;
+use App\Shared\Application\Hydrator\Mutator\PropertyValueMutator;
+use App\Shared\Application\Hydrator\Mutator\StringValueMutator;
+use App\Shared\Application\Hydrator\Mutator\UuidValueMutator;
 use App\Users\Domain\Entity\User;
 
 final class UserStorageMetadata extends StorageMetadata

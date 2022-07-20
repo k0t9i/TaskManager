@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
 
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\CriteriaFilterNotExistException;
 use App\Shared\Domain\Exception\CriteriaOrderNotExistException;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 
 final class CriteriaStorageFieldValidator
 {

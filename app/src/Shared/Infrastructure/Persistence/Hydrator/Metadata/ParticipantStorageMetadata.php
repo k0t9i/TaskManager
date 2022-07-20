@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\Hydrator\Metadata;
 
+use App\Shared\Application\Hydrator\Accessor\ChainValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\ConstValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\PropertyValueAccessor;
+use App\Shared\Application\Hydrator\Accessor\UuidValueAccessor;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadata;
+use App\Shared\Application\Hydrator\Metadata\StorageMetadataField;
+use App\Shared\Application\Hydrator\Mutator\PropertyValueMutator;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ChainValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\ConstValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\PropertyValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\UuidValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\PropertyValueMutator;
 
 final class ParticipantStorageMetadata extends StorageMetadata
 {
