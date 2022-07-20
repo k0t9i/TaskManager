@@ -6,25 +6,21 @@ namespace App\Shared\Infrastructure\Persistence\Hydrator\Metadata;
 use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\PropertyValueAccessor;
 use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\PropertyValueMutator;
 
-abstract class ResponseStorageMetadata implements StorageMetadataInterface
+abstract class ResponseStorageMetadata extends StorageMetadata
 {
     protected const COLUMN_TO_PROPERTY_MAP = [];
 
-    private array $storageFields = [];
-
-    public function getPrimaryKey(): array
-    {
-        return [];
-    }
+    private ?array $storageFields = null;
 
     /**
      * @return StorageMetadataField[]
      */
     public function getStorageFields(?object $parentObject = null): array
     {
-        if (count($this->storageFields) === 0) {
+        if ($this->storageFields === null) {
+            $this->storageFields = [];
             foreach (static::COLUMN_TO_PROPERTY_MAP as $column => $property) {
-                $this->storageFields[] = new StorageMetadataField(
+                $this->storageFields[$property] = new StorageMetadataField(
                     $column,
                     new PropertyValueAccessor($property),
                     new PropertyValueMutator($property)

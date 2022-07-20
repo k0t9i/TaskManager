@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\Persistence\Hydrator\Metadata;
 abstract class StorageMetadata implements StorageMetadataInterface
 {
     private ?array $pk = null;
+    private ?array $propertyToColumnMap = null;
 
     public function getPrimaryKey(): array
     {
@@ -18,5 +19,18 @@ abstract class StorageMetadata implements StorageMetadataInterface
             }
         }
         return $this->pk;
+    }
+
+    public function getPropertyToColumnMap(): array
+    {
+        if ($this->propertyToColumnMap === null) {
+            $this->propertyToColumnMap = [];
+            foreach ($this->getStorageFields() as $propertyName => $metadataField) {
+                if (!is_int($propertyName) && $metadataField->metadata === null) {
+                    $this->propertyToColumnMap[$propertyName] = $metadataField->name;
+                }
+            }
+        }
+        return $this->propertyToColumnMap;
     }
 }

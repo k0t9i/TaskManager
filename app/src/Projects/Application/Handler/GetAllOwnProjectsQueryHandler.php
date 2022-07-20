@@ -31,7 +31,7 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
         $userId = $this->authenticatorService->getAuthUser()->getId();
 
         $criteria = new Criteria([
-            new ExpressionOperand('user_id', '=', $userId->value)
+            new ExpressionOperand('userId', '=', $userId->value)
         ]);
         $criteria->loadScalarFilters($query->criteria->filters);
         $count = $this->projectRepository->findCountByCriteria($criteria);

@@ -13,25 +13,20 @@ final class CriteriaStorageFieldValidator
 {
     public function validate(Criteria $criteria, StorageMetadataInterface $metadata): void
     {
-        $columns = [];
-        foreach ($metadata->getStorageFields() as $metadataField) {
-            if ($metadataField->metadata === null) {
-                $columns[$metadataField->name] = $metadataField->name;
-            }
-        }
+        $columns = $metadata->getPropertyToColumnMap();
 
         /**
          * @var ExpressionOperand $operand
          */
         foreach ($criteria->getExpression()->getOperands() as [$operator, $operand]) {
-            if (!array_key_exists($operand->field, $columns)) {
-                throw new CriteriaFilterNotExistException($operand->field);
+            if (!array_key_exists($operand->property, $columns)) {
+                throw new CriteriaFilterNotExistException($operand->property);
             }
         }
 
         foreach ($criteria->getOrders() as $order) {
-            if (!array_key_exists($order->field, $columns)) {
-                throw new CriteriaOrderNotExistException($order->field);
+            if (!array_key_exists($order->property, $columns)) {
+                throw new CriteriaOrderNotExistException($order->property);
             }
         }
     }

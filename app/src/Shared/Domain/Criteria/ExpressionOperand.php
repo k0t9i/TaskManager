@@ -34,7 +34,7 @@ final class ExpressionOperand
     ];
 
     public function __construct(
-        public readonly string $field,
+        public readonly string $property,
         string $operator,
         public readonly mixed $value
     ){

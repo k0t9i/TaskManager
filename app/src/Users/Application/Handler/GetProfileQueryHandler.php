@@ -29,7 +29,7 @@ final class GetProfileQueryHandler implements QueryHandlerInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $user = $this->userRepository->findProfileByCriteria(new Criteria([
-            new ExpressionOperand('user_id', '=', $userId->value)
+            new ExpressionOperand('id', '=', $userId->value)
         ]));
         if ($user === null) {
             throw new UserNotExistException($userId->value);

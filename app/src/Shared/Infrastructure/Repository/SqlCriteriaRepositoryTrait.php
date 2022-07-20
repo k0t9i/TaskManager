@@ -33,7 +33,7 @@ trait SqlCriteriaRepositoryTrait
     ): array {
         $builder->select('*');
         $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria);
+        $this->criteriaConverter->convert($builder, $criteria, $metadata);
 
         $rawItems = $this->storageLoader->loadAll(new SqlStorageFinder($builder), $metadata);
         $result = [];
@@ -55,7 +55,7 @@ trait SqlCriteriaRepositoryTrait
         $builder->select('count(*)')
             ->from($metadata->getStorageName());
         $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria);
+        $this->criteriaConverter->convert($builder, $criteria, $metadata);
 
         $builder->setFirstResult(0);
         $builder->setMaxResults(null);
@@ -70,7 +70,7 @@ trait SqlCriteriaRepositoryTrait
     ): mixed {
         $builder = $builder->select('*');
         $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria);
+        $this->criteriaConverter->convert($builder, $criteria, $metadata);
 
         return $this->storageLoader->load(new SqlStorageFinder($builder), $metadata)[0];
     }

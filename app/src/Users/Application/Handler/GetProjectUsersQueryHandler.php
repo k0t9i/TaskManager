@@ -31,15 +31,15 @@ final class GetProjectUsersQueryHandler implements QueryHandlerInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $user = $this->userRepository->findByCriteria(new Criteria([
-            new ExpressionOperand('project_id', '=', $query->projectId),
-            new ExpressionOperand('user_id', '=', $userId->value)
+            new ExpressionOperand('projectId', '=', $query->projectId),
+            new ExpressionOperand('id', '=', $userId->value)
         ]));
         if ($user === null) {
             throw new UserIsNotInProjectException($userId->value, $query->projectId);
         }
 
         $criteria = new Criteria([
-            new ExpressionOperand('project_id', '=', $query->projectId)
+            new ExpressionOperand('projectId', '=', $query->projectId)
         ]);
         $criteria->loadScalarFilters($query->criteria->filters);
         $count = $this->userRepository->findCountByCriteria($criteria);
