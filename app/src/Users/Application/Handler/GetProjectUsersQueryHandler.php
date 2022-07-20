@@ -30,11 +30,11 @@ final class GetProjectUsersQueryHandler implements QueryHandlerInterface
     public function __invoke(GetProjectUsersQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
-        $user = $this->userRepository->findByCriteria(new Criteria([
+        $count = $this->userRepository->findCountByCriteria(new Criteria([
             new ExpressionOperand('projectId', '=', $query->projectId),
             new ExpressionOperand('id', '=', $userId->value)
         ]));
-        if ($user === null) {
+        if ($count === 0) {
             throw new UserIsNotInProjectException($userId->value, $query->projectId);
         }
 

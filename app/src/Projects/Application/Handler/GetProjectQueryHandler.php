@@ -29,10 +29,10 @@ final class GetProjectQueryHandler implements QueryHandlerInterface
     public function __invoke(GetProjectQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
-        $project = $this->projectRepository->findByCriteria(new Criteria([
+        $count = $this->projectRepository->findCountByCriteria(new Criteria([
             new ExpressionOperand('id', '=', $query->id)
         ]));
-        if ($project === null) {
+        if ($count === 0) {
             throw new ProjectNotExistException($query->id);
         }
 
