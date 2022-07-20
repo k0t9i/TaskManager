@@ -46,7 +46,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 
     public function findByCriteria(Criteria $criteria): ?ProjectResponseDTO
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata)[0];
     }
 
     private function queryBuilder(): QueryBuilder

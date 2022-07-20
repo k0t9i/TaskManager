@@ -45,7 +45,7 @@ class SqlUserQueryRepository implements UserQueryRepositoryInterface
 
     public function findByCriteria(Criteria $criteria): ?UserResponseDTO
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata)[0];
     }
 
     /**
@@ -53,7 +53,7 @@ class SqlUserQueryRepository implements UserQueryRepositoryInterface
      */
     public function findProfileByCriteria(Criteria $criteria): ?ProfileResponseDTO
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->profileMetadata);
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->profileMetadata)[0];
     }
 
     private function queryBuilder(): QueryBuilder

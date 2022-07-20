@@ -43,6 +43,7 @@ final class SqlStorageLoader implements StorageLoaderInterface
      * @param StorageFinderInterface $finder
      * @param StorageMetadataInterface $metadata
      * @return array
+     * @throws Exception
      */
     public function loadAll(StorageFinderInterface $finder, StorageMetadataInterface $metadata): array
     {

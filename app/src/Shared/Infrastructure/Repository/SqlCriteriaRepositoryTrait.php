@@ -67,11 +67,11 @@ trait SqlCriteriaRepositoryTrait
         QueryBuilder $builder,
         Criteria $criteria,
         StorageMetadataInterface $metadata
-    ): mixed {
+    ): array {
         $builder = $builder->select('*');
         $this->criteriaValidator->validate($criteria, $metadata);
         $this->criteriaConverter->convert($builder, $criteria, $metadata);
 
-        return $this->storageLoader->load(new SqlStorageFinder($builder), $metadata)[0];
+        return $this->storageLoader->load(new SqlStorageFinder($builder), $metadata);
     }
 }
