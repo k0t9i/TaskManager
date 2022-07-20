@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\Hydrator\Mutator;
 
+use ReflectionClass;
 use ReflectionException;
 use ReflectionObject;
 
@@ -46,7 +47,7 @@ final class PropertyValueMutator implements ValueMutatorInterface
         if (!class_exists($type)) {
             return null;
         }
-        $reflection = new \ReflectionClass($type);
+        $reflection = new ReflectionClass($type);
         return $reflection->newInstanceWithoutConstructor();
     }
 }

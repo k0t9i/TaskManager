@@ -10,10 +10,10 @@ use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 use Exception;
 
 final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface

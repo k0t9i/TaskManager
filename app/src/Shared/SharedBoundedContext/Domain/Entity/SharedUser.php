@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\Entity;
+namespace App\Shared\SharedBoundedContext\Domain\Entity;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\ValueObject\Users\UserEmail;

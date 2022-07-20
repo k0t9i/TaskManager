@@ -8,8 +8,8 @@ use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 
 final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements EventSubscriberInterface
 {

@@ -1,18 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Application\Subscriber;
+namespace App\Shared\SharedBoundedContext\Application\Subscriber;
 
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
-use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
+use App\Shared\Domain\Event\Users\UserWasCreatedEvent;
+use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
+use App\Shared\SharedBoundedContext\Domain\Entity\SharedUser;
+use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 
-final class ChangeSharedUserOnUserProfileChangedSubscriber implements EventSubscriberInterface
+final class CreateSharedUserOnUserCreatedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly SharedUserRepositoryInterface $userRepository,
@@ -22,17 +23,14 @@ final class ChangeSharedUserOnUserProfileChangedSubscriber implements EventSubsc
 
     public function subscribeTo(): array
     {
-        return [UserProfileWasChangedEvent::class];
+        return [UserWasCreatedEvent::class];
     }
 
-    public function __invoke(UserProfileWasChangedEvent $event): void
+    public function __invoke(UserWasCreatedEvent $event): void
     {
-        $user = $this->userRepository->findById(new UserId($event->aggregateId));
-        if ($user === null) {
-            throw new UserNotExistException($event->aggregateId);
-        }
-
-        $user->changeProfile(
+        $user = SharedUser::create(
+            new UserId($event->aggregateId),
+            new UserEmail($event->email),
             new UserFirstname($event->firstname),
             new UserLastname($event->lastname)
         );

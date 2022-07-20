@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Persistence\Hydrator\Metadata;
+namespace App\Shared\SharedBoundedContext\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Shared\Application\Hydrator\Accessor\StringValueAccessor;
 use App\Shared\Application\Hydrator\Accessor\UuidValueAccessor;
@@ -9,7 +9,7 @@ use App\Shared\Application\Hydrator\Metadata\StorageMetadata;
 use App\Shared\Application\Hydrator\Metadata\StorageMetadataField;
 use App\Shared\Application\Hydrator\Mutator\StringValueMutator;
 use App\Shared\Application\Hydrator\Mutator\UuidValueMutator;
-use App\Shared\Domain\Entity\SharedUser;
+use App\Shared\SharedBoundedContext\Domain\Entity\SharedUser;
 
 final class SharedUserStorageMetadata extends StorageMetadata
 {
