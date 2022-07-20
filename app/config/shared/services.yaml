@@ -49,12 +49,12 @@ services:
             $path: '^/api/(?!.*(security)).*$'
 
     _instanceof:
-        App\Shared\Domain\Bus\Command\CommandHandlerInterface:
+        App\Shared\Application\Bus\Command\CommandHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: command.bus }
-        App\Shared\Domain\Bus\Query\QueryHandlerInterface:
+        App\Shared\Application\Bus\Query\QueryHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: query.bus }
-        App\Shared\Domain\Bus\Event\EventSubscriberInterface:
+        App\Shared\Application\Bus\Event\EventSubscriberInterface:
             tags:
                 - { name: messenger.message_handler, bus: event.bus }
