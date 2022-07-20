@@ -4,14 +4,11 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Projects\Domain\DTO\ProjectListResponseDTO;
-use App\Shared\Infrastructure\Persistence\Hydrator\Accessor\PropertyValueAccessor;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadata;
-use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataField;
-use App\Shared\Infrastructure\Persistence\Hydrator\Mutator\PropertyValueMutator;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\ResponseStorageMetadata;
 
-final class ProjectListResponseStorageMetadata extends StorageMetadata
+final class ProjectListResponseStorageMetadata extends ResponseStorageMetadata
 {
-    private const COLUMN_TO_PROPERTY_MAP = [
+    protected const COLUMN_TO_PROPERTY_MAP = [
         'id' => 'id',
         'user_id' => 'userId',
         'name' => 'name',
@@ -26,8 +23,6 @@ final class ProjectListResponseStorageMetadata extends StorageMetadata
         'pending_requests_count' => 'pendingRequestsCount'
     ];
 
-    private array $storageFields = [];
-
     public function getStorageName(): string
     {
         return 'project_projections';
@@ -36,22 +31,5 @@ final class ProjectListResponseStorageMetadata extends StorageMetadata
     public function getClassName(): string
     {
         return ProjectListResponseDTO::class;
-    }
-
-    /**
-     * @return StorageMetadataField[]
-     */
-    public function getStorageFields(?object $parentObject = null): array
-    {
-        if (count($this->storageFields) === 0) {
-            foreach (self::COLUMN_TO_PROPERTY_MAP as $column => $property) {
-                $this->storageFields[] = new StorageMetadataField(
-                    $column,
-                    new PropertyValueAccessor($property),
-                    new PropertyValueMutator($property)
-                );
-            }
-        }
-        return $this->storageFields;
     }
 }
