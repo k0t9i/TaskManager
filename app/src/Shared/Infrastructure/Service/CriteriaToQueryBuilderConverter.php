@@ -130,7 +130,7 @@ final class CriteriaToQueryBuilderConverter
                     $parentTable,
                     $joinTable,
                     $joinTable,
-                    implode('AND', $condition)
+                    implode(' AND ', $condition)
                 ];
                 $parentTable = $storageField->metadata->getStorageName();
                 $columns = $storageField->metadata->getPropertyToColumnMap();
