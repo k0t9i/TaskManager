@@ -8,7 +8,7 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInter
 
 interface HydratorInterface
 {
-    public function loadIntoAggregateRoot(
+    public function loadIntoEntity(
         StorageMetadataInterface $metadata,
         HydratorEntityDTO $data
     ): object;

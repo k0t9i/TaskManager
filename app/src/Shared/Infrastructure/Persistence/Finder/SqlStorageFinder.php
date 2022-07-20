@@ -17,7 +17,7 @@ final class SqlStorageFinder implements StorageFinderInterface
     /**
      * @throws Exception
      */
-    public function find(string $storageName): array
+    public function findAll(string $storageName): array
     {
         $result = $this->queryBuilder
             ->from($storageName, $this->alias)

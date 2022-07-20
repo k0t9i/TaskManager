@@ -16,7 +16,7 @@ final class Hydrator implements HydratorInterface
     /**
      * @throws ReflectionException
      */
-    public function loadIntoAggregateRoot(
+    public function loadIntoEntity(
         StorageMetadataInterface $metadata,
         HydratorEntityDTO $data
     ): object {

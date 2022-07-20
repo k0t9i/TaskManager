@@ -28,7 +28,7 @@ final class SqlStorageLoader implements StorageLoaderInterface
      */
     public function load(StorageFinderInterface $finder, StorageMetadataInterface $metadata): array
     {
-        $raw = $finder->find($metadata->getStorageName());
+        $raw = $finder->findAll($metadata->getStorageName());
 
         if (count($raw) === 0) {
             return [null, -1];
@@ -36,7 +36,7 @@ final class SqlStorageLoader implements StorageLoaderInterface
 
         $dto = $this->loadChildren($metadata, $raw);
         $version = $raw['version'] ?? 0;
-        return [$this->hydrator->loadIntoAggregateRoot($metadata, $dto), $version];
+        return [$this->hydrator->loadIntoEntity($metadata, $dto), $version];
     }
 
     /**
