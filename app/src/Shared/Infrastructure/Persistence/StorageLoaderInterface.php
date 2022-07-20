@@ -9,4 +9,5 @@ use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInter
 interface StorageLoaderInterface
 {
     public function load(StorageFinderInterface $finder, StorageMetadataInterface $metadata): array;
+    public function loadAll(StorageFinderInterface $finder, StorageMetadataInterface $metadata): array;
 }

@@ -17,7 +17,7 @@ final class SqlStorageFinder implements StorageFinderInterface
     /**
      * @throws Exception
      */
-    public function findAll(string $storageName): array
+    public function find(string $storageName): array
     {
         $result = $this->queryBuilder
             ->from($storageName, $this->alias)
@@ -26,5 +26,15 @@ final class SqlStorageFinder implements StorageFinderInterface
             return [];
         }
         return $result;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function findAll(string $storageName): array
+    {
+        return $this->queryBuilder
+            ->from($storageName, $this->alias)
+            ->fetchAllAssociative();
     }
 }

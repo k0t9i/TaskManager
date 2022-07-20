@@ -5,5 +5,6 @@ namespace App\Shared\Infrastructure\Persistence\Finder;
 
 interface StorageFinderInterface
 {
+    public function find(string $storageName): array;
     public function findAll(string $storageName): array;
 }

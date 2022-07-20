@@ -10,7 +10,7 @@ final class StorageMetadataField
 {
     public function __construct(
         public readonly string $name,
-        public readonly ?ValueAccessorInterface $valueAccessor = null,
+        public readonly ValueAccessorInterface $valueAccessor,
         public readonly ?ValueMutatorInterface $valueMutator = null,
         public readonly ?StorageMetadataInterface $metadata = null,
         public readonly bool $isPrimaryKey = false,
