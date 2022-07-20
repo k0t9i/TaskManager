@@ -17,25 +17,7 @@ final class ProjectListResponseDTO
         public readonly int $status,
         public readonly int $tasksCount,
         public readonly int $participantsCount,
-        public readonly int $pendingRequestsCount,
+        public readonly int $pendingRequestsCount
     ) {
-    }
-
-    public static function create(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['user_id'],
-            $item['name'],
-            $item['finish_date'],
-            $item['owner_id'],
-            $item['owner_firstname'],
-            $item['owner_lastname'],
-            $item['owner_email'],
-            $item['status'],
-            $item['tasks_count'],
-            $item['participants_count'],
-            $item['pending_requests_count']
-        );
     }
 }

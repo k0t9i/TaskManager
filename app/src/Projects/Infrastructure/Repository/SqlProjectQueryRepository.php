@@ -6,9 +6,14 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\DTO\ProjectListResponseDTO;
 use App\Projects\Domain\DTO\ProjectResponseDTO;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
+use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListResponseStorageMetadata;
+use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectResponseStorageMetadata;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
+use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -19,10 +24,16 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
     private const CONNECTION = 'read';
 
+    private readonly StorageMetadataInterface $listMetadata;
+    private readonly StorageMetadataInterface $metadata;
+
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
-        private readonly CriteriaToQueryBuilderConverter $converter,
+        private readonly StorageLoaderInterface $storageLoader,
+        private readonly CriteriaToQueryBuilderConverter $converter
     ) {
+        $this->listMetadata = new ProjectListResponseStorageMetadata();
+        $this->metadata = new ProjectResponseStorageMetadata();
     }
 
     /**
@@ -32,16 +43,14 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findAllByCriteria(Criteria $criteria): array
     {
-        $queryBuilder = $this->queryBuilder()
-            ->select('*')
-            ->from('project_projections');
+        $builder = $this->queryBuilder()
+            ->select('*');
+        $this->converter->convert($builder, $criteria);
 
-        $this->converter->convert($queryBuilder, $criteria);
-
-        $rawItems = $queryBuilder->fetchAllAssociative();
+        $rawItems = $this->storageLoader->loadAll(new SqlStorageFinder($builder), $this->listMetadata);
         $result = [];
-        foreach ($rawItems as $rawItem) {
-            $result[] = ProjectListResponseDTO::create($rawItem);
+        foreach ($rawItems as [$item, $version]) {
+            $result[] = $item;
         }
 
         return $result;
@@ -54,16 +63,16 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findCountByCriteria(Criteria $criteria): int
     {
-        $queryBuilder = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('count(*)')
-            ->from('project_projections');
+            ->from($this->listMetadata->getStorageName());
 
-        $this->converter->convert($queryBuilder, $criteria);
+        $this->converter->convert($builder, $criteria);
 
-        $queryBuilder->setFirstResult(0);
-        $queryBuilder->setMaxResults(null);
+        $builder->setFirstResult(0);
+        $builder->setMaxResults(null);
 
-        return $queryBuilder->fetchOne();
+        return $builder->fetchOne();
     }
 
     /**
@@ -74,21 +83,16 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO
     {
-        $rawItem = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from('project_projections')
             ->where('id = ?')
             ->andWhere('user_id = ?')
             ->setParameters([
                 $id->value,
                 $userId->value
-            ])
-            ->fetchAssociative();
-        if ($rawItem === false) {
-            return null;
-        }
+            ]);
 
-        return ProjectResponseDTO::create($rawItem);
+        return $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata)[0];
     }
 
     /**
@@ -98,19 +102,14 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findById(ProjectId $id): ?ProjectResponseDTO
     {
-        $rawItem = $this->queryBuilder()
+        $builder = $this->queryBuilder()
             ->select('*')
-            ->from('project_projections')
             ->where('id = ?')
             ->setParameters([
                 $id->value
-            ])
-            ->fetchAssociative();
-        if ($rawItem === false) {
-            return null;
-        }
+            ]);
 
-        return ProjectResponseDTO::create($rawItem);
+        return $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata)[0];
     }
 
     private function queryBuilder(): QueryBuilder

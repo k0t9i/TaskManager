@@ -18,20 +18,4 @@ final class ProjectResponseDTO
         public readonly int $status
     ) {
     }
-
-    public static function create(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['user_id'],
-            $item['name'],
-            $item['description'],
-            $item['finish_date'],
-            $item['owner_id'],
-            $item['owner_firstname'],
-            $item['owner_lastname'],
-            $item['owner_email'],
-            $item['status']
-        );
-    }
 }
