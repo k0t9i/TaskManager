@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Factory;
+namespace App\Tasks\Application\Factory;
 
-use App\Tasks\Domain\DTO\TaskManagerDTO;
-use App\Tasks\Domain\DTO\TaskManagerMergeDTO;
+use App\Tasks\Application\DTO\TaskManagerDTO;
+use App\Tasks\Application\DTO\TaskManagerMergeDTO;
 use App\Tasks\Domain\Entity\TaskManager;
 
 final class TaskManagerMerger

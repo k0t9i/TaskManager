@@ -13,10 +13,10 @@ use App\Shared\Domain\Exception\LogicException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Tasks\Domain\DTO\TaskManagerMergeDTO;
+use App\Tasks\Application\DTO\TaskManagerMergeDTO;
+use App\Tasks\Application\Factory\TaskManagerMerger;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\Entity\TaskManager;
-use App\Tasks\Domain\Factory\TaskManagerMerger;
 
 final class TaskManagerStateRecreator
 {

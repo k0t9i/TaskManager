@@ -1,22 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\DTO;
+namespace App\Tasks\Application\DTO;
 
-use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Tasks\Domain\Collection\TaskCollection;
 
-final class ProjectMergeDTO
+final class TaskManagerMergeDTO
 {
     public function __construct(
         public readonly ?string $id = null,
-        public readonly ?string $name = null,
-        public readonly ?string $description = null,
-        public readonly ?string $finishDate = null,
+        public readonly ?string $projectId = null,
         public readonly ?int $status = null,
         public readonly ?string $ownerId = null,
+        public readonly ?string $finishDate = null,
         public readonly ?UserIdCollection $participantIds = null,
-        public readonly ?ProjectTaskCollection $tasks = null
+        public readonly ?TaskCollection $tasks = null
     ) {
     }
 }

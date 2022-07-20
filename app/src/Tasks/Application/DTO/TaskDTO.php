@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\DTO;
+namespace App\Tasks\Application\DTO;
 
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 
@@ -18,20 +18,5 @@ final class TaskDTO
         public readonly int $status,
         public readonly TaskLinkCollection $links
     ) {
-    }
-
-    public static function create(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['name'],
-            $item['brief'],
-            $item['description'],
-            $item['start_date'],
-            $item['finish_date'],
-            $item['owner_id'],
-            $item['status'],
-            $item['links']
-        );
     }
 }

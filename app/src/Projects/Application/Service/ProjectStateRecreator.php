@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Service;
 
-use App\Projects\Domain\DTO\ProjectMergeDTO;
-use App\Projects\Domain\DTO\ProjectTaskDTO;
+use App\Projects\Application\DTO\ProjectMergeDTO;
+use App\Projects\Application\DTO\ProjectTaskDTO;
+use App\Projects\Application\Factory\ProjectMerger;
+use App\Projects\Application\Factory\ProjectTaskFactory;
 use App\Projects\Domain\Entity\Project;
-use App\Projects\Domain\Factory\ProjectMerger;
-use App\Projects\Domain\Factory\ProjectTaskFactory;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;

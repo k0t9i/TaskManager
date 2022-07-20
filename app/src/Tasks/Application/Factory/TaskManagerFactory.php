@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Factory;
+namespace App\Tasks\Application\Factory;
 
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Tasks\Domain\DTO\TaskManagerDTO;
+use App\Tasks\Application\DTO\TaskManagerDTO;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\ValueObject\TaskManagerId;
 use App\Tasks\Domain\ValueObject\Tasks;

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Projects\Domain\Factory;
+namespace App\Projects\Application\Factory;
 
-use App\Projects\Domain\DTO\ProjectDTO;
-use App\Projects\Domain\DTO\ProjectMergeDTO;
+use App\Projects\Application\DTO\ProjectDTO;
+use App\Projects\Application\DTO\ProjectMergeDTO;
 use App\Projects\Domain\Entity\Project;
 
 final class ProjectMerger

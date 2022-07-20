@@ -9,9 +9,9 @@ use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Collection\UserIdCollection;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
+use App\Tasks\Application\DTO\TaskManagerDTO;
+use App\Tasks\Application\Factory\TaskManagerFactory;
 use App\Tasks\Domain\Collection\TaskCollection;
-use App\Tasks\Domain\DTO\TaskManagerDTO;
-use App\Tasks\Domain\Factory\TaskManagerFactory;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
 final class CreateOnProjectCreated implements EventSubscriberInterface

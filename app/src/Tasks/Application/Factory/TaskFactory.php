@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Factory;
+namespace App\Tasks\Application\Factory;
 
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Tasks\Domain\DTO\TaskDTO;
+use App\Tasks\Application\DTO\TaskDTO;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\ValueObject\TaskBrief;
 use App\Tasks\Domain\ValueObject\TaskDescription;
