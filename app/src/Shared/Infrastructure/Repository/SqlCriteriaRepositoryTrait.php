@@ -47,7 +47,7 @@ trait SqlCriteriaRepositoryTrait
     /**
      * @throws Exception
      */
-    public function findCountByCriteriaInternal(
+    private function findCountByCriteriaInternal(
         QueryBuilder $builder,
         Criteria $criteria,
         StorageMetadataInterface $metadata

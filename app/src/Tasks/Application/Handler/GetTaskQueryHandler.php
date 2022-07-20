@@ -5,10 +5,11 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
 use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\TaskNotExistException;
-use App\Shared\Domain\Exception\UserIsNotOwnerException;
+use App\Shared\Domain\Exception\UserIsNotInProjectException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
-use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Tasks\Application\Query\GetTaskQuery;
 use App\Tasks\Application\Query\GetTaskQueryResponse;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;
@@ -28,19 +29,19 @@ final class GetTaskQueryHandler implements QueryHandlerInterface
     public function __invoke(GetTaskQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
-        $task = $this->taskRepository->findById(
-            new TaskId($query->id)
-        );
+        $task = $this->taskRepository->findByCriteria(new Criteria([
+            new ExpressionOperand('id', '=', $query->id)
+        ]));
         if ($task === null) {
             throw new TaskNotExistException($query->id);
         }
 
-        $task = $this->taskRepository->findByIdAndUserId(
-            new TaskId($query->id),
-            $userId
-        );
-        if ($task === null) {
-            throw new UserIsNotOwnerException($userId->value);
+        $userTask = $this->taskRepository->findByCriteria(new Criteria([
+            new ExpressionOperand('id', '=', $query->id),
+            new ExpressionOperand('userId', '=', $userId->value)
+        ]));
+        if ($userTask === null) {
+            throw new UserIsNotInProjectException($userId->value, $task->projectId);
         }
 
         return new GetTaskQueryResponse($task);

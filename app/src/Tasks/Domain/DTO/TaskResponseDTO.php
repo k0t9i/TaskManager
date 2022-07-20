@@ -7,6 +7,8 @@ final class TaskResponseDTO
 {
     public function __construct(
         public readonly string $id,
+        public readonly string $userId,
+        public readonly string $projectId,
         public readonly string $name,
         public readonly string $brief,
         public readonly string $description,
@@ -18,22 +20,5 @@ final class TaskResponseDTO
         public readonly string $ownerEmail,
         public readonly int $status
     ) {
-    }
-
-    public static function create(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['name'],
-            $item['brief'],
-            $item['description'],
-            $item['start_date'],
-            $item['finish_date'],
-            $item['owner_id'],
-            $item['owner_firstname'],
-            $item['owner_lastname'],
-            $item['owner_email'],
-            $item['status']
-        );
     }
 }
