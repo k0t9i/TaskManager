@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\DTO;
 
-use App\Shared\Domain\Pagination\Pagination;
+use App\Shared\Application\Service\Pagination;
 
 final class PaginationDTO
 {
