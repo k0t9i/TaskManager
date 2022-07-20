@@ -3,33 +3,42 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
+use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
+use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserStorageMetadata;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
-class SqlUserRepository implements UserRepositoryInterface
+final class SqlUserRepository implements UserRepositoryInterface
 {
     use OptimisticLockTrait;
+    use SqlCriteriaRepositoryTrait{
+        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
+    }
 
     private readonly StorageMetadataInterface $metadata;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly StorageSaverInterface $storageSaver,
-        private readonly StorageLoaderInterface $storageLoader
+        ManagerRegistry $managerRegistry,
+        StorageLoaderInterface $storageLoader,
+        CriteriaToQueryBuilderConverter $criteriaConverter,
+        CriteriaStorageFieldValidator $criteriaValidator
     ) {
-        $this->metadata = new UserStorageMetadata();
+        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -39,12 +48,9 @@ class SqlUserRepository implements UserRepositoryInterface
      */
     public function findById(UserId $id): ?User
     {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('id = ?')
-            ->setParameters([$id->value]);
-
-        return $this->find($builder);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('id', '=', $id->value)
+        ]));
     }
 
     /**
@@ -54,12 +60,19 @@ class SqlUserRepository implements UserRepositoryInterface
      */
     public function findByEmail(UserEmail $email): ?User
     {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('email = ?')
-            ->setParameters([$email->value]);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('email', '=', $email->value)
+        ]));
+    }
 
-        return $this->find($builder);
+    public function findByCriteria(Criteria $criteria): ?User
+    {
+        /** @var User $result */
+        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
+        if ($result !== null) {
+            $this->setVersion($result->getId()->value, $version);
+        }
+        return $result;
     }
 
     /**
@@ -78,21 +91,13 @@ class SqlUserRepository implements UserRepositoryInterface
         }
     }
 
-    private function find(QueryBuilder $builder): ?User
-    {
-        /** @var User $user */
-        [$user, $version] = $this->storageLoader->load(
-            new SqlStorageFinder($builder),
-            $this->metadata
-        );
-        if ($user !== null) {
-            $this->setVersion($user->getId()->value, $version);
-        }
-        return $user;
-    }
-
     private function queryBuilder(): QueryBuilder
     {
-        return $this->entityManager->getConnection()->createQueryBuilder();
+        return $this->managerRegistry->getConnection()->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->metadata = new UserStorageMetadata();
     }
 }

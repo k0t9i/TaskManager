@@ -3,33 +3,42 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
+use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
+use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskManagerStorageMetadata;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
-class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
+final class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
 {
     use OptimisticLockTrait;
+    use SqlCriteriaRepositoryTrait{
+        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
+    }
 
     private readonly StorageMetadataInterface $metadata;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly StorageSaverInterface $storageSaver,
-        private readonly StorageLoaderInterface $storageLoader
+        ManagerRegistry $managerRegistry,
+        StorageLoaderInterface $storageLoader,
+        CriteriaToQueryBuilderConverter $criteriaConverter,
+        CriteriaStorageFieldValidator $criteriaValidator
     ) {
-        $this->metadata = new TaskManagerStorageMetadata();
+        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -39,12 +48,9 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
      */
     public function findByProjectId(ProjectId $id): ?TaskManager
     {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('project_id = ?')
-            ->setParameters([$id->value]);
-
-        return $this->find($builder);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('projectId', '=', $id->value)
+        ]));
     }
 
     /**
@@ -54,27 +60,19 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
      */
     public function findByTaskId(TaskId $id): ?TaskManager
     {
-        $alias = 'rm';
-        $builder = $this->queryBuilder()
-            ->select($alias . '.*')
-            ->leftJoin($alias, 'tasks', 't', 't.task_manager_id = ' . $alias . '.id')
-            ->where('t.id = ?')
-            ->setParameters([$id->value]);
-
-        return $this->find($builder, $alias);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('tasks.id', '=', $id->value)
+        ]));
     }
 
-    private function find(QueryBuilder $builder, ?string $alias = null): ?TaskManager
+    public function findByCriteria(Criteria $criteria): ?TaskManager
     {
-        /** @var TaskManager $manager */
-        [$manager, $version] = $this->storageLoader->load(
-            new SqlStorageFinder($builder, $alias),
-            $this->metadata
-        );
-        if ($manager !== null) {
-            $this->setVersion($manager->getId()->value, $version);
+        /** @var TaskManager $result */
+        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
+        if ($result !== null) {
+            $this->setVersion($result->getId()->value, $version);
         }
-        return $manager;
+        return $result;
     }
 
     /**
@@ -95,6 +93,11 @@ class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
 
     private function queryBuilder(): QueryBuilder
     {
-        return $this->entityManager->getConnection()->createQueryBuilder();
+        return $this->managerRegistry->getConnection()->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->metadata = new TaskManagerStorageMetadata();
     }
 }

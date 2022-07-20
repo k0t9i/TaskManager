@@ -38,7 +38,7 @@ final class ProjectStorageMetadata extends StorageMetadata
     public function getStorageFields(?object $parentObject = null): array
     {
         return [
-            new StorageMetadataField(
+            'id' => new StorageMetadataField(
                 'id',
                 new UuidValueAccessor('id'),
                 new UuidValueMutator('id'),

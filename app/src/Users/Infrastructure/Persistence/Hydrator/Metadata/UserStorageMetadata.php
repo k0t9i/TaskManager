@@ -33,13 +33,13 @@ final class UserStorageMetadata extends StorageMetadata
     public function getStorageFields(?object $parentObject = null): array
     {
         return [
-            new StorageMetadataField(
+            'id' => new StorageMetadataField(
                 'id',
                 new UuidValueAccessor('id'),
                 new UuidValueMutator('id'),
                 isPrimaryKey: true
             ),
-            new StorageMetadataField(
+            'email' => new StorageMetadataField(
                 'email',
                 new StringValueAccessor('email'),
                 new StringValueMutator('email')

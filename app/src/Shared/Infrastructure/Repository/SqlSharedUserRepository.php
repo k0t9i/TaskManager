@@ -3,28 +3,37 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Repository;
 
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Entity\SharedUser;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
+use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
+use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 final class SqlSharedUserRepository implements SharedUserRepositoryInterface
 {
+    use SqlCriteriaRepositoryTrait{
+        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
+    }
+
     private readonly StorageMetadataInterface $metadata;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly StorageSaverInterface $storageSaver,
-        private readonly StorageLoaderInterface $storageLoader
+        ManagerRegistry $managerRegistry,
+        StorageLoaderInterface $storageLoader,
+        CriteriaToQueryBuilderConverter $criteriaConverter,
+        CriteriaStorageFieldValidator $criteriaValidator
     ) {
-        $this->metadata = new SharedUserStorageMetadata();
+        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -34,14 +43,16 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function findById(UserId $id): ?SharedUser
     {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('id = ?')
-            ->setParameters([$id->value]);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('id', '=', $id->value)
+        ]));
+    }
 
-        /** @var SharedUser $user */
-        [$user] = $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata);
-        return $user;
+    public function findByCriteria(Criteria $criteria): ?SharedUser
+    {
+        /** @var SharedUser $result */
+        [$result] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
+        return $result;
     }
 
     /**
@@ -50,31 +61,20 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function save(SharedUser $user): void
     {
-        if ($this->isExist($user->getId())) {
+        if ($this->findById($user->getId()) !== null) {
             $this->storageSaver->update($user, $this->metadata);
         } else {
             $this->storageSaver->insert($user, $this->metadata, false);
         }
     }
 
-    /**
-     * @param UserId $id
-     * @return bool
-     * @throws Exception
-     */
-    private function isExist(UserId $id): bool
-    {
-        $count = $this->queryBuilder()
-            ->select('count(id)')
-            ->from($this->metadata->getStorageName())
-            ->where('id = ?')
-            ->setParameters([$id->value])
-            ->fetchOne();
-        return $count > 0;
-    }
-
     private function queryBuilder(): QueryBuilder
     {
-        return $this->entityManager->getConnection()->createQueryBuilder();
+        return $this->managerRegistry->getConnection()->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->metadata = new SharedUserStorageMetadata();
     }
 }

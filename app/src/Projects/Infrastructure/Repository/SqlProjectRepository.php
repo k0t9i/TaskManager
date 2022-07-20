@@ -6,29 +6,38 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectStorageMetadata;
+use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\OptimisticLockTrait;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
 use App\Shared\Infrastructure\Persistence\StorageSaverInterface;
+use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
+use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 class SqlProjectRepository implements ProjectRepositoryInterface
 {
     use OptimisticLockTrait;
+    use SqlCriteriaRepositoryTrait{
+        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
+    }
 
     private readonly StorageMetadataInterface $metadata;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         private readonly StorageSaverInterface $storageSaver,
-        private readonly StorageLoaderInterface $storageLoader
+        ManagerRegistry $managerRegistry,
+        StorageLoaderInterface $storageLoader,
+        CriteriaToQueryBuilderConverter $criteriaConverter,
+        CriteriaStorageFieldValidator $criteriaValidator
     ) {
-        $this->metadata = new ProjectStorageMetadata();
+        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -38,17 +47,19 @@ class SqlProjectRepository implements ProjectRepositoryInterface
      */
     public function findById(ProjectId $id): ?Project
     {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('id = ?')
-            ->setParameters([$id->value]);
+        return $this->findByCriteria(new Criteria([
+            new ExpressionOperand('id', '=', $id->value)
+        ]));
+    }
 
-        /** @var Project $project */
-        [$project, $version] = $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata);
-        if ($project !== null) {
-            $this->setVersion($project->getId()->value, $version);
+    public function findByCriteria(Criteria $criteria): ?Project
+    {
+        /** @var Project $result */
+        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
+        if ($result !== null) {
+            $this->setVersion($result->getId()->value, $version);
         }
-        return $project;
+        return $result;
     }
 
     /**
@@ -69,6 +80,11 @@ class SqlProjectRepository implements ProjectRepositoryInterface
 
     private function queryBuilder(): QueryBuilder
     {
-        return $this->entityManager->getConnection()->createQueryBuilder();
+        return $this->managerRegistry->getConnection()->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->metadata = new ProjectStorageMetadata();
     }
 }

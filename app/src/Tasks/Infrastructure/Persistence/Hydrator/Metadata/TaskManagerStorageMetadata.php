@@ -42,7 +42,7 @@ final class TaskManagerStorageMetadata extends StorageMetadata
                 new UuidValueMutator('id'),
                 isPrimaryKey: true
             ),
-            new StorageMetadataField(
+            'projectId' => new StorageMetadataField(
                 'project_id',
                 new UuidValueAccessor('projectId'),
                 new UuidValueMutator('projectId'),
@@ -83,7 +83,7 @@ final class TaskManagerStorageMetadata extends StorageMetadata
                     'task_manager_id'
                 )
             ),
-            new StorageMetadataField(
+            'tasks' => new StorageMetadataField(
                 'tasks',
                 new ChainValueAccessor(
                     new PropertyValueAccessor('tasks'),
