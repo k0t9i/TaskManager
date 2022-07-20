@@ -13,5 +13,9 @@ interface StorageMetadataInterface
      * @return StorageMetadataField[]
      */
     public function getStorageFields(?object $parentObject = null): array;
+
+    /**
+     * @return StorageMetadataField[]
+     */
     public function getPropertyToColumnMap(): array;
 }

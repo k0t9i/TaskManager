@@ -31,7 +31,7 @@ trait SqlCriteriaRepositoryTrait
         Criteria $criteria,
         StorageMetadataInterface $metadata
     ): array {
-        $builder->select('*');
+        $builder->select($metadata->getStorageName() . '.*');
         $this->criteriaValidator->validate($criteria, $metadata);
         $this->criteriaConverter->convert($builder, $criteria, $metadata);
 
@@ -68,7 +68,7 @@ trait SqlCriteriaRepositoryTrait
         Criteria $criteria,
         StorageMetadataInterface $metadata
     ): array {
-        $builder = $builder->select('*');
+        $builder = $builder->select($metadata->getStorageName() . '.*');
         $this->criteriaValidator->validate($criteria, $metadata);
         $this->criteriaConverter->convert($builder, $criteria, $metadata);
 

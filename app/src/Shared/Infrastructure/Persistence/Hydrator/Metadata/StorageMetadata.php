@@ -21,13 +21,16 @@ abstract class StorageMetadata implements StorageMetadataInterface
         return $this->pk;
     }
 
+    /**
+     * @return StorageMetadataField[]
+     */
     public function getPropertyToColumnMap(): array
     {
         if ($this->propertyToColumnMap === null) {
             $this->propertyToColumnMap = [];
             foreach ($this->getStorageFields() as $propertyName => $metadataField) {
-                if (!is_int($propertyName) && $metadataField->metadata === null) {
-                    $this->propertyToColumnMap[$propertyName] = $metadataField->name;
+                if (!is_int($propertyName)) {
+                    $this->propertyToColumnMap[$propertyName] = $metadataField;
                 }
             }
         }
