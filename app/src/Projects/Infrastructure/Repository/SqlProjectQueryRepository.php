@@ -14,6 +14,7 @@ use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
+use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -30,7 +31,8 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
         private readonly StorageLoaderInterface $storageLoader,
-        private readonly CriteriaToQueryBuilderConverter $converter
+        private readonly CriteriaToQueryBuilderConverter $criteriaConverter,
+        private readonly CriteriaStorageFieldValidator $criteriaValidator
     ) {
         $this->listMetadata = new ProjectListResponseStorageMetadata();
         $this->metadata = new ProjectResponseStorageMetadata();
@@ -45,7 +47,8 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
     {
         $builder = $this->queryBuilder()
             ->select('*');
-        $this->converter->convert($builder, $criteria);
+        $this->criteriaValidator->validate($criteria, $this->listMetadata);
+        $this->criteriaConverter->convert($builder, $criteria);
 
         $rawItems = $this->storageLoader->loadAll(new SqlStorageFinder($builder), $this->listMetadata);
         $result = [];
@@ -66,8 +69,8 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         $builder = $this->queryBuilder()
             ->select('count(*)')
             ->from($this->listMetadata->getStorageName());
-
-        $this->converter->convert($builder, $criteria);
+        $this->criteriaValidator->validate($criteria, $this->listMetadata);
+        $this->criteriaConverter->convert($builder, $criteria);
 
         $builder->setFirstResult(0);
         $builder->setMaxResults(null);

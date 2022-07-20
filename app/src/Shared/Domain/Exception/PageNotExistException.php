@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Exception;
 
-final class PageNotExistsException extends DomainException
+final class PageNotExistException extends DomainException
 {
     public function __construct(int $page)
     {

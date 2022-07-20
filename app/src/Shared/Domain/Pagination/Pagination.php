@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Pagination;
 
-use App\Shared\Domain\Exception\PageNotExistsException;
+use App\Shared\Domain\Exception\PageNotExistException;
 
 final class Pagination
 {
@@ -51,7 +51,7 @@ final class Pagination
             return;
         }
         if ($this->currentPage > $this->getTotalPageCount() || $this->currentPage < 1) {
-            throw new PageNotExistsException($this->currentPage);
+            throw new PageNotExistException($this->currentPage);
         }
     }
 }

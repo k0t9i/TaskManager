@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Criteria;
 
-//TODO filter and order fields validator
 final class Criteria
 {
     private Expression $expression;
