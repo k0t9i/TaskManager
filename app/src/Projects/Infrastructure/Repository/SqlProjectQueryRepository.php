@@ -9,32 +9,20 @@ use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListResponseStorageMetadata;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectResponseStorageMetadata;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
-use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
+use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 
 class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
+    use SqlCriteriaRepositoryTrait;
+
     private const CONNECTION = 'read';
 
     private readonly StorageMetadataInterface $listMetadata;
     private readonly StorageMetadataInterface $metadata;
-
-    public function __construct(
-        private readonly ManagerRegistry $managerRegistry,
-        private readonly StorageLoaderInterface $storageLoader,
-        private readonly CriteriaToQueryBuilderConverter $criteriaConverter,
-        private readonly CriteriaStorageFieldValidator $criteriaValidator
-    ) {
-        $this->listMetadata = new ProjectListResponseStorageMetadata();
-        $this->metadata = new ProjectResponseStorageMetadata();
-    }
 
     /**
      * @param Criteria $criteria
@@ -43,18 +31,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findAllByCriteria(Criteria $criteria): array
     {
-        $builder = $this->queryBuilder()
-            ->select('*');
-        $this->criteriaValidator->validate($criteria, $this->listMetadata);
-        $this->criteriaConverter->convert($builder, $criteria);
-
-        $rawItems = $this->storageLoader->loadAll(new SqlStorageFinder($builder), $this->listMetadata);
-        $result = [];
-        foreach ($rawItems as [$item, $version]) {
-            $result[] = $item;
-        }
-
-        return $result;
+        return $this->findAllByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
     }
 
     /**
@@ -64,26 +41,12 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
      */
     public function findCountByCriteria(Criteria $criteria): int
     {
-        $builder = $this->queryBuilder()
-            ->select('count(*)')
-            ->from($this->listMetadata->getStorageName());
-        $this->criteriaValidator->validate($criteria, $this->listMetadata);
-        $this->criteriaConverter->convert($builder, $criteria);
-
-        $builder->setFirstResult(0);
-        $builder->setMaxResults(null);
-
-        return $builder->fetchOne();
+        return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
     }
 
     public function findByCriteria(Criteria $criteria): ?ProjectResponseDTO
     {
-        $builder = $this->queryBuilder()
-            ->select('*');
-        $this->criteriaValidator->validate($criteria, $this->metadata);
-        $this->criteriaConverter->convert($builder, $criteria);
-
-        return $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata)[0];
+        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
     }
 
     private function queryBuilder(): QueryBuilder
@@ -91,5 +54,11 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         /** @var Connection $connection */
         $connection = $this->managerRegistry->getConnection(self::CONNECTION);
         return $connection->createQueryBuilder();
+    }
+
+    private function initMetadata(): void
+    {
+        $this->listMetadata = new ProjectListResponseStorageMetadata();
+        $this->metadata = new ProjectResponseStorageMetadata();
     }
 }
