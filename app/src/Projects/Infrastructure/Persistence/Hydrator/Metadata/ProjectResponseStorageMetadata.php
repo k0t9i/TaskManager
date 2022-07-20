@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Hydrator\Metadata;
 
-use App\Projects\Domain\DTO\ProjectResponseDTO;
+use App\Projects\Domain\Entity\ProjectProjection;
 use App\Shared\Application\Hydrator\Metadata\ResponseStorageMetadata;
 
 final class ProjectResponseStorageMetadata extends ResponseStorageMetadata
@@ -28,6 +28,6 @@ final class ProjectResponseStorageMetadata extends ResponseStorageMetadata
 
     public function getClassName(): string
     {
-        return ProjectResponseDTO::class;
+        return ProjectProjection::class;
     }
 }

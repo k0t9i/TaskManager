@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Shared\Application\Hydrator\Metadata\ResponseStorageMetadata;
-use App\Users\Domain\DTO\ProfileResponseDTO;
+use App\Users\Domain\Entity\ProfileProjection;
 
 final class ProfileResponseStorageMetadata extends ResponseStorageMetadata
 {
@@ -22,6 +22,6 @@ final class ProfileResponseStorageMetadata extends ResponseStorageMetadata
 
     public function getClassName(): string
     {
-        return ProfileResponseDTO::class;
+        return ProfileProjection::class;
     }
 }

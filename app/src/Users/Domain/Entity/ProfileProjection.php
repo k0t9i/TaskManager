@@ -1,17 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Users\Domain\DTO;
+namespace App\Users\Domain\Entity;
 
-final class UserResponseDTO
+final class ProfileProjection
 {
     public function __construct(
         public readonly string $id,
-        public readonly ?string $projectId,
-        public readonly ?string $ownerId,
         public readonly string $firstname,
         public readonly string $lastname,
-        public readonly string $email,
+        public readonly string $email
     ) {
     }
 }

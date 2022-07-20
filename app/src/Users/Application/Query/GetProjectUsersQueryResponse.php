@@ -5,17 +5,17 @@ namespace App\Users\Application\Query;
 
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
-use App\Users\Domain\DTO\UserResponseDTO;
+use App\Users\Domain\Entity\UserProjection;
 
 final class GetProjectUsersQueryResponse implements QueryResponseInterface
 {
     private readonly PaginationDTO $pagination;
     /**
-     * @var UserResponseDTO[]
+     * @var UserProjection[]
      */
     private readonly array $items;
 
-    public function __construct(PaginationDTO $pagination, UserResponseDTO... $items)
+    public function __construct(PaginationDTO $pagination, UserProjection... $items)
     {
         $this->pagination = $pagination;
         $this->items = $items;
@@ -27,7 +27,7 @@ final class GetProjectUsersQueryResponse implements QueryResponseInterface
     }
 
     /**
-     * @return UserResponseDTO[]
+     * @return UserProjection[]
      */
     public function getItems(): array
     {

@@ -6,7 +6,7 @@ namespace App\Tasks\Infrastructure\Repository;
 use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Tasks\Domain\DTO\TaskResponseDTO;
+use App\Tasks\Domain\Entity\TaskProjection;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;
 use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskListResponseStorageMetadata;
 use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskResponseStorageMetadata;
@@ -38,7 +38,7 @@ class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
         return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
     }
 
-    public function findByCriteria(Criteria $criteria): ?TaskResponseDTO
+    public function findByCriteria(Criteria $criteria): ?TaskProjection
     {
         return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata)[0];
     }

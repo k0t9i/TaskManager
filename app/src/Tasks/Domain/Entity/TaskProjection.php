@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\DTO;
+namespace App\Tasks\Domain\Entity;
 
-final class TaskResponseDTO
+final class TaskProjection
 {
     public function __construct(
         public readonly string $id,

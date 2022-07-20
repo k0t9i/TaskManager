@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Infrastructure\Persistence\Hydrator\Metadata;
 
 use App\Shared\Application\Hydrator\Metadata\ResponseStorageMetadata;
-use App\Tasks\Domain\DTO\TaskResponseDTO;
+use App\Tasks\Domain\Entity\TaskProjection;
 
 final class TaskResponseStorageMetadata extends ResponseStorageMetadata
 {
@@ -31,6 +31,6 @@ final class TaskResponseStorageMetadata extends ResponseStorageMetadata
 
     public function getClassName(): string
     {
-        return TaskResponseDTO::class;
+        return TaskProjection::class;
     }
 }

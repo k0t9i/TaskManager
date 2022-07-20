@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Query;
 
-use App\Projects\Domain\DTO\ProjectListResponseDTO;
+use App\Projects\Domain\Entity\ProjectListProjection;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
 
@@ -11,11 +11,11 @@ final class GetAllOwnProjectsQueryResponse implements QueryResponseInterface
 {
     private readonly PaginationDTO $pagination;
     /**
-     * @var ProjectListResponseDTO[]
+     * @var ProjectListProjection[]
      */
     private readonly array $items;
 
-    public function __construct(PaginationDTO $pagination, ProjectListResponseDTO... $items)
+    public function __construct(PaginationDTO $pagination, ProjectListProjection... $items)
     {
         $this->pagination = $pagination;
         $this->items = $items;
@@ -27,7 +27,7 @@ final class GetAllOwnProjectsQueryResponse implements QueryResponseInterface
     }
 
     /**
-     * @return ProjectListResponseDTO[]
+     * @return ProjectListProjection[]
      */
     public function getItems(): array
     {

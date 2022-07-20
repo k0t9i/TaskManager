@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
 
-use App\Projects\Domain\DTO\ProjectListResponseDTO;
-use App\Projects\Domain\DTO\ProjectResponseDTO;
+use App\Projects\Domain\Entity\ProjectListProjection;
+use App\Projects\Domain\Entity\ProjectProjection;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListResponseStorageMetadata;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectResponseStorageMetadata;
@@ -26,7 +26,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 
     /**
      * @param Criteria $criteria
-     * @return ProjectListResponseDTO[]
+     * @return ProjectListProjection[]
      * @throws Exception
      */
     public function findAllByCriteria(Criteria $criteria): array
@@ -44,7 +44,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
     }
 
-    public function findByCriteria(Criteria $criteria): ?ProjectResponseDTO
+    public function findByCriteria(Criteria $criteria): ?ProjectProjection
     {
         return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata)[0];
     }
