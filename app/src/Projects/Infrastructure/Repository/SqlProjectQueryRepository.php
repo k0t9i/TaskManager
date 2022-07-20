@@ -9,8 +9,6 @@ use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListResponseStorageMetadata;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectResponseStorageMetadata;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Finder\SqlStorageFinder;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Infrastructure\Persistence\StorageLoaderInterface;
@@ -78,39 +76,12 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
         return $builder->fetchOne();
     }
 
-    /**
-     * @param ProjectId $id
-     * @param UserId $userId
-     * @return ProjectResponseDTO|null
-     * @throws Exception
-     */
-    public function findByIdAndUserId(ProjectId $id, UserId $userId): ?ProjectResponseDTO
+    public function findByCriteria(Criteria $criteria): ?ProjectResponseDTO
     {
         $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('id = ?')
-            ->andWhere('user_id = ?')
-            ->setParameters([
-                $id->value,
-                $userId->value
-            ]);
-
-        return $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata)[0];
-    }
-
-    /**
-     * @param ProjectId $id
-     * @return ProjectResponseDTO|null
-     * @throws Exception
-     */
-    public function findById(ProjectId $id): ?ProjectResponseDTO
-    {
-        $builder = $this->queryBuilder()
-            ->select('*')
-            ->where('id = ?')
-            ->setParameters([
-                $id->value
-            ]);
+            ->select('*');
+        $this->criteriaValidator->validate($criteria, $this->metadata);
+        $this->criteriaConverter->convert($builder, $criteria);
 
         return $this->storageLoader->load(new SqlStorageFinder($builder), $this->metadata)[0];
     }
