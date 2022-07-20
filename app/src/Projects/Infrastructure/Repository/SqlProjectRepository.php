@@ -7,6 +7,7 @@ use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectStorageMetadata;
 use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
 use App\Shared\Application\Storage\StorageLoaderInterface;
 use App\Shared\Application\Storage\StorageSaverInterface;
 use App\Shared\Domain\Criteria\Criteria;
@@ -14,7 +15,6 @@ use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use App\Shared\Infrastructure\Service\OptimisticLockTrait;
 use Doctrine\DBAL\Exception;
@@ -35,7 +35,7 @@ class SqlProjectRepository implements ProjectRepositoryInterface
         ManagerRegistry $managerRegistry,
         StorageLoaderInterface $storageLoader,
         CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidator $criteriaValidator
+        CriteriaStorageFieldValidatorInterface $criteriaValidator
     ) {
         $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }

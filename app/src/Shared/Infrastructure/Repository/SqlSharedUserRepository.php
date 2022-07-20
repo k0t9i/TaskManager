@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Repository;
 
 use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
 use App\Shared\Application\Storage\StorageLoaderInterface;
 use App\Shared\Application\Storage\StorageSaverInterface;
 use App\Shared\Domain\Criteria\Criteria;
@@ -12,7 +13,6 @@ use App\Shared\Domain\Entity\SharedUser;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
-use App\Shared\Infrastructure\Service\CriteriaStorageFieldValidator;
 use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -31,7 +31,7 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
         ManagerRegistry $managerRegistry,
         StorageLoaderInterface $storageLoader,
         CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidator $criteriaValidator
+        CriteriaStorageFieldValidatorInterface $criteriaValidator
     ) {
         $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
