@@ -15,7 +15,9 @@ final class CriteriaStorageFieldValidator
     {
         $columns = [];
         foreach ($metadata->getStorageFields() as $metadataField) {
-            $columns[$metadataField->name] = $metadataField->name;
+            if ($metadataField->metadata === null) {
+                $columns[$metadataField->name] = $metadataField->name;
+            }
         }
 
         /**
