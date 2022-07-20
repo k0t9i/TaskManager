@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Query;
 
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Tasks\Domain\DTO\TaskResponseDTO;
 
 final class GetTaskQueryResponse implements QueryResponseInterface

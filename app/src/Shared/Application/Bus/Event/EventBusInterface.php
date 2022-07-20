@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Domain\Bus\Event;
+namespace App\Shared\Application\Bus\Event;
 
 interface EventBusInterface
 {

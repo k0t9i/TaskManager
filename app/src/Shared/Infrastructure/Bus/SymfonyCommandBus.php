@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
-use App\Shared\Domain\Bus\Command\CommandBusInterface;
-use App\Shared\Domain\Bus\Command\CommandInterface;
+use App\Shared\Application\Bus\Command\CommandBusInterface;
+use App\Shared\Application\Bus\Command\CommandInterface;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 

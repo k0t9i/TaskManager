@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Command;
 
-use App\Shared\Domain\Bus\Command\CommandInterface;
+use App\Shared\Application\Bus\Command\CommandInterface;
 
 final class DeleteLinkCommand implements CommandInterface
 {

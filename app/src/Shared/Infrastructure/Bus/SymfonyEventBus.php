@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Bus;
 
-use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class SymfonyEventBus implements EventBusInterface

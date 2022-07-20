@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Controller;
 
-use App\Shared\Domain\Bus\Command\CommandBusInterface;
-use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Application\Bus\Command\CommandBusInterface;
+use App\Shared\Application\Bus\Query\QueryBusInterface;
 use App\Shared\Infrastructure\Service\PaginationResponseFormatterInterface;
 use App\Shared\Infrastructure\Service\RequestCriteriaBuilderInterface;
 use App\Users\Application\Command\UpdateProfileCommand;

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Requests\Application\Query;
 
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 
 final class GetAllProjectRequestsQueryResponse implements QueryResponseInterface
 {

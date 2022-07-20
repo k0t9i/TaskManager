@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
 
-use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Command\CommandHandlerInterface;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;

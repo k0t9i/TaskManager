@@ -6,8 +6,8 @@ namespace App\Requests\Application\Subscriber;
 use App\Requests\Application\Service\RequestManagerStateRecreator;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
-use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
 trait RequestManagerSubscriberTrait

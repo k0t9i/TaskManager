@@ -5,8 +5,8 @@ namespace App\Projections\Application\Subscriber\Tasks;
 
 use App\Projections\Domain\Entity\TaskProjection;
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
-use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\Repository\SharedUserRepositoryInterface;

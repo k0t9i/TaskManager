@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Query;
 
-use App\Shared\Domain\Bus\Query\QueryInterface;
+use App\Shared\Application\Bus\Query\QueryInterface;
 
 final class GetProjectQuery implements QueryInterface
 {

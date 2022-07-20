@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Query;
 
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Users\Domain\DTO\UserResponseDTO;
 
 final class GetProjectUsersQueryResponse implements QueryResponseInterface

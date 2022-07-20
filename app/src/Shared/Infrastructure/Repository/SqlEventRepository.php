@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Repository;
 
-use App\Shared\Domain\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Domain\Repository\EventRepositoryInterface;
 use App\Shared\Domain\Service\UuidGeneratorInterface;
 use Doctrine\DBAL\Exception;

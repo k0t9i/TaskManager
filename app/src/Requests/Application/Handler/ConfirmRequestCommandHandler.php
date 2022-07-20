@@ -7,8 +7,8 @@ use App\Requests\Application\Command\ConfirmRequestCommand;
 use App\Requests\Domain\Exception\RequestManagerNotExistsException;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
-use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Command\CommandHandlerInterface;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Requests\ConfirmedRequestStatus;
 

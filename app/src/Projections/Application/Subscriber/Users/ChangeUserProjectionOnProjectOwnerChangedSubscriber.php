@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Projections\Application\Subscriber\Users;
 
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
-use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventSubscriberInterface;
+use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 

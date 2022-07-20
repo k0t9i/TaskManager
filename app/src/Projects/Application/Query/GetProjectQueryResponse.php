@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Application\Query;
 
 use App\Projects\Domain\DTO\ProjectResponseDTO;
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 
 final class GetProjectQueryResponse implements QueryResponseInterface
 {

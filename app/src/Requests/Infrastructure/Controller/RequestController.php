@@ -8,8 +8,8 @@ use App\Requests\Application\Command\CreateRequestToProjectCommand;
 use App\Requests\Application\Command\RejectRequestCommand;
 use App\Requests\Application\Query\GetAllProjectRequestsQuery;
 use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
-use App\Shared\Domain\Bus\Command\CommandBusInterface;
-use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Application\Bus\Command\CommandBusInterface;
+use App\Shared\Application\Bus\Query\QueryBusInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 

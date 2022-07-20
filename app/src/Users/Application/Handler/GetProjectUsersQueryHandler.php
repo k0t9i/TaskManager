@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
 
+use App\Shared\Application\Bus\Query\QueryHandlerInterface;
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
-use App\Shared\Domain\Bus\Query\QueryHandlerInterface;
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\UserIsNotInProjectException;

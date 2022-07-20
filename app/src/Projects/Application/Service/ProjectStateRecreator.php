@@ -8,7 +8,7 @@ use App\Projects\Domain\DTO\ProjectTaskDTO;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Factory\ProjectMerger;
 use App\Projects\Domain\Factory\ProjectTaskFactory;
-use App\Shared\Domain\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;

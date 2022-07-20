@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Domain\Event\Requests;
 
-use App\Shared\Domain\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\DomainEvent;
 
 final class RequestWasCreatedEvent extends DomainEvent
 {

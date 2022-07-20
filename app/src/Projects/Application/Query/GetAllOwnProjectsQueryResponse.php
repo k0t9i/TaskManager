@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Projects\Application\Query;
 
 use App\Projects\Domain\DTO\ProjectListResponseDTO;
+use App\Shared\Application\Bus\Query\QueryResponseInterface;
 use App\Shared\Application\DTO\PaginationDTO;
-use App\Shared\Domain\Bus\Query\QueryResponseInterface;
 
 final class GetAllOwnProjectsQueryResponse implements QueryResponseInterface
 {

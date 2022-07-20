@@ -5,8 +5,8 @@ namespace App\Projects\Application\Handler;
 
 use App\Projects\Application\Command\RemoveProjectParticipantCommand;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Shared\Domain\Bus\Command\CommandHandlerInterface;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Command\CommandHandlerInterface;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\Security\AuthenticatorServiceInterface;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;

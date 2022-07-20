@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tasks\Application\Subscriber;
 
-use App\Shared\Domain\Bus\Event\DomainEvent;
-use App\Shared\Domain\Bus\Event\EventBusInterface;
+use App\Shared\Application\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Tasks\Application\Service\TaskManagerStateRecreator;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;

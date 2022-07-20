@@ -6,7 +6,7 @@ namespace App\Requests\Application\Service;
 use App\Requests\Domain\DTO\RequestManagerMergeDTO;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Factory\RequestManagerMerger;
-use App\Shared\Domain\Bus\Event\DomainEvent;
+use App\Shared\Application\Bus\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;

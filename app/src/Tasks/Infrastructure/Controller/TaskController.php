@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Controller;
 
-use App\Shared\Domain\Bus\Command\CommandBusInterface;
-use App\Shared\Domain\Bus\Query\QueryBusInterface;
+use App\Shared\Application\Bus\Command\CommandBusInterface;
+use App\Shared\Application\Bus\Query\QueryBusInterface;
 use App\Tasks\Application\Command\ActivateTaskCommand;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Application\Command\CloseTaskCommand;
