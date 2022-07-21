@@ -34,8 +34,23 @@ services:
         resource: '../../src/Shared/SharedBoundedContext/Domain'
         autowire: false
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    _instanceof:
+        App\Shared\Application\Bus\Command\CommandHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
+        App\Shared\Application\Bus\Query\QueryHandlerInterface:
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }
+        App\Shared\Application\Bus\Event\EventSubscriberInterface:
+            tags:
+                - { name: messenger.message_handler, bus: event.bus }
+        App\Shared\Domain\Event\DomainEvent:
+            tags: [ 'projects.domain_event' ]
+
+    # @see MapperCompilerPass adds class names of all services, tagged with target value, as an argument
+    App\Shared\Infrastructure\Service\DomainEventMapper:
+        tags:
+            - { name: projects.mapper, target_tag: projects.domain_event }
 
     Symfony\Component\PasswordHasher\Hasher\Pbkdf2PasswordHasher:
         arguments:
@@ -51,13 +66,3 @@ services:
         arguments:
             $path: '^/api/(?!.*(security)).*$'
 
-    _instanceof:
-        App\Shared\Application\Bus\Command\CommandHandlerInterface:
-            tags:
-                - { name: messenger.message_handler, bus: command.bus }
-        App\Shared\Application\Bus\Query\QueryHandlerInterface:
-            tags:
-                - { name: messenger.message_handler, bus: query.bus }
-        App\Shared\Application\Bus\Event\EventSubscriberInterface:
-            tags:
-                - { name: messenger.message_handler, bus: event.bus }

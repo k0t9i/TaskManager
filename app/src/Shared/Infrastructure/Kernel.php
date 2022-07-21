@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure;
 
+use App\Shared\Infrastructure\Service\MapperCompilerPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
@@ -12,6 +14,12 @@ use function dirname;
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
+
+    protected function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new MapperCompilerPass());
+    }
 
     public function getProjectDir(): string
     {
