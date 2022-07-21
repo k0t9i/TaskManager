@@ -5,7 +5,6 @@ namespace App\Tests\unit\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\DateTime;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeTest extends TestCase
@@ -54,16 +53,6 @@ class DateTimeTest extends TestCase
         self::assertFalse($date->isGreaterThan($biggerDate));
         self::assertFalse($date->isGreaterThan($sameDate));
         self::assertFalse($sameDate->isGreaterThan($date));
-    }
-
-    public function testGetPhpDate(): void
-    {
-        $date = self::getMockForAbstractClass(
-            DateTime::class,
-            ['01-01-1990']
-        );
-        self::assertTrue($date->getPhpDate() instanceof DateTimeImmutable);
-        self::assertEquals(new DateTimeImmutable('01-01-1990'), $date->getPhpDate());
     }
 }
 
