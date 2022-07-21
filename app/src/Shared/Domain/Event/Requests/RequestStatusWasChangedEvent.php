@@ -13,6 +13,7 @@ final class RequestStatusWasChangedEvent extends DomainEvent
         public readonly string $requestId,
         public readonly string $userId,
         public readonly string $status,
+        public readonly string $changeDate,
         string $occurredOn = null
     ) {
         parent::__construct($id, $occurredOn);
@@ -31,6 +32,7 @@ final class RequestStatusWasChangedEvent extends DomainEvent
             $body['requestId'],
             $body['userId'],
             $body['status'],
+            $body['changeDate'],
             $occurredOn
         );
     }
@@ -42,6 +44,7 @@ final class RequestStatusWasChangedEvent extends DomainEvent
             'requestId' => $this->requestId,
             'userId' => $this->userId,
             'status' => $this->status,
+            'changeDate' => $this->changeDate,
         ];
     }
 }
