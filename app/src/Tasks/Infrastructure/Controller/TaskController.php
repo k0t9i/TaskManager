@@ -5,6 +5,8 @@ namespace App\Tasks\Infrastructure\Controller;
 
 use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
+use App\Shared\Application\Service\PaginationResponseFormatterInterface;
+use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
 use App\Tasks\Application\Command\ActivateTaskCommand;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Application\Command\CloseTaskCommand;
@@ -25,7 +27,9 @@ final class TaskController
 {
     public function __construct(
         private CommandBusInterface $commandBus,
-        private readonly QueryBusInterface $queryBus
+        private readonly QueryBusInterface $queryBus,
+        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
+        private readonly PaginationResponseFormatterInterface $responseFormatter
     ) {
     }
 
@@ -104,13 +108,19 @@ final class TaskController
     }
 
     #[Route('/in-project/{projectId}/', name: 'getAllInProject', methods: ['GET'])]
-    public function getAllInProject(string $projectId): JsonResponse
+    public function getAllInProject(string $projectId, Request $request): JsonResponse
     {
-        //TODO add paginator and ordering
         /** @var GetProjectTasksQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetProjectTasksQuery($projectId));
+        $envelope = $this->queryBus->dispatch(
+            new GetProjectTasksQuery(
+                $projectId,
+                $this->criteriaBuilder->build($request->query->all())
+            )
+        );
 
-        return new JsonResponse($envelope->getTasks());
+        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+
+        return new JsonResponse($response);
     }
 
     #[Route('/{id}/', name: 'get', methods: ['GET'])]

@@ -5,7 +5,9 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
+use App\Shared\Application\DTO\PaginationDTO;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
+use App\Shared\Application\Service\Pagination;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Tasks\Application\Query\GetProjectTasksQuery;
@@ -27,10 +29,25 @@ final class GetProjectTasksQueryHandler implements QueryHandlerInterface
     public function __invoke(GetProjectTasksQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
-        $tasks = $this->taskRepository->findAllByCriteria(new Criteria([
+
+        $criteria = new Criteria([
             new ExpressionOperand('projectId', '=', $query->projectId),
             new ExpressionOperand('userId', '=', $userId->value)
-        ]));
-        return new GetProjectTasksQueryResponse(...$tasks);
+        ]);
+        $criteria->loadScalarFilters($query->criteria->filters);
+        $count = $this->taskRepository->findCountByCriteria($criteria);
+
+        $pagination = new Pagination(
+            $count,
+            $query->criteria->page
+        );
+        $criteria->loadScalarOrders($query->criteria->orders)
+            ->loadOffsetAndLimit(...$pagination->getOffsetAndLimit());
+        $tasks = $this->taskRepository->findAllByCriteria($criteria);
+
+        return new GetProjectTasksQueryResponse(
+            PaginationDTO::createFromPagination($pagination),
+            ...$tasks
+        );
     }
 }
