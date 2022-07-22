@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Requests\Domain\Entity;
 
-use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
@@ -80,12 +79,6 @@ final class RequestManager extends AggregateRoot
     public function getId(): RequestManagerId
     {
         return $this->id;
-    }
-
-    public function getRequestsForOwner(UserId $userId): RequestCollection
-    {
-        $this->owner->ensureIsNotOwner($userId);
-        return $this->requests->getInnerItems();
     }
 
     public function changeStatus(ProjectStatus $status): void

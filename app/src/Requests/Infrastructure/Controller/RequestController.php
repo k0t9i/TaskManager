@@ -6,11 +6,14 @@ namespace App\Requests\Infrastructure\Controller;
 use App\Requests\Application\Command\ConfirmRequestCommand;
 use App\Requests\Application\Command\CreateRequestToProjectCommand;
 use App\Requests\Application\Command\RejectRequestCommand;
-use App\Requests\Application\Query\GetAllProjectRequestsQuery;
-use App\Requests\Application\Query\GetAllProjectRequestsQueryResponse;
+use App\Requests\Application\Query\GetProjectRequestsQueryResponse;
+use App\Requests\Application\Query\GetProjectsRequestsQuery;
 use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
+use App\Shared\Application\Service\PaginationResponseFormatterInterface;
+use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/requests', name: 'request.')]
@@ -18,7 +21,9 @@ final class RequestController
 {
     public function __construct(
         private CommandBusInterface $commandBus,
-        private readonly QueryBusInterface $queryBus
+        private readonly QueryBusInterface $queryBus,
+        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
+        private readonly PaginationResponseFormatterInterface $responseFormatter
     ) {
     }
 
@@ -47,12 +52,18 @@ final class RequestController
     }
 
     #[Route('/in-project/{projectId}/', name: 'getAllInProject', methods: ['GET'])]
-    public function getAllInProject(string $projectId): JsonResponse
+    public function getAllInProject(string $projectId, Request $request): JsonResponse
     {
-        //TODO add paginator and ordering
-        /** @var GetAllProjectRequestsQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(new GetAllProjectRequestsQuery($projectId));
+        /** @var GetProjectRequestsQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(
+            new GetProjectsRequestsQuery(
+                $projectId,
+                $this->criteriaBuilder->build($request->query->all())
+            )
+        );
 
-        return new JsonResponse($envelope->getRequests());
+        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+
+        return new JsonResponse($response);
     }
 }
