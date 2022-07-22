@@ -56,9 +56,4 @@ final class Requests
     {
         return $this->requests->get($requestId->getHash());
     }
-
-    public function getInnerItems(): RequestCollection
-    {
-        return $this->requests;
-    }
 }

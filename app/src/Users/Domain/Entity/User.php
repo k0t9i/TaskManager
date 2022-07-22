@@ -54,11 +54,6 @@ final class User extends AggregateRoot
         return $this->id;
     }
 
-    public function getEmail(): UserEmail
-    {
-        return $this->email;
-    }
-
     public function getProfile(): UserProfile
     {
         return $this->profile;

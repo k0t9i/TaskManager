@@ -26,7 +26,7 @@ class DateTime implements Stringable
                     sprintf('%.f', microtime(true))
                 );
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             throw new InvalidArgumentException(sprintf('Invalid datetime value "%s"', $value));
         }
     }

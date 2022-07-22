@@ -14,6 +14,5 @@ interface UserQueryRepositoryInterface
      */
     public function findAllByCriteria(Criteria $criteria): array;
     public function findCountByCriteria(Criteria $criteria): int;
-    public function findByCriteria(Criteria $criteria): ?UserProjection;
     public function findProfileByCriteria(Criteria $criteria): ?ProfileProjection;
 }

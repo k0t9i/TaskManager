@@ -15,13 +15,6 @@ class SqlProjectProjectionRepository implements ProjectProjectionRepositoryInter
     ) {
     }
 
-    public function findById(string $id): ?ProjectProjection
-    {
-        return $this->getRepository()->findOneBy([
-            'id' => $id
-        ]);
-    }
-
     public function save(ProjectProjection $projection): void
     {
         $this->entityManager->persist($projection);

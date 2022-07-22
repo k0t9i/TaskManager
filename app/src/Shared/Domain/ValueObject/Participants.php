@@ -53,9 +53,4 @@ final class Participants
         $result->participants = $this->participants->remove($userId);
         return $result;
     }
-
-    public function getInnerItems(): UserIdCollection
-    {
-        return $this->participants;
-    }
 }

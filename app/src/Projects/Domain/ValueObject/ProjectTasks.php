@@ -6,8 +6,6 @@ namespace App\Projects\Domain\ValueObject;
 use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\Exception\UserHasProjectTaskException;
-use App\Shared\Domain\Collection\Hashable;
-use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
@@ -44,19 +42,5 @@ final class ProjectTasks
         $result = new self();
         $result->tasks = $this->tasks->add($task);
         return $result;
-    }
-
-    /**
-     * @param TaskId $taskId
-     * @return ProjectTask|null|Hashable
-     */
-    public function get(TaskId $taskId): ?ProjectTask
-    {
-        return $this->tasks->get($taskId->getHash());
-    }
-
-    public function getInnerItems(): ProjectTaskCollection
-    {
-        return $this->tasks;
     }
 }

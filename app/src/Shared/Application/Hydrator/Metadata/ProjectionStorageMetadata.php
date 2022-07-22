@@ -16,6 +16,7 @@ abstract class ProjectionStorageMetadata extends StorageMetadata
 
     /**
      * @return StorageMetadataField[]
+     * @throws ReflectionException
      */
     public function getStorageFields(?object $parentObject = null): array
     {

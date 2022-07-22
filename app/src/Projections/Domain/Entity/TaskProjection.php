@@ -43,18 +43,6 @@ final class TaskProjection
         $this->status = $status;
     }
 
-    public function changeOwner(
-        string $ownerId,
-        string $ownerFirstname,
-        string $ownerLastname,
-        string $ownerEmail
-    ): void {
-        $this->ownerId = $ownerId;
-        $this->ownerFirstname = $ownerFirstname;
-        $this->ownerLastname = $ownerLastname;
-        $this->ownerEmail = $ownerEmail;
-    }
-
     public function changeOwnerProfile(
         string $ownerFirstname,
         string $ownerLastname

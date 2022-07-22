@@ -22,11 +22,6 @@ final class UserProjection
         $this->lastname = $lastname;
     }
 
-    public function updateProject(string $projectId): void
-    {
-        $this->projectId = $projectId;
-    }
-
     public function updateOwner(string $ownerId, self $other): void
     {
         if ($this->userId === $this->ownerId) {

@@ -22,11 +22,6 @@ final class ProjectTask implements Hashable
         return $this->id;
     }
 
-    public function getTaskId(): TaskId
-    {
-        return $this->taskId;
-    }
-
     public function getOwnerId(): UserId
     {
         return $this->ownerId;

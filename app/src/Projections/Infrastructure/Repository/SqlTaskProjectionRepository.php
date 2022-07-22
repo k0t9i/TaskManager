@@ -35,12 +35,6 @@ class SqlTaskProjectionRepository implements TaskProjectionRepositoryInterface
         ]);
     }
 
-    public function delete(TaskProjection $projection): void
-    {
-        $this->entityManager->remove($projection);
-        $this->entityManager->flush();
-    }
-
     private function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(TaskProjection::class);
