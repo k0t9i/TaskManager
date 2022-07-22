@@ -41,7 +41,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         $userId = $command->ownerId !== null
             ? new UserId($command->ownerId)
             : $this->authenticator->getAuthUser()->getId();
-        $user = $this->userRepository->findById($userId);
+        $user = $this->userRepository->findById($userId->value);
         if ($user === null) {
             throw new UserNotExistException($userId->value);
         }

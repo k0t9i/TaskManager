@@ -36,14 +36,14 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
         if ($project === null) {
             throw new ProjectNotExistException($command->id);
         }
-        $user = $this->userRepository->findById(new UserId($command->ownerId));
+        $user = $this->userRepository->findById($command->ownerId);
         if ($user === null) {
             throw new UserNotExistException($command->ownerId);
         }
 
         $project->changeOwner(
             new Owner(
-                $user->getId()
+                new UserId($user->getId())
             ),
             $this->authenticator->getAuthUser()->getId()
         );

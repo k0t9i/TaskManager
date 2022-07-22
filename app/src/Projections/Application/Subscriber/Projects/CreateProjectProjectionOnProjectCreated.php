@@ -5,12 +5,11 @@ namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Entity\ProjectProjection;
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
+use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 use DateTime;
 use Exception;
 
@@ -18,7 +17,7 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
 {
     public function __construct(
         private readonly ProjectProjectionRepositoryInterface $projectionRepository,
-        private readonly SharedUserRepositoryInterface $userRepository
+        private readonly UserProjectionRepositoryInterface $userRepository
     ) {
     }
 
@@ -35,7 +34,7 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
      */
     public function __invoke(ProjectWasCreatedEvent $event): void
     {
-        $user = $this->userRepository->findById(new UserId($event->ownerId));
+        $user = $this->userRepository->findByUserId($event->ownerId);
         if ($user === null) {
             throw new UserNotExistException($event->ownerId);
         }
@@ -48,9 +47,9 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
             new DateTime($event->finishDate),
             (int) $event->status,
             $event->ownerId,
-            $user->getFirstname()->value,
-            $user->getLastname()->value,
-            $user->getEmail()->value
+            $user->getFirstname(),
+            $user->getLastname(),
+            $user->getEmail()
         );
 
         $this->projectionRepository->save($projection);

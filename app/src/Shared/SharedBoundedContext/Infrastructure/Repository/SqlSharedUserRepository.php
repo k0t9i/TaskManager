@@ -3,57 +3,27 @@ declare(strict_types=1);
 
 namespace App\Shared\SharedBoundedContext\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
-use App\Shared\Application\Storage\StorageSaverInterface;
-use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\ExpressionOperand;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
 use App\Shared\SharedBoundedContext\Domain\Entity\SharedUser;
 use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
-use App\Shared\SharedBoundedContext\Infrastructure\Persistence\Hydrator\Metadata\SharedUserStorageMetadata;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 final class SqlSharedUserRepository implements SharedUserRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait{
-        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
-    }
-
-    private readonly StorageMetadataInterface $metadata;
-
     public function __construct(
-        private readonly StorageSaverInterface $storageSaver,
-        ManagerRegistry $managerRegistry,
-        StorageLoaderInterface $storageLoader,
-        CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly EntityManagerInterface $entityManager
     ) {
-        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
-     * @param UserId $id
-     * @return SharedUser|null
      * @throws Exception
      */
-    public function findById(UserId $id): ?SharedUser
+    public function findById(string $id): ?SharedUser
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $id->value)
-        ]));
-    }
-
-    public function findByCriteria(Criteria $criteria): ?SharedUser
-    {
-        /** @var SharedUser $result */
-        [$result] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
-        return $result;
+        return $this->getRepository()->findOneBy([
+            'id' => $id
+        ]);
     }
 
     /**
@@ -62,20 +32,12 @@ final class SqlSharedUserRepository implements SharedUserRepositoryInterface
      */
     public function save(SharedUser $user): void
     {
-        if ($this->findById($user->getId()) !== null) {
-            $this->storageSaver->update($user, $this->metadata);
-        } else {
-            $this->storageSaver->insert($user, $this->metadata, false);
-        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): EntityRepository
     {
-        return $this->managerRegistry->getConnection()->createQueryBuilder();
-    }
-
-    private function initMetadata(): void
-    {
-        $this->metadata = new SharedUserStorageMetadata();
+        return $this->entityManager->getRepository(SharedUser::class);
     }
 }

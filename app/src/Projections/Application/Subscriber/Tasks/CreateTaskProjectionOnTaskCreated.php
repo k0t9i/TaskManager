@@ -5,12 +5,11 @@ namespace App\Projections\Application\Subscriber\Tasks;
 
 use App\Projections\Domain\Entity\TaskProjection;
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
+use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 use DateTime;
 use Exception;
 
@@ -18,7 +17,7 @@ final class CreateTaskProjectionOnTaskCreated implements EventSubscriberInterfac
 {
     public function __construct(
         private readonly TaskProjectionRepositoryInterface $projectionRepository,
-        private readonly SharedUserRepositoryInterface $userRepository
+        private readonly UserProjectionRepositoryInterface $userRepository
     ) {
     }
 
@@ -35,7 +34,7 @@ final class CreateTaskProjectionOnTaskCreated implements EventSubscriberInterfac
      */
     public function __invoke(TaskWasCreatedEvent $event): void
     {
-        $user = $this->userRepository->findById(new UserId($event->ownerId));
+        $user = $this->userRepository->findByUserId($event->ownerId);
         if ($user === null) {
             throw new UserNotExistException($event->ownerId);
         }
@@ -50,9 +49,9 @@ final class CreateTaskProjectionOnTaskCreated implements EventSubscriberInterfac
             new DateTime($event->finishDate),
             (int) $event->status,
             $event->ownerId,
-            $user->getFirstname()->value,
-            $user->getLastname()->value,
-            $user->getEmail()->value
+            $user->getFirstname(),
+            $user->getLastname(),
+            $user->getEmail()
         );
 
         $this->projectionRepository->save($projection);

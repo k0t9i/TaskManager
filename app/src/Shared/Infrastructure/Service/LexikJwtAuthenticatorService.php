@@ -6,7 +6,6 @@ namespace App\Shared\Infrastructure\Service;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
 use App\Shared\Domain\Exception\AuthenticationException;
 use App\Shared\Domain\Exception\LogicException;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Service\ValueObject\AuthUser;
 use App\Shared\Infrastructure\Service\ValueObject\SymfonySecurityUser;
 use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
@@ -81,7 +80,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
             }
 
             $id = $payload[$idClaim];
-            $user = $this->userRepository->findById(new UserId($id));
+            $user = $this->userRepository->findById($id);
             if ($user === null) {
                 throw new AuthenticationException(sprintf('User "%s" doesn\'t exist', $id));
             }

@@ -4,19 +4,18 @@ declare(strict_types=1);
 namespace App\Projections\Application\Subscriber\Requests;
 
 use App\Projections\Domain\Repository\RequestProjectionRepositoryInterface;
+use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 use Exception;
 
 final class ChangeOnUserProfileChanged implements EventSubscriberInterface
 {
     public function __construct(
         private readonly RequestProjectionRepositoryInterface $requestRepository,
-        private readonly SharedUserRepositoryInterface $userRepository
+        private readonly UserProjectionRepositoryInterface $userRepository
     ) {
     }
 
@@ -33,7 +32,7 @@ final class ChangeOnUserProfileChanged implements EventSubscriberInterface
      */
     public function __invoke(UserProfileWasChangedEvent $event): void
     {
-        $user = $this->userRepository->findById(new UserId($event->aggregateId));
+        $user = $this->userRepository->findByUserId($event->aggregateId);
         if ($user === null) {
             throw new UserNotExistException($event->aggregateId);
         }

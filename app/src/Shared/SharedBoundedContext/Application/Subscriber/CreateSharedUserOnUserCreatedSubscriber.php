@@ -6,10 +6,6 @@ namespace App\Shared\SharedBoundedContext\Application\Subscriber;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Users\UserWasCreatedEvent;
-use App\Shared\Domain\ValueObject\Users\UserEmail;
-use App\Shared\Domain\ValueObject\Users\UserFirstname;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Domain\ValueObject\Users\UserLastname;
 use App\Shared\SharedBoundedContext\Domain\Entity\SharedUser;
 use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 
@@ -28,12 +24,7 @@ final class CreateSharedUserOnUserCreatedSubscriber implements EventSubscriberIn
 
     public function __invoke(UserWasCreatedEvent $event): void
     {
-        $user = SharedUser::create(
-            new UserId($event->aggregateId),
-            new UserEmail($event->email),
-            new UserFirstname($event->firstname),
-            new UserLastname($event->lastname)
-        );
+        $user = new SharedUser($event->aggregateId);
 
         $this->userRepository->save($user);
         $this->eventBus->dispatch(...$user->releaseEvents());

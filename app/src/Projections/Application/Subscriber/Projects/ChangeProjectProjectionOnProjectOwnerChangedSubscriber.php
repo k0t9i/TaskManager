@@ -4,18 +4,17 @@ declare(strict_types=1);
 namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
+use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
-use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\SharedBoundedContext\Domain\Repository\SharedUserRepositoryInterface;
 
 final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly ProjectProjectionRepositoryInterface $projectionRepository,
-        private readonly SharedUserRepositoryInterface $userRepository
+        private readonly UserProjectionRepositoryInterface $userRepository
     ) {
     }
 
@@ -29,7 +28,7 @@ final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements Ev
 
     public function __invoke(ProjectOwnerWasChangedEvent $event): void
     {
-        $user = $this->userRepository->findById(new UserId($event->ownerId));
+        $user = $this->userRepository->findByUserId($event->ownerId);
         if ($user === null) {
             throw new UserNotExistException($event->ownerId);
         }
@@ -38,9 +37,9 @@ final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements Ev
         foreach ($projections as $projection) {
             $projection->changeOwner(
                 $event->ownerId,
-                $user->getFirstname()->value,
-                $user->getLastname()->value,
-                $user->getEmail()->value
+                $user->getFirstname(),
+                $user->getLastname(),
+                $user->getEmail()
             );
             $this->projectionRepository->save($projection);
         }

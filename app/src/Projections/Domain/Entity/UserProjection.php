@@ -50,4 +50,19 @@ final class UserProjection
             $projectId
         );
     }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getFirstname(): string
+    {
+        return $this->firstname;
+    }
+
+    public function getLastname(): string
+    {
+        return $this->lastname;
+    }
 }

@@ -6,8 +6,18 @@ doctrine:
                 url: '%env(resolve:DATABASE_URL)%'
             read:
                 url: '%env(resolve:READ_DATABASE_URL)%'
-    #FIXME: only for doctrine transaction middleware in command bus
-    orm: ~
+    orm:
+        connection: default
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: false
+        mappings:
+            Projections:
+                type: xml
+                dir: '%kernel.project_dir%/../src/Shared/SharedBoundedContext/Infrastructure/Persistence/Doctrine'
+                is_bundle: false
+                prefix: App\Shared\SharedBoundedContext\Domain\Entity
+                alias: SharedBoundedContext
 
 when@test:
     doctrine:

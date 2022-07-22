@@ -19,14 +19,7 @@ final class Version20220706094418 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('
-            CREATE TABLE shared_users (
-              id VARCHAR(36) NOT NULL,
-              email VARCHAR(255) NOT NULL,
-              firstname VARCHAR(255) NOT NULL,
-              lastname VARCHAR(255) NOT NULL
-            );
-        ');
+        $this->addSql('CREATE TABLE shared_users (id VARCHAR(36) NOT NULL, PRIMARY KEY(id))');
     }
 
     public function down(Schema $schema): void
