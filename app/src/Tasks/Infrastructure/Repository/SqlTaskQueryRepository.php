@@ -8,8 +8,8 @@ use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use App\Tasks\Domain\Entity\TaskProjection;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;
-use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskListResponseStorageMetadata;
-use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskResponseStorageMetadata;
+use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskListProjectionStorageMetadata;
+use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskProjectionStorageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -52,7 +52,7 @@ class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
 
     private function initMetadata(): void
     {
-        $this->listMetadata = new TaskListResponseStorageMetadata();
-        $this->metadata = new TaskResponseStorageMetadata();
+        $this->listMetadata = new TaskListProjectionStorageMetadata();
+        $this->metadata = new TaskProjectionStorageMetadata();
     }
 }

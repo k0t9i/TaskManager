@@ -6,8 +6,8 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\Entity\ProjectListProjection;
 use App\Projects\Domain\Entity\ProjectProjection;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
-use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListResponseStorageMetadata;
-use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectResponseStorageMetadata;
+use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListProjectionStorageMetadata;
+use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectProjectionStorageMetadata;
 use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
@@ -58,7 +58,7 @@ class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 
     private function initMetadata(): void
     {
-        $this->listMetadata = new ProjectListResponseStorageMetadata();
-        $this->metadata = new ProjectResponseStorageMetadata();
+        $this->listMetadata = new ProjectListProjectionStorageMetadata();
+        $this->metadata = new ProjectProjectionStorageMetadata();
     }
 }

@@ -5,12 +5,14 @@ namespace App\Shared\Application\Hydrator\Metadata;
 
 use App\Shared\Application\Hydrator\Accessor\PropertyValueAccessor;
 use App\Shared\Application\Hydrator\Mutator\PropertyValueMutator;
+use App\Shared\Domain\Service\Utils;
+use ReflectionClass;
+use ReflectionException;
 
-abstract class ResponseStorageMetadata extends StorageMetadata
+abstract class ProjectionStorageMetadata extends StorageMetadata
 {
-    protected const COLUMN_TO_PROPERTY_MAP = [];
-
     private ?array $storageFields = null;
+    private ?array $map = null;
 
     /**
      * @return StorageMetadataField[]
@@ -19,7 +21,7 @@ abstract class ResponseStorageMetadata extends StorageMetadata
     {
         if ($this->storageFields === null) {
             $this->storageFields = [];
-            foreach (static::COLUMN_TO_PROPERTY_MAP as $column => $property) {
+            foreach ($this->columnToPropertyMap() as $column => $property) {
                 $this->storageFields[$property] = new StorageMetadataField(
                     $column,
                     new PropertyValueAccessor($property),
@@ -28,5 +30,21 @@ abstract class ResponseStorageMetadata extends StorageMetadata
             }
         }
         return $this->storageFields;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    protected function columnToPropertyMap(): array
+    {
+        if ($this->map === null) {
+            $this->map = [];
+
+            $reflection = new ReflectionClass($this->getClassName());
+            foreach ($reflection->getProperties() as $property) {
+                $this->map[Utils::toSnakeCase($property->name)] = $property->name;
+            }
+        }
+        return $this->map;
     }
 }

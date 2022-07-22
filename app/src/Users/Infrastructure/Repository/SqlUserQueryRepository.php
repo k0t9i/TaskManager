@@ -9,8 +9,8 @@ use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
 use App\Users\Domain\Entity\ProfileProjection;
 use App\Users\Domain\Entity\UserProjection;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;
-use App\Users\Infrastructure\Persistence\Hydrator\Metadata\ProfileResponseStorageMetadata;
-use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserResponseStorageMetadata;
+use App\Users\Infrastructure\Persistence\Hydrator\Metadata\ProfileProjectionStorageMetadata;
+use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserProjectionStorageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -65,7 +65,7 @@ class SqlUserQueryRepository implements UserQueryRepositoryInterface
 
     private function initMetadata(): void
     {
-        $this->userMetadata = new UserResponseStorageMetadata();
-        $this->profileMetadata = new ProfileResponseStorageMetadata();
+        $this->userMetadata = new UserProjectionStorageMetadata();
+        $this->profileMetadata = new ProfileProjectionStorageMetadata();
     }
 }
