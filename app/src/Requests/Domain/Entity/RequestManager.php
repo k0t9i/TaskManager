@@ -83,35 +83,30 @@ final class RequestManager extends AggregateRoot
         return $this->id;
     }
 
-    public function getProjectId(): ProjectId
-    {
-        return $this->projectId;
-    }
-
-    public function getStatus(): ProjectStatus
-    {
-        return $this->status;
-    }
-
-    public function getOwner(): Owner
-    {
-        return $this->owner;
-    }
-
-    public function getParticipants(): Participants
-    {
-        return $this->participants;
-    }
-
-    public function getRequests(): Requests
-    {
-        return $this->requests;
-    }
-
     public function getRequestsForOwner(UserId $userId): RequestCollection
     {
         $this->owner->ensureIsNotOwner($userId);
         return $this->requests->getInnerItems();
+    }
+
+    public function changeStatus(ProjectStatus $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function changeOwner(Owner $owner): void
+    {
+        $this->owner = $owner;
+    }
+
+    public function removeParticipant(UserId $participantId): void
+    {
+        $this->participants = $this->participants->remove($participantId);
+    }
+
+    public function addParticipant(UserId $participantId): void
+    {
+        $this->participants = $this->participants->add($participantId);
     }
 
     private function ensureIsUserAlreadyInProject(UserId $userId): void

@@ -5,6 +5,7 @@ namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Domain\Exception\LogicException;
 
+//todo to application
 final class DomainEventMapper
 {
     private ?array $map = null;

@@ -5,10 +5,12 @@ namespace App\Projects\Domain\Entity;
 
 use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticipantException;
 use App\Projects\Domain\ValueObject\ProjectInformation;
+use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Projects\Domain\ValueObject\ProjectTasks;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
+use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
@@ -17,6 +19,8 @@ use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ActiveProjectStatus;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
+use App\Shared\Domain\ValueObject\Requests\RequestStatus;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use Exception;
 
@@ -139,6 +143,23 @@ final class Project extends AggregateRoot
         ));
     }
 
+    public function createTask(ProjectTaskId $id, TaskId $taskId, UserId $ownerId): void
+    {
+        $task = new ProjectTask($id, $taskId, $ownerId);
+        $this->tasks = $this->tasks->add($task);
+    }
+
+    public function addParticipantAfterConfirmation(UserId $participantId, RequestStatus $status): void
+    {
+        if ($status->isConfirmed()) {
+            $this->participants = $this->participants->add($participantId);
+            $this->registerEvent(new ProjectParticipantWasAddedEvent(
+                $this->id->value,
+                $participantId->value
+            ));
+        }
+    }
+
     public function getId(): ProjectId
     {
         return $this->id;
@@ -147,25 +168,5 @@ final class Project extends AggregateRoot
     public function getInformation(): ProjectInformation
     {
         return $this->information;
-    }
-
-    public function getStatus(): ProjectStatus
-    {
-        return $this->status;
-    }
-
-    public function getOwner(): Owner
-    {
-        return $this->owner;
-    }
-
-    public function getParticipants(): Participants
-    {
-        return $this->participants;
-    }
-
-    public function getTasks(): ProjectTasks
-    {
-        return $this->tasks;
     }
 }

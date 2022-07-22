@@ -16,7 +16,6 @@ use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\InsufficientPermissionsToChangeTaskException;
 use App\Tasks\Domain\Exception\TaskUserNotExistException;
@@ -190,42 +189,40 @@ final class TaskManager extends AggregateRoot
         return $this->id;
     }
 
-    public function getProjectId(): ProjectId
-    {
-        return $this->projectId;
-    }
-
-    public function getStatus(): ProjectStatus
-    {
-        return $this->status;
-    }
-
-    public function getOwner(): Owner
-    {
-        return $this->owner;
-    }
-
-    public function getFinishDate(): DateTime
-    {
-        return $this->finishDate;
-    }
-
-    public function getParticipants(): Participants
-    {
-        return $this->participants;
-    }
-
     public function getTasks(): Tasks
     {
         return $this->tasks;
     }
 
-    public function getTasksForProjectUser(UserId $userId): TaskCollection
+    public function changeStatus(ProjectStatus $status): void
     {
-        if (!$this->owner->isOwner($userId) && !$this->participants->isParticipant($userId)) {
-            throw new TaskUserNotExistException($userId->value);
+        if ($status->isClosed()) {
+            /** @var Task $task */
+            foreach ($this->tasks->getInnerItems() as $task) {
+                $task->closeIfCan();
+            }
         }
-        return $this->tasks->getInnerItems();
+        $this->status = $status;
+    }
+
+    public function changeOwner(Owner $owner): void
+    {
+        $this->owner = $owner;
+    }
+
+    public function removeParticipant(UserId $participantId): void
+    {
+        $this->participants = $this->participants->remove($participantId);
+    }
+
+    public function addParticipant(UserId $participantId): void
+    {
+        $this->participants = $this->participants->add($participantId);
+    }
+
+    public function changeFinishDate(DateTime $date): void
+    {
+        $this->finishDate = $date;
     }
 
     private function ensureCanChangeTask(UserId $taskOwnerId, UserId $currentUserId): void
