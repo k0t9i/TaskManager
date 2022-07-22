@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Projections\Domain\Entity\RequestProjection" table="request_projections">
+        <id name="id" length="36" />
+        <field name="projectId" length="36" />
+        <field name="status" type="integer" />
+        <field name="changeDate" type="datetime" />
+        <field name="userId" length="36" />
+        <field name="userFirstname" length="255" />
+        <field name="userLastname" length="255" />
+        <field name="userEmail" length="255" />
+        <indexes>
+            <index columns="project_id" />
+            <index columns="user_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>
