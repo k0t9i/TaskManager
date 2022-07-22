@@ -66,6 +66,8 @@ final class Rehydrator implements RehydratorInterface
         $added = $this->loadFromCollectionPartially($collection->getAdded(), $metadataField->metadata, $parent);
         $updated = $this->loadFromCollectionPartially($collection->getUpdated(), $metadataField->metadata, $parent);
         $deleted = $this->loadFromCollectionPartially($collection->getDeleted(), $metadataField->metadata, $parent);
+        //We should process items in case if child collection has changed
+        $this->loadFromCollectionPartially($collection->getItems(), $metadataField->metadata, $parent);
 
         $this->added = array_merge($this->added, $added);
         $this->updated = array_merge($this->updated, $updated);
