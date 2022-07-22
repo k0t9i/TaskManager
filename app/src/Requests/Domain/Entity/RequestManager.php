@@ -72,7 +72,6 @@ final class RequestManager extends AggregateRoot
             $this->projectId->value,
             $request->getId()->value,
             $request->getUserId()->value,
-            (string) $this->status->getScalar(),
             (string) $request->getStatus()->getScalar(),
             $request->getChangeDate()->getValue()
         ));
