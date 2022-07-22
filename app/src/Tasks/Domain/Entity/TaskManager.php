@@ -222,6 +222,10 @@ final class TaskManager extends AggregateRoot
 
     public function changeFinishDate(DateTime $date): void
     {
+        /** @var Task $task */
+        foreach ($this->tasks->getInnerItems() as $task) {
+            $task->limitDatesIfNeed($date);
+        }
         $this->finishDate = $date;
     }
 
