@@ -16,9 +16,9 @@ final class Pagination
         $this->ensureIsValidCurrentPage();
     }
 
-    public function getOffsetAndLimit(): array
+    public static function getOffsetAndLimit(int $page): array
     {
-        $offset = ($this->currentPage - 1) * Pagination::PAGE_SIZE;
+        $offset = ($page - 1) * Pagination::PAGE_SIZE;
         $limit = Pagination::PAGE_SIZE;
         return [$offset, $limit];
     }

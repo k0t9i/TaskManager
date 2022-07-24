@@ -5,9 +5,10 @@ namespace App\Shared\Application\DTO;
 
 use App\Shared\Application\Service\Pagination;
 
-final class PaginationDTO
+final class PaginationItemsDTO
 {
     public function __construct(
+        public readonly array $items,
         public readonly int $total,
         public readonly int $current,
         public readonly ?int $prev,
@@ -15,9 +16,10 @@ final class PaginationDTO
     ) {
     }
 
-    public static function createFromPagination(Pagination $pagination): self
+    public static function create(Pagination $pagination, array $items): self
     {
         return new self(
+            $items,
             $pagination->getTotalPageCount(),
             $pagination->getCurrentPage(),
             $pagination->getPrevPage(),

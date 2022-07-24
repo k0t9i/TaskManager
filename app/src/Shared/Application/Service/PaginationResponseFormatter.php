@@ -3,15 +3,20 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\Service;
 
-use App\Shared\Application\DTO\PaginationDTO;
+use App\Shared\Application\DTO\PaginationItemsDTO;
 
 class PaginationResponseFormatter implements PaginationResponseFormatterInterface
 {
-    public function format(PaginationDTO $pagination, array $items): array
+    public function format(PaginationItemsDTO $pagination): array
     {
         return [
-            'page' => $pagination,
-            'items' => $items
+            'page' => [
+                'total' => $pagination->total,
+                'current' => $pagination->current,
+                'prev' => $pagination->prev,
+                'next' => $pagination->next,
+            ],
+            'items' => $pagination->items
         ];
     }
 }

@@ -8,9 +8,8 @@ use App\Requests\Application\Query\GetProjectsRequestsQuery;
 use App\Requests\Domain\Repository\RequestQueryRepositoryInterface;
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
-use App\Shared\Application\DTO\PaginationDTO;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
-use App\Shared\Application\Service\Pagination;
+use App\Shared\Application\Service\PaginationBuilder;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 
@@ -19,6 +18,7 @@ final class GetProjectRequestsQueryHandler implements QueryHandlerInterface
     public function __construct(
         private readonly RequestQueryRepositoryInterface $repository,
         private readonly AuthenticatorServiceInterface $authenticatorService,
+        private readonly PaginationBuilder $paginationBuilder
     ) {
     }
 
@@ -34,20 +34,9 @@ final class GetProjectRequestsQueryHandler implements QueryHandlerInterface
             new ExpressionOperand('projectId', '=', $query->projectId),
             new ExpressionOperand('projectOwnerId', '=', $userId->value)
         ]);
-        $criteria->loadScalarFilters($query->criteria->filters);
-        $count = $this->repository->findCountByCriteria($criteria);
 
-        $pagination = new Pagination(
-            $count,
-            $query->criteria->page
-        );
-        $criteria->loadScalarOrders($query->criteria->orders)
-            ->loadOffsetAndLimit(...$pagination->getOffsetAndLimit());
-        $requests = $this->repository->findAllByCriteria($criteria);
+        $result = $this->paginationBuilder->build($this->repository, $criteria, $query->criteria);
 
-        return new GetProjectRequestsQueryResponse(
-            PaginationDTO::createFromPagination($pagination),
-            ...$requests
-        );
+        return new GetProjectRequestsQueryResponse($result);
     }
 }
