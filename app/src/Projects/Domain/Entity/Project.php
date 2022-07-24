@@ -169,4 +169,24 @@ final class Project extends AggregateRoot
     {
         return $this->information;
     }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function getOwner(): Owner
+    {
+        return $this->owner;
+    }
+
+    public function getParticipants(): Participants
+    {
+        return $this->participants;
+    }
+
+    public function getTasks(): ProjectTasks
+    {
+        return $this->tasks;
+    }
 }

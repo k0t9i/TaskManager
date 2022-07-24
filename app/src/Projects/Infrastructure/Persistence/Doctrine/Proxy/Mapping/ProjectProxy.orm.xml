@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxy" table="projects">
+        <id name="id" length="36" />
+        <field name="name" length="255" />
+        <field name="description" type="text" />
+        <field name="finishDate" type="date" />
+        <field name="status" type="integer" />
+        <field name="ownerId" length="36" />
+        <one-to-many field="tasks"
+                     target-entity="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectTaskProxy"
+                     mapped-by="project">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
+        <one-to-many field="participants"
+                     target-entity="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectParticipantProxy"
+                     mapped-by="project"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
+        <field name="version" type="integer" version="true" />
+        <indexes>
+            <index columns="owner_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

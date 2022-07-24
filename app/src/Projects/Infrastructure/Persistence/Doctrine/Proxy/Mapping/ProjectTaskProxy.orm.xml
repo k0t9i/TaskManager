@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectTaskProxy" table="project_tasks">
+        <id name="id" length="36" />
+        <field name="taskId" length="36" />
+        <field name="ownerId" length="36" />
+        <many-to-one field="project" target-entity="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxy" inversed-by="tasks" />
+        <indexes>
+            <index columns="task_id" />
+            <index columns="owner_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

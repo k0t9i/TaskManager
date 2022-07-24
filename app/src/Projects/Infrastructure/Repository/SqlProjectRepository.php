@@ -5,39 +5,21 @@ namespace App\Projects\Infrastructure\Repository;
 
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
-use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectStorageMetadata;
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
-use App\Shared\Application\Storage\StorageSaverInterface;
-use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\ExpressionOperand;
+use App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxy;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
-use App\Shared\Infrastructure\Service\OptimisticLockTrait;
+use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class SqlProjectRepository implements ProjectRepositoryInterface
 {
-    use OptimisticLockTrait;
-    use SqlCriteriaRepositoryTrait{
-        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
-    }
-
-    private readonly StorageMetadataInterface $metadata;
+    use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly StorageSaverInterface $storageSaver,
-        ManagerRegistry $managerRegistry,
-        StorageLoaderInterface $storageLoader,
-        CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly EntityManagerInterface $entityManager
     ) {
-        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -47,19 +29,12 @@ class SqlProjectRepository implements ProjectRepositoryInterface
      */
     public function findById(ProjectId $id): ?Project
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $id->value)
-        ]));
-    }
+        /** @var ProjectProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'id' => $id->value
+        ]);
 
-    public function findByCriteria(Criteria $criteria): ?Project
-    {
-        /** @var Project $result */
-        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
-        if ($result !== null) {
-            $this->setVersion($result->getId()->value, $version);
-        }
-        return $result;
+        return $proxy?->createEntity();
     }
 
     /**
@@ -69,22 +44,30 @@ class SqlProjectRepository implements ProjectRepositoryInterface
      */
     public function save(Project $project): void
     {
-        $prevVersion = $this->getVersion($project->getId()->value);
+        $proxy = $this->getOrCreate($project->getId()->value);
 
-        if ($prevVersion > 0) {
-            $this->storageSaver->update($project, $this->metadata, $prevVersion);
-        } else {
-            $this->storageSaver->insert($project, $this->metadata);
+        $this->lock($this->entityManager, $proxy);
+
+        $proxy->loadFromEntity($project);
+
+        //FIXME bump version if a child was changed
+        $this->entityManager->persist($proxy);
+        $this->entityManager->flush();
+    }
+
+    private function getOrCreate(string $id): ProjectProxy
+    {
+        $result = $this->getRepository()->findOneBy([
+            'id' => $id
+        ]);
+        if ($result === null) {
+            $result = new ProjectProxy();
         }
+        return $result;
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): EntityRepository
     {
-        return $this->managerRegistry->getConnection()->createQueryBuilder();
-    }
-
-    private function initMetadata(): void
-    {
-        $this->metadata = new ProjectStorageMetadata();
+        return $this->entityManager->getRepository(ProjectProxy::class);
     }
 }

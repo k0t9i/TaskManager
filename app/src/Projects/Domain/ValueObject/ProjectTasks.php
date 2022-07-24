@@ -43,4 +43,9 @@ final class ProjectTasks
         $result->tasks = $this->tasks->add($task);
         return $result;
     }
+
+    public function getCollection(): ProjectTaskCollection
+    {
+        return $this->tasks;
+    }
 }
