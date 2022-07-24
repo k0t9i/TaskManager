@@ -18,7 +18,8 @@ trait DoctrineOptimisticLockTrait
      */
     private function lock(EntityManagerInterface $entityManager, DoctrineVersionedProxyInterface $proxy): void
     {
-        if ($entityManager->getUnitOfWork()->getEntityState($proxy) === UnitOfWork::STATE_MANAGED) {
+        $uow = $entityManager->getUnitOfWork();
+        if ($uow->getEntityState($proxy) === UnitOfWork::STATE_MANAGED) {
             $version = $proxy->getVersion();
             $entityManager->refresh($proxy);
             try {

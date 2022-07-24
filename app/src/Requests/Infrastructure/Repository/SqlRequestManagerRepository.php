@@ -66,10 +66,7 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
      */
     public function save(RequestManager $manager): void
     {
-        /** @var RequestManagerProxy $proxy */
-        $proxy = $this->getRepository()->findOneBy([
-            'id' => $manager->getId()->value
-        ]);
+        $proxy = $this->getOrCreate($manager->getId()->value);
 
         $this->lock($this->entityManager, $proxy);
 
@@ -78,6 +75,17 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
         //FIXME bump version if a child was changed
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
+    }
+
+    private function getOrCreate(string $id): RequestManagerProxy
+    {
+        $result = $this->getRepository()->findOneBy([
+            'id' => $id
+        ]);
+        if ($result === null) {
+            $result = new RequestManagerProxy();
+        }
+        return $result;
     }
 
     private function getRepository(): EntityRepository
