@@ -81,6 +81,31 @@ final class RequestManager extends AggregateRoot
         return $this->id;
     }
 
+    public function getProjectId(): ProjectId
+    {
+        return $this->projectId;
+    }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function getOwner(): Owner
+    {
+        return $this->owner;
+    }
+
+    public function getParticipants(): Participants
+    {
+        return $this->participants;
+    }
+
+    public function getRequests(): Requests
+    {
+        return $this->requests;
+    }
+
     public function changeStatus(ProjectStatus $status): void
     {
         $this->status = $status;

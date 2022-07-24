@@ -11,7 +11,7 @@ use Stringable;
 class DateTime implements Stringable
 {
     //ATOM with microseconds
-    private const DEFAULT_FORMAT = 'Y-m-d\TH:i:s.uP';
+    public const DEFAULT_FORMAT = 'Y-m-d\TH:i:s.uP';
 
     private DateTimeImmutable $dateTime;
 

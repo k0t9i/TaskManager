@@ -53,4 +53,12 @@ final class Participants
         $result->participants = $this->participants->remove($userId);
         return $result;
     }
+
+    /**
+     * @return UserIdCollection|UserId[]
+     */
+    public function getCollection(): UserIdCollection
+    {
+        return $this->participants;
+    }
 }

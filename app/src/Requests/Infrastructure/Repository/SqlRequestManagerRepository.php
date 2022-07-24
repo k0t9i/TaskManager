@@ -6,39 +6,22 @@ namespace App\Requests\Infrastructure\Repository;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
-use App\Requests\Infrastructure\Persistence\Hydrator\Metadata\RequestManagerStorageMetadata;
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
-use App\Shared\Application\Storage\StorageSaverInterface;
-use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\ExpressionOperand;
+use App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxy;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
-use App\Shared\Infrastructure\Service\OptimisticLockTrait;
+use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 final class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
 {
-    use OptimisticLockTrait;
-    use SqlCriteriaRepositoryTrait{
-        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
-    }
-
-    private readonly StorageMetadataInterface $metadata;
+    use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly StorageSaverInterface $storageSaver,
-        ManagerRegistry $managerRegistry,
-        StorageLoaderInterface $storageLoader,
-        CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly EntityManagerInterface $entityManager
     ) {
-        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -48,31 +31,32 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
      */
     public function findByProjectId(ProjectId $id): ?RequestManager
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('projectId', '=', $id->value)
-        ]));
+        /** @var RequestManagerProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'projectId' => $id->value
+        ]);
+
+        return $proxy?->createEntity();
     }
 
     /**
      * @param RequestId $id
      * @return RequestManager|null
      * @throws Exception
+     * @throws NonUniqueResultException
      */
     public function findByRequestId(RequestId $id): ?RequestManager
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('requests.id', '=', $id->value)
-        ]));
-    }
+        /** @var RequestManagerProxy $proxy */
+        $proxy = $this->getRepository()
+            ->createQueryBuilder('t')
+            ->leftJoin('t.requests', 'r')
+            ->where('r.id = :id')
+            ->setParameter('id', $id->value)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-    public function findByCriteria(Criteria $criteria): ?RequestManager
-    {
-        /** @var RequestManager $result */
-        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
-        if ($result !== null) {
-            $this->setVersion($result->getId()->value, $version);
-        }
-        return $result;
+        return $proxy?->createEntity();
     }
 
     /**
@@ -82,22 +66,22 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
      */
     public function save(RequestManager $manager): void
     {
-        $prevVersion = $this->getVersion($manager->getId()->value);
+        /** @var RequestManagerProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'id' => $manager->getId()->value
+        ]);
 
-        if ($prevVersion > 0) {
-            $this->storageSaver->update($manager, $this->metadata, $prevVersion);
-        } else {
-            $this->storageSaver->insert($manager, $this->metadata);
-        }
+        $this->lock($this->entityManager, $proxy);
+
+        $proxy->loadFromEntity($manager);
+
+        //FIXME bump version if a child was changed
+        $this->entityManager->persist($proxy);
+        $this->entityManager->flush();
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): EntityRepository
     {
-        return $this->managerRegistry->getConnection()->createQueryBuilder();
-    }
-
-    private function initMetadata(): void
-    {
-        $this->metadata = new RequestManagerStorageMetadata();
+        return $this->entityManager->getRepository(RequestManagerProxy::class);
     }
 }

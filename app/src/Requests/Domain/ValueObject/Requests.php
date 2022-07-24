@@ -56,4 +56,12 @@ final class Requests
     {
         return $this->requests->get($requestId->getHash());
     }
+
+    /**
+     * @return RequestCollection|Request[]
+     */
+    public function getCollection(): RequestCollection
+    {
+        return $this->requests;
+    }
 }
