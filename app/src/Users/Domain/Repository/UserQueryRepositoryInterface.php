@@ -4,15 +4,13 @@ declare(strict_types=1);
 namespace App\Users\Domain\Repository;
 
 use App\Shared\Domain\Criteria\Criteria;
+use App\Shared\Domain\Service\PageableRepositoryInterface;
 use App\Users\Domain\Entity\ProfileProjection;
-use App\Users\Domain\Entity\UserProjection;
 
-interface UserQueryRepositoryInterface
+/**
+ * @method findAllByCriteria(Criteria $criteria): UserProjection[]
+ */
+interface UserQueryRepositoryInterface extends PageableRepositoryInterface
 {
-    /**
-     * @return UserProjection[]
-     */
-    public function findAllByCriteria(Criteria $criteria): array;
-    public function findCountByCriteria(Criteria $criteria): int;
     public function findProfileByCriteria(Criteria $criteria): ?ProfileProjection;
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Users\Domain\Entity\UserProjection" table="user_projections" read-only="true">
+        <id name="id" column="user_id" />
+        <field name="projectId" />
+        <field name="ownerId" />
+        <field name="firstname" />
+        <field name="lastname" />
+        <field name="email" />
+    </entity>
+</doctrine-mapping>

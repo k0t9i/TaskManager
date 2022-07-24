@@ -55,7 +55,7 @@ final class UserController
             )
         );
 
-        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+        $response = $this->responseFormatter->format($envelope->getPagination());
 
         return new JsonResponse($response);
     }

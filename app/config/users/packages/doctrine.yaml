@@ -23,5 +23,5 @@ doctrine:
                         type: xml
                         dir: '%kernel.project_dir%/../src/Users/Infrastructure/Persistence/Doctrine/Mapping'
                         is_bundle: false
-                        prefix: App\Requests\Domain\Entity
+                        prefix: App\Users\Domain\Entity
                         alias: Users

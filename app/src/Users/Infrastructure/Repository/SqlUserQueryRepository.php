@@ -3,69 +3,98 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Service\CriteriaFieldValidatorInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Service\CriteriaToDoctrineCriteriaConverterInterface;
 use App\Users\Domain\Entity\ProfileProjection;
 use App\Users\Domain\Entity\UserProjection;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;
-use App\Users\Infrastructure\Persistence\Hydrator\Metadata\ProfileProjectionStorageMetadata;
-use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserProjectionStorageMetadata;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 
 class SqlUserQueryRepository implements UserQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    private const MANAGER = 'read';
 
-    private const CONNECTION = 'read';
-
-    private readonly StorageMetadataInterface $userMetadata;
-    private readonly StorageMetadataInterface $profileMetadata;
+    public function __construct(
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly CriteriaToDoctrineCriteriaConverterInterface $converter,
+        private readonly CriteriaFieldValidatorInterface $validator
+    ) {
+    }
 
     /**
      * @param Criteria $criteria
      * @return UserProjection[]
+     * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array
     {
-        return $this->findAllByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
+        $this->validator->validate($criteria, UserProjection::class);
+
+        return $this->getRepository()
+            ->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getArrayResult();
     }
 
     /**
      * @param Criteria $criteria
      * @return int
-     * @throws Exception
+     * @throws QueryException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function findCountByCriteria(Criteria $criteria): int
     {
-        return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata);
-    }
+        $this->validator->validate($criteria, UserProjection::class);
 
-    public function findByCriteria(Criteria $criteria): ?UserProjection
-    {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->userMetadata)[0];
+        $doctrineCriteria = $this->converter->convert($criteria);
+        $doctrineCriteria->setFirstResult(null);
+        $doctrineCriteria->setMaxResults(null);
+        return $this->getRepository()
+            ->createQueryBuilder('t')
+            ->select('count(t.id)')
+            ->addCriteria($doctrineCriteria)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
-     * @throws Exception
+     * @param Criteria $criteria
+     * @return ProfileProjection|null
+     * @throws NonUniqueResultException
+     * @throws QueryException
      */
     public function findProfileByCriteria(Criteria $criteria): ?ProfileProjection
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->profileMetadata)[0];
+        $this->validator->validate($criteria, ProfileProjection::class);
+
+        return $this->getProfileRepository()
+            ->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): ObjectRepository|EntityRepository
     {
-        /** @var Connection $connection */
-        $connection = $this->managerRegistry->getConnection(self::CONNECTION);
-        return $connection->createQueryBuilder();
+        return $this->managerRegistry->getRepository(
+            UserProjection::class,
+            self::MANAGER
+        );
     }
 
-    private function initMetadata(): void
+    private function getProfileRepository(): ObjectRepository|EntityRepository
     {
-        $this->userMetadata = new UserProjectionStorageMetadata();
-        $this->profileMetadata = new ProfileProjectionStorageMetadata();
+        return $this->managerRegistry->getRepository(
+            ProfileProjection::class,
+            self::MANAGER
+        );
     }
 }
