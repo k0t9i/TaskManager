@@ -7,7 +7,6 @@
         <id name="id" length="36" />
         <field name="userId" length="36" />
         <field name="status" type="integer" />
-        <!--TODO add microseconds -->
         <field name="changeDate" type="datetimetz" length="6" />
         <many-to-one field="manager" target-entity="App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxy" inversed-by="requests" />
         <indexes>
