@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace App\Requests\Infrastructure\Persistence\Doctrine\Proxy;
 
+use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\Users\UserId;
 
-final class RequestManagerParticipantProxy
+final class RequestManagerParticipantProxy implements Hashable
 {
     private RequestManagerProxy $manager;
     private string $userId;
@@ -24,5 +25,18 @@ final class RequestManagerParticipantProxy
     public function createEntity(): UserId
     {
         return new UserId($this->userId);
+    }
+
+    public function getHash(): string
+    {
+        return $this->userId;
+    }
+
+    public function isEqual(object $other): bool
+    {
+        if (!($other instanceof Hashable)) {
+            return false;
+        }
+        return $this->getHash() === $other->getHash();
     }
 }

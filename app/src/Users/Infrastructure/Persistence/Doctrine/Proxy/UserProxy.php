@@ -7,7 +7,7 @@ use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
-use App\Shared\Infrastructure\Service\DoctrineVersionedProxyInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\ValueObject\UserPassword;
 use App\Users\Domain\ValueObject\UserProfile;

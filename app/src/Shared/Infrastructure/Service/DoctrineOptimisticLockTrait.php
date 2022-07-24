@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException as DoctrineOptimisticLockException;

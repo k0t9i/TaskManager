@@ -14,12 +14,15 @@ use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
-use App\Shared\Infrastructure\Service\DoctrineVersionedProxyInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 final class RequestManagerProxy implements DoctrineVersionedProxyInterface
 {
+    use ProxyCollectionLoaderTrait;
+
     private string $id;
     private string $projectId;
     private int $status;
@@ -51,8 +54,8 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface
         $this->projectId = $entity->getProjectId()->value;
         $this->status = $entity->getStatus()->getScalar();
         $this->ownerId = $entity->getOwner()->userId->value;
-        $this->participants = $this->loadParticipants($entity);
-        $this->requests = $this->loadRequests($entity);
+        $this->loadParticipants($entity);
+        $this->loadRequests($entity);
     }
 
     public function createEntity(): RequestManager
@@ -76,41 +79,27 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface
         );
     }
 
-    private function loadParticipants(RequestManager $entity): Collection
+    private function loadParticipants(RequestManager $entity): void
     {
-        $participants = new ArrayCollection();
-
-        /** @var UserId $child */
-        foreach ($entity->getParticipants()->getCollection() as $child) {
-            $participant = $this->participants->filter(function (RequestManagerParticipantProxy $item) use ($child) {
-                return $child->value === $item->getUserId();
-            })->first();
-            if ($participant === false) {
-                $participant = new RequestManagerParticipantProxy();
+        $this->loadCollection(
+            $entity->getParticipants()->getCollection(),
+            $this->participants,
+            new RequestManagerParticipantProxy(),
+            function (RequestManagerParticipantProxy $proxy, RequestManagerProxy $parent, UserId $entity) {
+                $proxy->loadFromEntity($parent, $entity);
             }
-            $participant->loadFromEntity($this, $child);
-            $participants->add($participant);
-        }
-
-        return $participants;
+        );
     }
 
-    private function loadRequests(RequestManager $entity): Collection
+    private function loadRequests(RequestManager $entity): void
     {
-        $requests = new ArrayCollection();
-
-        /** @var Request $child */
-        foreach ($entity->getRequests()->getCollection() as $child) {
-            $request = $this->requests->filter(function (RequestProxy $item) use ($child) {
-                return $child->getId()->value === $item->getId();
-            })->first();
-            if ($request === false) {
-                $request = new RequestProxy();
+        $this->loadCollection(
+            $entity->getRequests()->getCollection(),
+            $this->requests,
+            new RequestProxy(),
+            function (RequestProxy $proxy, RequestManagerProxy $parent, Request $entity) {
+                $proxy->loadFromEntity($parent, $entity);
             }
-            $request->loadFromEntity($this, $child);
-            $requests->add($request);
-        }
-
-       return $requests;
+        );
     }
 }

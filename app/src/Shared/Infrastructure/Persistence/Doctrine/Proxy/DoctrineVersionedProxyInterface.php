@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Service;
+namespace App\Shared\Infrastructure\Persistence\Doctrine\Proxy;
 
 interface DoctrineVersionedProxyInterface
 {
