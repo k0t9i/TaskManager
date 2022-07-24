@@ -4,23 +4,41 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Application\DTO\CriteriaJoinDTO;
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldParserInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\Expression;
 use App\Shared\Domain\Criteria\ExpressionOperand;
+use Doctrine\Common\Collections\Criteria as DoctrineCriteria;
+use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 
-final class CriteriaToQueryBuilderConverter
+final class CriteriaToDoctrineCriteriaConverter
 {
-    public function __construct(private readonly CriteriaStorageFieldParserInterface $parser)
+    public function convert(Criteria $criteria): DoctrineCriteria
     {
-    }
+        $result = new DoctrineCriteria();
 
-    public function convert(QueryBuilder $queryBuilder, Criteria $criteria, StorageMetadataInterface $metadata)
-    {
-        $joins = $this->parser->parseJoins($criteria, $metadata);
+        /**
+         * @var ExpressionOperand $operand
+         */
+        foreach ($criteria->getExpression()->getOperands() as [$operator, $operand]) {
+            if ($operator === Expression::OPERATOR_AND) {
+                $result->andWhere(new Comparison($operand->property, $operand->operator, $operand->value));
+            } else {
+                $result->orWhere(new Comparison($operand->property, $operand->operator, $operand->value));
+            }
+        }
+        $orderings = [];
+        foreach ($criteria->getOrders() as $order) {
+            $orderings[$order->property] = $order->isAsc ? DoctrineCriteria::ASC : DoctrineCriteria::DESC;
+        }
+        $result->orderBy($orderings);
+
+        $result->setFirstResult($criteria->getOffset() ?? 0);
+        $result->setMaxResults($criteria->getLimit());
+
+        return $result;
+        /*$joins = $this->parser->parseJoins($criteria, $metadata);
         $columns = $this->parser->parseColumns($joins, $criteria, $metadata);
 
         $this->buildJoins($queryBuilder, $joins);
@@ -28,7 +46,7 @@ final class CriteriaToQueryBuilderConverter
         $this->buildOrders($queryBuilder, $criteria, $columns);
 
         $queryBuilder->setFirstResult($criteria->getOffset() ?? 0);
-        $queryBuilder->setMaxResults($criteria->getLimit());
+        $queryBuilder->setMaxResults($criteria->getLimit());*/
     }
 
     /**

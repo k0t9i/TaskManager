@@ -16,9 +16,7 @@ final class ExpressionOperand
     public const OPERATOR_LT = '<';
     public const OPERATOR_LTE = '<=';
     public const OPERATOR_IN = 'IN';
-    public const OPERATOR_NIN = 'NOT IN';
-    public const OPERATOR_LIKE = 'LIKE';
-    public const OPERATOR_NLIKE = 'NOT LIKE';
+    public const OPERATOR_NIN = 'NIN';
 
     private static array $operators = [
         self::OPERATOR_EQ,
@@ -28,9 +26,7 @@ final class ExpressionOperand
         self::OPERATOR_LT,
         self::OPERATOR_LTE,
         self::OPERATOR_IN,
-        self::OPERATOR_NIN,
-        self::OPERATOR_LIKE,
-        self::OPERATOR_NLIKE
+        self::OPERATOR_NIN
     ];
 
     public function __construct(
