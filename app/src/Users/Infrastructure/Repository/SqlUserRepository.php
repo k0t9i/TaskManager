@@ -3,42 +3,24 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
-use App\Shared\Application\Storage\StorageSaverInterface;
-use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
-use App\Shared\Infrastructure\Service\OptimisticLockTrait;
+use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
-use App\Users\Infrastructure\Persistence\Hydrator\Metadata\UserStorageMetadata;
+use App\Users\Infrastructure\Persistence\Doctrine\Proxy\UserProxy;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 final class SqlUserRepository implements UserRepositoryInterface
 {
-    use OptimisticLockTrait;
-    use SqlCriteriaRepositoryTrait{
-        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
-    }
-
-    private readonly StorageMetadataInterface $metadata;
+    use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly StorageSaverInterface $storageSaver,
-        ManagerRegistry $managerRegistry,
-        StorageLoaderInterface $storageLoader,
-        CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly EntityManagerInterface $entityManager
     ) {
-        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
@@ -48,9 +30,12 @@ final class SqlUserRepository implements UserRepositoryInterface
      */
     public function findById(UserId $id): ?User
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $id->value)
-        ]));
+        /** @var UserProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'id' => $id->value
+        ]);
+
+        return $proxy?->createEntity();
     }
 
     /**
@@ -60,19 +45,12 @@ final class SqlUserRepository implements UserRepositoryInterface
      */
     public function findByEmail(UserEmail $email): ?User
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('email', '=', $email->value)
-        ]));
-    }
+        /** @var UserProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'email' => $email->value
+        ]);
 
-    public function findByCriteria(Criteria $criteria): ?User
-    {
-        /** @var User $result */
-        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
-        if ($result !== null) {
-            $this->setVersion($result->getId()->value, $version);
-        }
-        return $result;
+        return $proxy?->createEntity();
     }
 
     /**
@@ -82,22 +60,31 @@ final class SqlUserRepository implements UserRepositoryInterface
      */
     public function save(User $user): void
     {
-        $prevVersion = $this->getVersion($user->getId()->value);
+        /** @var UserProxy $proxy */
+        $proxy = $this->getOrCreate($user->getId()->value);
 
-        if ($prevVersion > 0) {
-            $this->storageSaver->update($user, $this->metadata, $prevVersion);
-        } else {
-            $this->storageSaver->insert($user, $this->metadata);
+        $this->lock($this->entityManager, $proxy);
+
+        $proxy->loadFromEntity($user);
+
+        //FIXME bump version if a child was changed
+        $this->entityManager->persist($proxy);
+        $this->entityManager->flush();
+    }
+
+    private function getOrCreate(string $id): UserProxy
+    {
+        $result = $this->getRepository()->findOneBy([
+            'id' => $id
+        ]);
+        if ($result === null) {
+            $result = new UserProxy();
         }
+        return $result;
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): EntityRepository
     {
-        return $this->managerRegistry->getConnection()->createQueryBuilder();
-    }
-
-    private function initMetadata(): void
-    {
-        $this->metadata = new UserStorageMetadata();
+        return $this->entityManager->getRepository(UserProxy::class);
     }
 }
