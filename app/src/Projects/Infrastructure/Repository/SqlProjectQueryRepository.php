@@ -6,59 +6,95 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\Entity\ProjectListProjection;
 use App\Projects\Domain\Entity\ProjectProjection;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
-use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectListProjectionStorageMetadata;
-use App\Projects\Infrastructure\Persistence\Hydrator\Metadata\ProjectProjectionStorageMetadata;
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
+use App\Shared\Application\Service\CriteriaFieldValidatorInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
+use App\Shared\Infrastructure\Service\CriteriaToDoctrineCriteriaConverterInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 
 class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    private const MANAGER = 'read';
 
-    private const CONNECTION = 'read';
-
-    private readonly StorageMetadataInterface $listMetadata;
-    private readonly StorageMetadataInterface $metadata;
+    public function __construct(
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly CriteriaToDoctrineCriteriaConverterInterface $converter,
+        private readonly CriteriaFieldValidatorInterface $validator
+    ) {
+    }
 
     /**
      * @param Criteria $criteria
      * @return ProjectListProjection[]
-     * @throws Exception
+     * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array
     {
-        return $this->findAllByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
+        $this->validator->validate($criteria, ProjectListProjection::class);
+
+        return $this->getListRepository()
+            ->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getArrayResult();
     }
 
     /**
      * @param Criteria $criteria
      * @return int
-     * @throws Exception
+     * @throws QueryException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function findCountByCriteria(Criteria $criteria): int
     {
-        return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
+        $this->validator->validate($criteria, ProjectListProjection::class);
+
+        $doctrineCriteria = $this->converter->convert($criteria);
+        $doctrineCriteria->setFirstResult(null);
+        $doctrineCriteria->setMaxResults(null);
+        return $this->getRepository()
+            ->createQueryBuilder('t')
+            ->select('count(t.id)')
+            ->addCriteria($doctrineCriteria)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
+    /**
+     * @param Criteria $criteria
+     * @return ProjectProjection|null
+     * @throws NonUniqueResultException
+     * @throws QueryException
+     */
     public function findByCriteria(Criteria $criteria): ?ProjectProjection
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata)[0];
+        $this->validator->validate($criteria, ProjectProjection::class);
+
+        return $this->getRepository()
+            ->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getListRepository(): ObjectRepository|EntityRepository
     {
-        /** @var Connection $connection */
-        $connection = $this->managerRegistry->getConnection(self::CONNECTION);
-        return $connection->createQueryBuilder();
+        return $this->managerRegistry->getRepository(
+            ProjectListProjection::class,
+            self::MANAGER
+        );
     }
 
-    private function initMetadata(): void
+    private function getRepository(): ObjectRepository|EntityRepository
     {
-        $this->listMetadata = new ProjectListProjectionStorageMetadata();
-        $this->metadata = new ProjectProjectionStorageMetadata();
+        return $this->managerRegistry->getRepository(
+            ProjectProjection::class,
+            self::MANAGER
+        );
     }
 }

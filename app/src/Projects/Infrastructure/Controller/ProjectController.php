@@ -105,7 +105,7 @@ final class ProjectController
             )
         );
 
-        $response = $this->responseFormatter->format($envelope->getPagination(), $envelope->getItems());
+        $response = $this->responseFormatter->format($envelope->getPagination());
 
         return new JsonResponse($response);
     }

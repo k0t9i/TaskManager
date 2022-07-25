@@ -3,34 +3,20 @@ declare(strict_types=1);
 
 namespace App\Projects\Application\Query;
 
-use App\Projects\Domain\Entity\ProjectListProjection;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
-use App\Shared\Application\DTO\PaginationDTO;
+use App\Shared\Application\DTO\PaginationItemsDTO;
 
 final class GetAllOwnProjectsQueryResponse implements QueryResponseInterface
 {
-    private readonly PaginationDTO $pagination;
-    /**
-     * @var ProjectListProjection[]
-     */
-    private readonly array $items;
+    private readonly PaginationItemsDTO $pagination;
 
-    public function __construct(PaginationDTO $pagination, ProjectListProjection... $items)
+    public function __construct(PaginationItemsDTO $pagination)
     {
         $this->pagination = $pagination;
-        $this->items = $items;
     }
 
-    public function getPagination(): PaginationDTO
+    public function getPagination(): PaginationItemsDTO
     {
         return $this->pagination;
-    }
-
-    /**
-     * @return ProjectListProjection[]
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 }
