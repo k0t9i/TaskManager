@@ -50,7 +50,6 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
 
         $proxy->refresh();
 
-        //FIXME bump version if a child was changed
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
     }

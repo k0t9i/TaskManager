@@ -124,7 +124,6 @@ final class Task implements Hashable
         if (get_class($this) !== get_class($other)) {
             return false;
         }
-        //FIXME should I add links to equality check?
         return $this->id->isEqual($other->id) &&
             $this->information->isEqual($other->information) &&
             $this->status->isEqual($other->status) &&
