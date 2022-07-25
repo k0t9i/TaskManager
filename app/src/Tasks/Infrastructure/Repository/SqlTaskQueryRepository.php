@@ -3,56 +3,69 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Tasks\Domain\Entity\TaskListProjection;
 use App\Tasks\Domain\Entity\TaskProjection;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;
-use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskListProjectionStorageMetadata;
-use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskProjectionStorageMetadata;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\Persistence\ObjectRepository;
 
 class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
 {
     use SqlCriteriaRepositoryTrait;
 
-    private const CONNECTION = 'read';
+    private const MANAGER = 'read';
 
-    private readonly StorageMetadataInterface $listMetadata;
-    private readonly StorageMetadataInterface $metadata;
-
+    /**
+     * @param Criteria $criteria
+     * @return TaskListProjection[]
+     * @throws QueryException
+     */
     public function findAllByCriteria(Criteria $criteria): array
     {
-        return $this->findAllByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
+        return $this->findAllByCriteriaInternal($this->getListRepository(), $criteria);
     }
 
     /**
      * @param Criteria $criteria
      * @return int
-     * @throws Exception
+     * @throws QueryException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function findCountByCriteria(Criteria $criteria): int
     {
-        return $this->findCountByCriteriaInternal($this->queryBuilder(), $criteria, $this->listMetadata);
+        return $this->findCountByCriteriaInternal($this->getListRepository(), $criteria);
     }
 
+    /**
+     * @param Criteria $criteria
+     * @return TaskProjection|null
+     * @throws NonUniqueResultException
+     * @throws QueryException
+     */
     public function findByCriteria(Criteria $criteria): ?TaskProjection
     {
-        return $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata)[0];
+        return $this->findByCriteriaInternal($this->getRepository(), $criteria);
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getListRepository(): ObjectRepository|EntityRepository
     {
-        /** @var Connection $connection */
-        $connection = $this->managerRegistry->getConnection(self::CONNECTION);
-        return $connection->createQueryBuilder();
+        return $this->managerRegistry->getRepository(
+            TaskListProjection::class,
+            self::MANAGER
+        );
     }
 
-    private function initMetadata(): void
+    private function getRepository(): ObjectRepository|EntityRepository
     {
-        $this->listMetadata = new TaskListProjectionStorageMetadata();
-        $this->metadata = new TaskProjectionStorageMetadata();
+        return $this->managerRegistry->getRepository(
+            TaskProjection::class,
+            self::MANAGER
+        );
     }
 }

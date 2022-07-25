@@ -5,9 +5,8 @@ namespace App\Tasks\Application\Handler;
 
 use App\Shared\Application\Bus\Query\QueryHandlerInterface;
 use App\Shared\Application\Bus\Query\QueryResponseInterface;
-use App\Shared\Application\DTO\PaginationDTO;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
-use App\Shared\Application\Service\Pagination;
+use App\Shared\Application\Service\PaginationBuilder;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Tasks\Application\Query\GetProjectTasksQuery;
@@ -18,7 +17,8 @@ final class GetProjectTasksQueryHandler implements QueryHandlerInterface
 {
     public function __construct(
         private readonly TaskQueryRepositoryInterface $taskRepository,
-        private readonly AuthenticatorServiceInterface $authenticatorService
+        private readonly AuthenticatorServiceInterface $authenticatorService,
+        private readonly PaginationBuilder $paginationBuilder
     ) {
     }
 
@@ -34,20 +34,8 @@ final class GetProjectTasksQueryHandler implements QueryHandlerInterface
             new ExpressionOperand('projectId', '=', $query->projectId),
             new ExpressionOperand('userId', '=', $userId->value)
         ]);
-        $criteria->loadScalarFilters($query->criteria->filters);
-        $count = $this->taskRepository->findCountByCriteria($criteria);
+        $result = $this->paginationBuilder->build($this->taskRepository, $criteria, $query->criteria);
 
-        $pagination = new Pagination(
-            $count,
-            $query->criteria->page
-        );
-        $criteria->loadScalarOrders($query->criteria->orders)
-            ->loadOffsetAndLimit(...$pagination->getOffsetAndLimit());
-        $tasks = $this->taskRepository->findAllByCriteria($criteria);
-
-        return new GetProjectTasksQueryResponse(
-            PaginationDTO::createFromPagination($pagination),
-            ...$tasks
-        );
+        return new GetProjectTasksQueryResponse($result);
     }
 }
