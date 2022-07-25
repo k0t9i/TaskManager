@@ -18,23 +18,6 @@ class DateTimeTest extends TestCase
         );
     }
 
-    public function testGetValue(): void
-    {
-        $values = [
-            '01-03-1990' => '1990-03-01T00:00:00+00:00',
-            '05.12.2020' => '2020-12-05T00:00:00+00:00',
-            '02/07/1980' => '1980-02-07T00:00:00+00:00',
-        ];
-
-        foreach ($values as $raw => $value) {
-            $date = self::getMockForAbstractClass(
-                DateTime::class,
-                [$raw]
-            );
-            self::assertEquals($value, $date->getValue());
-        }
-    }
-
     public function testIsGreaterThan(): void
     {
         $date = self::getMockForAbstractClass(
@@ -53,6 +36,26 @@ class DateTimeTest extends TestCase
         self::assertFalse($date->isGreaterThan($biggerDate));
         self::assertFalse($date->isGreaterThan($sameDate));
         self::assertFalse($sameDate->isGreaterThan($date));
+    }
+
+    public function testIsEqual(): void
+    {
+        $date = self::getMockForAbstractClass(
+            DateTime::class,
+            ['01-01-1990 00:01:59.376044']
+        );
+        $sameDate = self::getMockForAbstractClass(
+            DateTime::class,
+            ['01-01-1990 00:01:59.376044']
+        );
+        $biggerDate = self::getMockForAbstractClass(
+            DateTime::class,
+            ['01-01-1990 00:01:59.376040']
+        );
+        self::assertFalse($biggerDate->isEqual($date));
+        self::assertFalse($date->isEqual($biggerDate));
+        self::assertTrue($date->isEqual($sameDate));
+        self::assertTrue($sameDate->isEqual($date));
     }
 }
 

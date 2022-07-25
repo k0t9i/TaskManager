@@ -36,7 +36,7 @@ class ProjectDescriptionTest extends TestCase
     public function testInvalidMaxLength(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('Project description should contain at most 4000 characters.');
+        self::expectExceptionMessage('"Project description" should contain at most 4000 characters.');
         new ProjectDescription($this->faker->regexify('.{4001}'));
     }
 }

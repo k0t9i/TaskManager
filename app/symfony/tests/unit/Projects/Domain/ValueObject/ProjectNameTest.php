@@ -33,14 +33,14 @@ class ProjectNameTest extends TestCase
     public function testEmpty(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('Project name cannot be blank.');
+        self::expectExceptionMessage('"Project name" cannot be blank.');
         new ProjectName('');
     }
 
     public function testInvalidMaxLength(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('Project name should contain at most 255 characters.');
+        self::expectExceptionMessage('"Project name" should contain at most 255 characters.');
         new ProjectName($this->faker->regexify('.{256}'));
     }
 }

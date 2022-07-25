@@ -3,24 +3,12 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Collection;
 
-use App\Shared\Domain\Exception\InvalidArgumentException;
+use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\Exception\LogicException;
 use PHPUnit\Framework\TestCase;
 
 class CollectionTest extends TestCase
 {
-    private TestedCollection $collection;
-
-    protected function setUp(): void
-    {
-        $items = [
-            new CollectionItem('1'),
-            new CollectionItem('2'),
-            new CollectionItem('3'),
-            new CollectionItem('4'),
-        ];
-        $this->collection = new TestedCollection($items);
-    }
-
     public function testExceptionWhenCreateWithInvalidType(): void
     {
         $items = [
@@ -29,7 +17,33 @@ class CollectionTest extends TestCase
             'sssss',
             new CollectionItem('2')
         ];
-        self::expectException(InvalidArgumentException::class);
+        self::expectException(LogicException::class);
+        self::expectExceptionMessage(sprintf('Object must be of type "%s"', Hashable::class));
+        new TestedCollection($items);
+    }
+
+    public function testExceptionWhenCreateWithWrongHashable(): void
+    {
+        $hashable = new class implements Hashable
+        {
+            public function getHash(): string
+            {
+                return '';
+            }
+
+            public function isEqual(object $other): bool
+            {
+                return true;
+            }
+        };
+
+        $items = [
+            new CollectionItem('1'),
+            new CollectionItem('2'),
+            $hashable
+        ];
+        self::expectException(LogicException::class);
+        self::expectExceptionMessage(sprintf('Object must be of type "%s"', CollectionItem::class));
         new TestedCollection($items);
     }
 
@@ -59,6 +73,47 @@ class CollectionTest extends TestCase
         $collection = new TestedCollection($items);
         self::assertTrue($collection->hashExists($exists->getHash()));
         self::assertFalse($collection->hashExists($notExists->getHash()));
+    }
+
+    public function testGet(): void
+    {
+        $item = new CollectionItem('1');
+        $items = [
+            new CollectionItem('3'),
+            $item,
+            new CollectionItem('5')
+        ];
+        $collection = new TestedCollection($items);
+        self::assertSame($collection->get('1'), $item);
+    }
+
+    public function testAdd(): void
+    {
+        $item = new CollectionItem('1');
+        $items = [
+            new CollectionItem('3'),
+            new CollectionItem('5')
+        ];
+        $collection = new TestedCollection($items);
+        $newCollection = $collection->add($item);
+        self::assertNotSame($newCollection, $collection);
+        self::assertCount(2, $collection);
+        self::assertCount(3, $newCollection);
+    }
+
+    public function testRemove(): void
+    {
+        $item = new CollectionItem('1');
+        $items = [
+            new CollectionItem('3'),
+            new CollectionItem('5'),
+            $item
+        ];
+        $collection = new TestedCollection($items);
+        $newCollection = $collection->remove($item);
+        self::assertNotSame($newCollection, $collection);
+        self::assertCount(3, $collection);
+        self::assertCount(2, $newCollection);
     }
 }
 

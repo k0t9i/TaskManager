@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\unit\Users\Domain\ValueObject;
+namespace App\Tests\unit\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
-use App\Users\Domain\ValueObject\UserEmail;
+use App\Shared\Domain\ValueObject\Users\UserEmail;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -30,14 +30,14 @@ class UserEmailTest extends TestCase
     public function testEmpty(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('User email cannot be blank.');
+        self::expectExceptionMessage('"User email" cannot be blank.');
         new UserEmail('');
     }
 
     public function testInvalidEmail(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('User email is not a valid email address.');
+        self::expectExceptionMessage('"User email" is not a valid email address.');
         new UserEmail($this->faker->regexify('.{255}'));
     }
 }
