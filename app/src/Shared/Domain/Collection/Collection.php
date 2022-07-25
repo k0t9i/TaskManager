@@ -15,21 +15,6 @@ abstract class Collection implements CollectionInterface
     private array $items = [];
 
     /**
-     * @var Hashable[]
-     */
-    private array $added = [];
-
-    /**
-     * @var Hashable[]
-     */
-    private array $deleted = [];
-
-    /**
-     * @var Hashable[]
-     */
-    private array $oldItems = [];
-
-    /**
      * @param array|Hashable $items
      */
     public function __construct(array $items = [])
@@ -37,50 +22,14 @@ abstract class Collection implements CollectionInterface
         foreach ($items as $item) {
             $this->ensureIsValidType($item);
             $this->items[$item->getHash()] = $item;
-            $this->oldItems[$item->getHash()] = $this->cloneItem($item);
         }
     }
 
     abstract protected function getType(): string;
 
-    public function getAdded(): array
-    {
-        return $this->added;
-    }
-
-    public function getDeleted(): array
-    {
-        return $this->deleted;
-    }
-
     public function getItems(): array
     {
         return $this->items;
-    }
-
-    public function getUpdated(): array
-    {
-        $result = [];
-        foreach ($this->items as $key => $item) {
-            if (!$this->oldItems[$key]->isEqual($item)) {
-                $result[$key] = $item;
-            }
-        }
-        return $result;
-    }
-
-    public function flush(): void
-    {
-        $this->added = [];
-        $this->deleted = [];
-        foreach ($this->items as $key => $item) {
-            $this->oldItems[$key] = $this->cloneItem($item);
-        }
-    }
-
-    public function isDirty(): bool
-    {
-        return count($this->added) > 0 || count($this->deleted) > 0;
     }
 
     /**
@@ -109,14 +58,7 @@ abstract class Collection implements CollectionInterface
         $this->ensureIsValidType($item);
         $key = $item->getHash();
         $collection = static::createFromOther($this);
-        if (!isset($collection->items[$key]) && !isset($collection->deleted[$key])) {
-            $collection->added[$key] = $item;
-        }
-        if (!isset($collection->oldItems[$key])) {
-            $collection->oldItems[$key] = $this->cloneItem($item);
-        }
         $collection->items[$key] = $item;
-        unset($collection->deleted[$key]);
 
         return $collection;
     }
@@ -125,11 +67,7 @@ abstract class Collection implements CollectionInterface
     {
         $key = $item->getHash();
         $collection = static::createFromOther($this);
-        if (isset($collection->items[$key]) && !isset($collection->added[$key])) {
-            $collection->deleted[$key] = $collection->items[$key];
-        }
         unset($collection->items[$key]);
-        unset($collection->added[$key]);
 
         return $collection;
     }
@@ -149,16 +87,7 @@ abstract class Collection implements CollectionInterface
     {
         $collection = new static();
         $collection->items = $other->items;
-        $collection->added = $other->added;
-        $collection->deleted = $other->deleted;
-        $collection->oldItems = $other->oldItems;
         return $collection;
-    }
-
-    private function cloneItem(Hashable $item): Hashable
-    {
-        //TODO Is shallow copy ?
-        return clone $item;
     }
 
     private function ensureIsValidType(mixed $value): void
