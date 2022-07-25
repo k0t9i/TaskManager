@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\unit\Shared\Domain\Aggregate;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
-use App\Shared\Domain\Bus\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEvent;
 use PHPUnit\Framework\TestCase;
 
 class AggregateRootTest extends TestCase
