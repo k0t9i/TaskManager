@@ -66,24 +66,24 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
      */
     public function save(RequestManager $manager): void
     {
-        $proxy = $this->getOrCreate($manager->getId()->value);
+        $proxy = $this->getOrCreate($manager);
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->loadFromEntity($manager);
+        $proxy->refresh();
 
         //FIXME bump version if a child was changed
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
     }
 
-    private function getOrCreate(string $id): RequestManagerProxy
+    private function getOrCreate(RequestManager $manager): RequestManagerProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $manager->getId()->value
         ]);
         if ($result === null) {
-            $result = new RequestManagerProxy();
+            $result = new RequestManagerProxy($manager);
         }
         return $result;
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Requests\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Requests\Domain\Collection\RequestCollection;
-use App\Requests\Domain\Entity\Request;
 use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\ValueObject\RequestManagerId;
 use App\Requests\Domain\ValueObject\Requests;
@@ -18,6 +17,7 @@ use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyI
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
 
 final class RequestManagerProxy implements DoctrineVersionedProxyInterface
 {
@@ -28,19 +28,21 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface
     private int $status;
     private string $ownerId;
     /**
-     * @var Collection|RequestManagerParticipantProxy[]
+     * @var Collection|PersistentCollection|RequestManagerParticipantProxy[]
      */
-    private Collection $participants;
+    public Collection $participants;
     /**
-     * @var Collection|RequestProxy[]
+     * @var Collection|PersistentCollection|RequestProxy[]
      */
     private Collection $requests;
     private int $version;
+    public ?RequestManager $entity = null;
 
-    public function __construct()
+    public function __construct(RequestManager $entity)
     {
         $this->participants = new ArrayCollection();
         $this->requests = new ArrayCollection();
+        $this->entity = $entity;
     }
 
     public function getVersion(): int
@@ -48,58 +50,55 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface
         return $this->version;
     }
 
-    public function loadFromEntity(RequestManager $entity): void
+    public function refresh(): void
     {
-        $this->id = $entity->getId()->value;
-        $this->projectId = $entity->getProjectId()->value;
-        $this->status = $entity->getStatus()->getScalar();
-        $this->ownerId = $entity->getOwner()->userId->value;
-        $this->loadParticipants($entity);
-        $this->loadRequests($entity);
+        $this->id = $this->entity->getId()->value;
+        $this->projectId = $this->entity->getProjectId()->value;
+        $this->status = $this->entity->getStatus()->getScalar();
+        $this->ownerId = $this->entity->getOwner()->userId->value;
+        $this->loadParticipants();
+        $this->loadRequests();
     }
 
     public function createEntity(): RequestManager
     {
-        $participants = new UserIdCollection(array_map(function (RequestManagerParticipantProxy $item){
-            return $item->createEntity();
-        }, $this->participants->toArray()));
-        $requests = new RequestCollection(array_map(function (RequestProxy $item){
-            return $item->createEntity();
-        }, $this->requests->toArray()));
+        if ($this->entity === null) {
+            $participants = new UserIdCollection(array_map(function (RequestManagerParticipantProxy $item){
+                return $item->createEntity();
+            }, $this->participants->toArray()));
+            $requests = new RequestCollection(array_map(function (RequestProxy $item){
+                return $item->createEntity();
+            }, $this->requests->toArray()));
+            $this->entity = new RequestManager(
+                new RequestManagerId($this->id),
+                new ProjectId($this->projectId),
+                ProjectStatus::createFromScalar($this->status),
+                new Owner(
+                    new UserId($this->ownerId)
+                ),
+                new Participants($participants),
+                new Requests($requests)
+            );
+        }
 
-        return new RequestManager(
-            new RequestManagerId($this->id),
-            new ProjectId($this->projectId),
-            ProjectStatus::createFromScalar($this->status),
-            new Owner(
-                new UserId($this->ownerId)
-            ),
-            new Participants($participants),
-            new Requests($requests)
-        );
+        return $this->entity;
     }
 
-    private function loadParticipants(RequestManager $entity): void
+    private function loadParticipants(): void
     {
         $this->loadCollection(
-            $entity->getParticipants()->getCollection(),
+            $this->entity->getParticipants()->getCollection(),
             $this->participants,
-            new RequestManagerParticipantProxy(),
-            function (RequestManagerParticipantProxy $proxy, RequestManagerProxy $parent, UserId $entity) {
-                $proxy->loadFromEntity($parent, $entity);
-            }
+            $this
         );
     }
 
-    private function loadRequests(RequestManager $entity): void
+    private function loadRequests(): void
     {
         $this->loadCollection(
-            $entity->getRequests()->getCollection(),
+            $this->entity->getRequests()->getCollection(),
             $this->requests,
-            new RequestProxy(),
-            function (RequestProxy $proxy, RequestManagerProxy $parent, Request $entity) {
-                $proxy->loadFromEntity($parent, $entity);
-            }
+            $this
         );
     }
 }

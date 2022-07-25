@@ -5,7 +5,6 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Projects\Domain\Collection\ProjectTaskCollection;
 use App\Projects\Domain\Entity\Project;
-use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\ValueObject\ProjectDescription;
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectName;
@@ -22,6 +21,7 @@ use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTr
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
 
 final class ProjectProxy implements DoctrineVersionedProxyInterface
 {
@@ -34,19 +34,21 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface
     private int $status;
     private string $ownerId;
     /**
-     * @var Collection|ProjectParticipantProxy[]
+     * @var Collection|PersistentCollection|ProjectParticipantProxy[]
      */
     private Collection $participants;
     /**
-     * @var Collection|ProjectTaskProxy[]
+     * @var Collection|PersistentCollection|ProjectTaskProxy[]
      */
     private Collection $tasks;
     private int $version;
+    private ?Project $entity = null;
 
-    public function __construct()
+    public function __construct(Project $entity)
     {
         $this->participants = new ArrayCollection();
         $this->tasks = new ArrayCollection();
+        $this->entity = $entity;
     }
 
     public function getVersion(): int
@@ -54,67 +56,65 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface
         return $this->version;
     }
 
-    public function loadFromEntity(Project $entity): void
+    public function refresh(): void
     {
-        $this->id = $entity->getId()->value;
-        $this->name = $entity->getInformation()->name->value;
-        $this->description = $entity->getInformation()->description->value;
+        $this->id = $this->entity->getId()->value;
+        $this->name = $this->entity->getInformation()->name->value;
+        $this->description = $this->entity->getInformation()->description->value;
         $this->finishDate = PhpDateTime::createFromFormat(
             DateTime::DEFAULT_FORMAT,
-            $entity->getInformation()->finishDate->getValue()
+            $this->entity->getInformation()->finishDate->getValue()
         );
-        $this->status = $entity->getStatus()->getScalar();
-        $this->ownerId = $entity->getOwner()->userId->value;
-        $this->loadParticipants($entity);
-        $this->loadTasks($entity);
+        $this->status = $this->entity->getStatus()->getScalar();
+        $this->ownerId = $this->entity->getOwner()->userId->value;
+        $this->loadParticipants();
+        $this->loadTasks();
     }
 
     public function createEntity(): Project
     {
-        $participants = new UserIdCollection(array_map(function (ProjectParticipantProxy $item){
-            return $item->createEntity();
-        }, $this->participants->toArray()));
-        $tasks = new ProjectTaskCollection(array_map(function (ProjectTaskProxy $item){
-            return $item->createEntity();
-        }, $this->tasks->toArray()));
+        if ($this->entity === null) {
+            $participants = new UserIdCollection(array_map(function (ProjectParticipantProxy $item){
+                return $item->createEntity();
+            }, $this->participants->toArray()));
+            $tasks = new ProjectTaskCollection(array_map(function (ProjectTaskProxy $item){
+                return $item->createEntity();
+            }, $this->tasks->toArray()));
 
-        return new Project(
-            new ProjectId($this->id),
-            new ProjectInformation(
-                new ProjectName($this->name),
-                new ProjectDescription($this->description),
-                new DateTime($this->finishDate->format(DateTime::DEFAULT_FORMAT))
-            ),
-            ProjectStatus::createFromScalar($this->status),
-            new Owner(
-                new UserId($this->ownerId)
-            ),
-            new Participants($participants),
-            new ProjectTasks($tasks)
-        );
+            $this->entity = new Project(
+                new ProjectId($this->id),
+                new ProjectInformation(
+                    new ProjectName($this->name),
+                    new ProjectDescription($this->description),
+                    new DateTime($this->finishDate->format(DateTime::DEFAULT_FORMAT))
+                ),
+                ProjectStatus::createFromScalar($this->status),
+                new Owner(
+                    new UserId($this->ownerId)
+                ),
+                new Participants($participants),
+                new ProjectTasks($tasks)
+            );
+        }
+
+        return $this->entity;
     }
 
-    private function loadParticipants(Project $entity): void
+    private function loadParticipants(): void
     {
         $this->loadCollection(
-            $entity->getParticipants()->getCollection(),
+            $this->entity->getParticipants()->getCollection(),
             $this->participants,
-            new ProjectParticipantProxy(),
-            function (ProjectParticipantProxy $proxy, ProjectProxy $parent, UserId $entity) {
-                $proxy->loadFromEntity($parent, $entity);
-            }
+            $this
         );
     }
 
-    private function loadTasks(Project $entity): void
+    private function loadTasks(): void
     {
         $this->loadCollection(
-            $entity->getTasks()->getCollection(),
+            $this->entity->getTasks()->getCollection(),
             $this->tasks,
-            new ProjectTaskProxy(),
-            function (ProjectTaskProxy $proxy, ProjectProxy $parent, ProjectTask $entity) {
-                $proxy->loadFromEntity($parent, $entity);
-            }
+            $this
         );
     }
 }

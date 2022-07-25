@@ -5,49 +5,50 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
-use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 
-final class ProjectTaskProxy implements Hashable
+final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface
 {
     private string $id;
     private string $taskId;
     private string $ownerId;
     private ProjectProxy $project;
+    private ?ProjectTask $entity = null;
+
+    public function __construct(ProjectProxy $owner, ProjectTask $entity)
+    {
+        $this->project = $owner;
+        $this->entity = $entity;
+    }
 
     public function getId(): string
     {
         return $this->id;
     }
 
-    public function loadFromEntity(ProjectProxy $project, ProjectTask $entity): void
+    public function refresh(): void
     {
-        $this->id = $entity->getId()->value;
-        $this->taskId = $entity->getTaskId()->value;
-        $this->ownerId = $entity->getOwnerId()->value;
-        $this->project = $project;
+        $this->id = $this->entity->getId()->value;
+        $this->taskId = $this->entity->getTaskId()->value;
+        $this->ownerId = $this->entity->getOwnerId()->value;
     }
 
     public function createEntity(): ProjectTask
     {
-        return new ProjectTask(
-            new ProjectTaskId($this->id),
-            new TaskId($this->taskId),
-            new UserId($this->ownerId),
-        );
+        if ($this->entity === null) {
+            $this->entity = new ProjectTask(
+                new ProjectTaskId($this->id),
+                new TaskId($this->taskId),
+                new UserId($this->ownerId),
+            );
+        }
+        return $this->entity;
     }
 
-    public function getHash(): string
+    public function getKey(): string
     {
         return $this->id;
-    }
-
-    public function isEqual(object $other): bool
-    {
-        if (!($other instanceof Hashable)) {
-            return false;
-        }
-        return $this->getHash() === $other->getHash();
     }
 }

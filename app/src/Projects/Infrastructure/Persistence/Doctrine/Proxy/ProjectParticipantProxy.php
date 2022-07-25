@@ -3,40 +3,41 @@ declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
-use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 
-final class ProjectParticipantProxy implements Hashable
+final class ProjectParticipantProxy implements DoctrineProxyCollectionItemInterface
 {
     private ProjectProxy $project;
     private string $userId;
+    private ?UserId $entity = null;
+
+    public function __construct(ProjectProxy $owner, UserId $entity)
+    {
+        $this->project = $owner;
+        $this->entity = $entity;
+    }
 
     public function getUserId(): string
     {
         return $this->userId;
     }
 
-    public function loadFromEntity(ProjectProxy $project, UserId $entity): void
+    public function refresh(): void
     {
-        $this->userId = $entity->value;
-        $this->project = $project;
+        $this->userId = $this->entity->value;
     }
 
     public function createEntity(): UserId
     {
-        return new UserId($this->userId);
+        if ($this->entity === null) {
+            $this->entity = new UserId($this->userId);
+        }
+        return $this->entity;
     }
 
-    public function getHash(): string
+    public function getKey(): string
     {
         return $this->userId;
-    }
-
-    public function isEqual(object $other): bool
-    {
-        if (!($other instanceof Hashable)) {
-            return false;
-        }
-        return $this->getHash() === $other->getHash();
     }
 }

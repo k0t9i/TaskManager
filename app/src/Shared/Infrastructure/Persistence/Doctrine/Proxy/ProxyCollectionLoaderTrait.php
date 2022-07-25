@@ -4,36 +4,54 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\Collection\CollectionInterface;
-use App\Shared\Domain\Collection\Hashable;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\PersistentCollection;
+use LogicException;
 
 trait ProxyCollectionLoaderTrait
 {
     private function loadCollection(
         CollectionInterface $collection,
-        Collection $doctrineCollection,
-        Hashable $newObject,
-        callable $loader
+        PersistentCollection $persistentCollection,
+        DoctrineProxyInterface $owner
     ): void {
-        foreach ($collection as $child) {
-            $proxy = $doctrineCollection->filter(function (Hashable $item) use ($child) {
-                return $item->isEqual($child);
-            })->first();
-            $isNew = false;
-            if ($proxy === false) {
-                $proxy = $newObject;
-                $isNew = true;
+        $class = $persistentCollection->getTypeClass()->getName();
+        if (!is_a($class, DoctrineProxyCollectionItemInterface::class, true)) {
+            throw new LogicException('DoctrineProxyCollectionItemInterface');
+        }
+
+        $proxies = $this->prepareProxies($collection, $persistentCollection);
+
+        foreach ($collection->getItems() as $child) {
+            $proxy = $proxies[$child->getHash()];
+            if ($proxy === null) {
+                $proxy = new $class($owner, $child);
+                $persistentCollection->add($proxy);
             }
-            $loader($proxy, $this, $child);
-            if ($isNew) {
-                $doctrineCollection->add($proxy);
+            $proxy->refresh();
+        }
+        /** @var DoctrineProxyCollectionItemInterface $proxy */
+        foreach ($persistentCollection->toArray() as $key => $proxy) {
+            if (!$collection->hashExists($proxy->getKey())) {
+                unset($persistentCollection[$key]);
             }
         }
-        /** @var Hashable $proxy */
-        foreach ($doctrineCollection->toArray() as $key => $proxy) {
-            if (!$collection->hashExists($proxy->getHash())) {
-                unset($doctrineCollection[$key]);
+    }
+
+    /**
+     * @return DoctrineProxyCollectionItemInterface[]
+     */
+    private function prepareProxies(CollectionInterface $collection, PersistentCollection $persistentCollection): array
+    {
+        $proxies = [];
+        /** @var DoctrineProxyCollectionItemInterface $item */
+        foreach ($persistentCollection as $item) {
+            $proxies[$item->getKey()] = $item;
+        }
+        foreach ($collection->getItems() as $item) {
+            if (!isset($proxies[$item->getHash()])) {
+                $proxies[$item->getHash()] = null;
             }
         }
+        return $proxies;
     }
 }

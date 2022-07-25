@@ -61,23 +61,23 @@ final class SqlUserRepository implements UserRepositoryInterface
     public function save(User $user): void
     {
         /** @var UserProxy $proxy */
-        $proxy = $this->getOrCreate($user->getId()->value);
+        $proxy = $this->getOrCreate($user);
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->loadFromEntity($user);
+        $proxy->refresh();
 
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
     }
 
-    private function getOrCreate(string $id): UserProxy
+    private function getOrCreate(User $user): UserProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $user->getId()->value
         ]);
         if ($result === null) {
-            $result = new UserProxy();
+            $result = new UserProxy($user);
         }
         return $result;
     }

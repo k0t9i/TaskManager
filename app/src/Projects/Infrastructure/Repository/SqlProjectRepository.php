@@ -44,24 +44,24 @@ class SqlProjectRepository implements ProjectRepositoryInterface
      */
     public function save(Project $project): void
     {
-        $proxy = $this->getOrCreate($project->getId()->value);
+        $proxy = $this->getOrCreate($project);
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->loadFromEntity($project);
+        $proxy->refresh();
 
         //FIXME bump version if a child was changed
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
     }
 
-    private function getOrCreate(string $id): ProjectProxy
+    private function getOrCreate(Project $project): ProjectProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $project->getId()->value
         ]);
         if ($result === null) {
-            $result = new ProjectProxy();
+            $result = new ProjectProxy($project);
         }
         return $result;
     }
