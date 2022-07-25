@@ -14,7 +14,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-final class SqlUserRepository implements UserRepositoryInterface
+final class DoctrineUserRepository implements UserRepositoryInterface
 {
     use DoctrineOptimisticLockTrait;
 

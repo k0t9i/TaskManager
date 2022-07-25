@@ -7,16 +7,16 @@ use App\Projects\Domain\Entity\ProjectListProjection;
 use App\Projects\Domain\Entity\ProjectProjection;
 use App\Projects\Domain\Repository\ProjectQueryRepositoryInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Repository\DoctrineCriteriaRepositoryTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 
-class SqlProjectQueryRepository implements ProjectQueryRepositoryInterface
+class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    use DoctrineCriteriaRepositoryTrait;
 
     private const MANAGER = 'read';
 

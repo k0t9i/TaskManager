@@ -6,7 +6,7 @@ namespace App\Requests\Infrastructure\Repository;
 use App\Requests\Domain\Entity\RequestListProjection;
 use App\Requests\Domain\Repository\RequestQueryRepositoryInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Repository\DoctrineCriteriaRepositoryTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -14,9 +14,9 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 use ReflectionException;
 
-class SqlRequestQueryRepository implements RequestQueryRepositoryInterface
+class DoctrineRequestQueryRepository implements RequestQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    use DoctrineCriteriaRepositoryTrait;
 
     private const MANAGER = 'read';
 

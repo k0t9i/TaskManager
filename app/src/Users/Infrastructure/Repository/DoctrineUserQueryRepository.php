@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Repository;
 
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Repository\DoctrineCriteriaRepositoryTrait;
 use App\Users\Domain\Entity\ProfileProjection;
 use App\Users\Domain\Entity\UserProjection;
 use App\Users\Domain\Repository\UserQueryRepositoryInterface;
@@ -14,9 +14,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 
-class SqlUserQueryRepository implements UserQueryRepositoryInterface
+class DoctrineUserQueryRepository implements UserQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    use DoctrineCriteriaRepositoryTrait;
 
     private const MANAGER = 'read';
 

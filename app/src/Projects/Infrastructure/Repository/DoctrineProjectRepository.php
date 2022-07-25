@@ -13,7 +13,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class SqlProjectRepository implements ProjectRepositoryInterface
+class DoctrineProjectRepository implements ProjectRepositoryInterface
 {
     use DoctrineOptimisticLockTrait;
 

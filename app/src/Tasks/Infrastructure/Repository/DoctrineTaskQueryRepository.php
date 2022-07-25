@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Tasks\Infrastructure\Repository;
 
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
+use App\Shared\Infrastructure\Repository\DoctrineCriteriaRepositoryTrait;
 use App\Tasks\Domain\Entity\TaskListProjection;
 use App\Tasks\Domain\Entity\TaskProjection;
 use App\Tasks\Domain\Repository\TaskQueryRepositoryInterface;
@@ -14,9 +14,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 
-class SqlTaskQueryRepository implements TaskQueryRepositoryInterface
+class DoctrineTaskQueryRepository implements TaskQueryRepositoryInterface
 {
-    use SqlCriteriaRepositoryTrait;
+    use DoctrineCriteriaRepositoryTrait;
 
     private const MANAGER = 'read';
 

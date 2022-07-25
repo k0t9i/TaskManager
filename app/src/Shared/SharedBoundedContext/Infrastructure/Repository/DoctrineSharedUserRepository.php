@@ -9,7 +9,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-final class SqlSharedUserRepository implements SharedUserRepositoryInterface
+final class DoctrineSharedUserRepository implements SharedUserRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager

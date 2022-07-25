@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Requests\Infrastructure\Repository;
+namespace App\Tasks\Infrastructure\Repository;
 
-use App\Requests\Domain\Entity\RequestManager;
-use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
-use App\Requests\Domain\ValueObject\RequestId;
-use App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxy;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
+use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
+use App\Tasks\Domain\Entity\TaskManager;
+use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
+use App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskManagerProxy;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 
-final class SqlRequestManagerRepository implements RequestManagerRepositoryInterface
+final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterface
 {
     use DoctrineOptimisticLockTrait;
 
@@ -26,12 +26,11 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
 
     /**
      * @param ProjectId $id
-     * @return RequestManager|null
-     * @throws Exception
+     * @return TaskManager|null
      */
-    public function findByProjectId(ProjectId $id): ?RequestManager
+    public function findByProjectId(ProjectId $id): ?TaskManager
     {
-        /** @var RequestManagerProxy $proxy */
+        /** @var TaskManagerProxy $proxy */
         $proxy = $this->getRepository()->findOneBy([
             'projectId' => $id->value
         ]);
@@ -40,17 +39,16 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
     }
 
     /**
-     * @param RequestId $id
-     * @return RequestManager|null
-     * @throws Exception
+     * @param TaskId $id
+     * @return TaskManager|null
      * @throws NonUniqueResultException
      */
-    public function findByRequestId(RequestId $id): ?RequestManager
+    public function findByTaskId(TaskId $id): ?TaskManager
     {
-        /** @var RequestManagerProxy $proxy */
+        /** @var TaskManagerProxy $proxy */
         $proxy = $this->getRepository()
             ->createQueryBuilder('t')
-            ->leftJoin('t.requests', 'r')
+            ->leftJoin('t.tasks', 'r')
             ->where('r.id = :id')
             ->setParameter('id', $id->value)
             ->getQuery()
@@ -60,11 +58,11 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
     }
 
     /**
-     * @param RequestManager $manager
+     * @param TaskManager $manager
      * @throws Exception
      * @throws OptimisticLockException
      */
-    public function save(RequestManager $manager): void
+    public function save(TaskManager $manager): void
     {
         $proxy = $this->getOrCreate($manager);
 
@@ -77,19 +75,19 @@ final class SqlRequestManagerRepository implements RequestManagerRepositoryInter
         $this->entityManager->flush();
     }
 
-    private function getOrCreate(RequestManager $manager): RequestManagerProxy
+    private function getOrCreate(TaskManager $manager): TaskManagerProxy
     {
         $result = $this->getRepository()->findOneBy([
             'id' => $manager->getId()->value
         ]);
         if ($result === null) {
-            $result = new RequestManagerProxy($manager);
+            $result = new TaskManagerProxy($manager);
         }
         return $result;
     }
 
     private function getRepository(): EntityRepository
     {
-        return $this->entityManager->getRepository(RequestManagerProxy::class);
+        return $this->entityManager->getRepository(TaskManagerProxy::class);
     }
 }

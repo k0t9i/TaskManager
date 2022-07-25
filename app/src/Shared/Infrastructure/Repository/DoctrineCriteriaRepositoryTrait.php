@@ -12,7 +12,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
 
-trait SqlCriteriaRepositoryTrait
+trait DoctrineCriteriaRepositoryTrait
 {
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
