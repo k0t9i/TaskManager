@@ -100,6 +100,16 @@ final class Task implements Hashable
         return $this->ownerId;
     }
 
+    public function getStatus(): TaskStatus
+    {
+        return $this->status;
+    }
+
+    public function getLinks(): TaskLinkCollection
+    {
+        return $this->links;
+    }
+
     public function getHash(): string
     {
         return $this->id->getHash();

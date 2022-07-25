@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskLinkProxy" table="task_links">
+        <id name="toTaskId" length="36" />
+        <id name="task" length="36" association-key="true" />
+        <many-to-one field="task" target-entity="App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskProxy" inversed-by="links" />
+        <indexes>
+            <index columns="to_task_id" />
+            <index columns="task_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

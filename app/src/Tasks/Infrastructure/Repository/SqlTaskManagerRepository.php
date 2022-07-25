@@ -3,76 +3,58 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
-use App\Shared\Application\Storage\StorageSaverInterface;
-use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
-use App\Shared\Infrastructure\Repository\SqlCriteriaRepositoryTrait;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
-use App\Shared\Infrastructure\Service\OptimisticLockTrait;
+use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
-use App\Tasks\Infrastructure\Persistence\Hydrator\Metadata\TaskManagerStorageMetadata;
+use App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskManagerProxy;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 final class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
 {
-    use OptimisticLockTrait;
-    use SqlCriteriaRepositoryTrait{
-        SqlCriteriaRepositoryTrait::__construct as private traitConstruct;
-    }
-
-    private readonly StorageMetadataInterface $metadata;
+    use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly StorageSaverInterface $storageSaver,
-        ManagerRegistry $managerRegistry,
-        StorageLoaderInterface $storageLoader,
-        CriteriaToQueryBuilderConverter $criteriaConverter,
-        CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly EntityManagerInterface $entityManager
     ) {
-        $this->traitConstruct($managerRegistry, $storageLoader, $criteriaConverter, $criteriaValidator);
     }
 
     /**
      * @param ProjectId $id
      * @return TaskManager|null
-     * @throws Exception
      */
     public function findByProjectId(ProjectId $id): ?TaskManager
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('projectId', '=', $id->value)
-        ]));
+        /** @var TaskManagerProxy $proxy */
+        $proxy = $this->getRepository()->findOneBy([
+            'projectId' => $id->value
+        ]);
+
+        return $proxy?->createEntity();
     }
 
     /**
      * @param TaskId $id
      * @return TaskManager|null
-     * @throws Exception
+     * @throws NonUniqueResultException
      */
     public function findByTaskId(TaskId $id): ?TaskManager
     {
-        return $this->findByCriteria(new Criteria([
-            new ExpressionOperand('tasks.id', '=', $id->value)
-        ]));
-    }
+        /** @var TaskManagerProxy $proxy */
+        $proxy = $this->getRepository()
+            ->createQueryBuilder('t')
+            ->leftJoin('t.tasks', 'r')
+            ->where('r.id = :id')
+            ->setParameter('id', $id->value)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-    public function findByCriteria(Criteria $criteria): ?TaskManager
-    {
-        /** @var TaskManager $result */
-        [$result, $version] = $this->findByCriteriaInternal($this->queryBuilder(), $criteria, $this->metadata);
-        if ($result !== null) {
-            $this->setVersion($result->getId()->value, $version);
-        }
-        return $result;
+        return $proxy?->createEntity();
     }
 
     /**
@@ -82,22 +64,30 @@ final class SqlTaskManagerRepository implements TaskManagerRepositoryInterface
      */
     public function save(TaskManager $manager): void
     {
-        $prevVersion = $this->getVersion($manager->getId()->value);
+        $proxy = $this->getOrCreate($manager);
 
-        if ($prevVersion > 0) {
-            $this->storageSaver->update($manager, $this->metadata, $prevVersion);
-        } else {
-            $this->storageSaver->insert($manager, $this->metadata);
+        $this->lock($this->entityManager, $proxy);
+
+        $proxy->refresh();
+
+        //FIXME bump version if a child was changed
+        $this->entityManager->persist($proxy);
+        $this->entityManager->flush();
+    }
+
+    private function getOrCreate(TaskManager $manager): TaskManagerProxy
+    {
+        $result = $this->getRepository()->findOneBy([
+            'id' => $manager->getId()->value
+        ]);
+        if ($result === null) {
+            $result = new TaskManagerProxy($manager);
         }
+        return $result;
     }
 
-    private function queryBuilder(): QueryBuilder
+    private function getRepository(): EntityRepository
     {
-        return $this->managerRegistry->getConnection()->createQueryBuilder();
-    }
-
-    private function initMetadata(): void
-    {
-        $this->metadata = new TaskManagerStorageMetadata();
+        return $this->entityManager->getRepository(TaskManagerProxy::class);
     }
 }

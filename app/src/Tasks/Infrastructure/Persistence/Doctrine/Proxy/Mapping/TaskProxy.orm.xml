@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskProxy" table="tasks">
+        <id name="id" length="36" />
+        <field name="name" length="255" />
+        <field name="brief" type="text" />
+        <field name="description" type="text" />
+        <field name="startDate" type="date" />
+        <field name="finishDate" type="date" />
+        <field name="ownerId" length="36" />
+        <field name="status" type="integer" />
+        <many-to-one field="manager" target-entity="App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskManagerProxy" inversed-by="tasks" />
+        <one-to-many field="links"
+                     target-entity="App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskLinkProxy"
+                     mapped-by="task"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
+        <indexes>
+            <index columns="owner_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

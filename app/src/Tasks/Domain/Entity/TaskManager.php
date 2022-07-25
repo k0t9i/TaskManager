@@ -189,6 +189,31 @@ final class TaskManager extends AggregateRoot
         return $this->id;
     }
 
+    public function getProjectId(): ProjectId
+    {
+        return $this->projectId;
+    }
+
+    public function getStatus(): ProjectStatus
+    {
+        return $this->status;
+    }
+
+    public function getOwner(): Owner
+    {
+        return $this->owner;
+    }
+
+    public function getFinishDate(): DateTime
+    {
+        return $this->finishDate;
+    }
+
+    public function getParticipants(): Participants
+    {
+        return $this->participants;
+    }
+
     public function getTasks(): Tasks
     {
         return $this->tasks;
@@ -198,7 +223,7 @@ final class TaskManager extends AggregateRoot
     {
         if ($status->isClosed()) {
             /** @var Task $task */
-            foreach ($this->tasks->getInnerItems() as $task) {
+            foreach ($this->tasks->getCollection() as $task) {
                 $task->closeIfCan();
             }
         }
@@ -223,7 +248,7 @@ final class TaskManager extends AggregateRoot
     public function changeFinishDate(DateTime $date): void
     {
         /** @var Task $task */
-        foreach ($this->tasks->getInnerItems() as $task) {
+        foreach ($this->tasks->getCollection() as $task) {
             $task->limitDatesIfNeed($date);
         }
         $this->finishDate = $date;

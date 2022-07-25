@@ -1,0 +1,27 @@
+doctrine:
+    orm:
+        default_entity_manager: default
+        auto_generate_proxy_classes: true
+        entity_managers:
+            default:
+                connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                auto_mapping: false
+                mappings:
+                    Tasks:
+                        type: xml
+                        dir: '%kernel.project_dir%/../src/Tasks/Infrastructure/Persistence/Doctrine/Proxy/Mapping'
+                        is_bundle: false
+                        prefix: App\Tasks\Infrastructure\Persistence\Doctrine\Proxy
+                        alias: Tasks
+            read:
+                connection: read
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                auto_mapping: false
+                mappings:
+                    Tasks:
+                        type: xml
+                        dir: '%kernel.project_dir%/../src/Tasks/Infrastructure/Persistence/Doctrine/Mapping'
+                        is_bundle: false
+                        prefix: App\Tasks\Domain\Entity
+                        alias: Tasks

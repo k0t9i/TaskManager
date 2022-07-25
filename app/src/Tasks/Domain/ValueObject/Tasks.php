@@ -72,7 +72,7 @@ final class Tasks
         return $this->tasks->get($taskId->getHash());
     }
 
-    public function getInnerItems(): TaskCollection
+    public function getCollection(): TaskCollection
     {
         return $this->tasks;
     }
