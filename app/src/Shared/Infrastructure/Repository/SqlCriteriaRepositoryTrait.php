@@ -3,75 +3,76 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Repository;
 
-use App\Shared\Application\Hydrator\Metadata\StorageMetadataInterface;
-use App\Shared\Application\Service\CriteriaStorageFieldValidatorInterface;
-use App\Shared\Application\Storage\StorageLoaderInterface;
+use App\Shared\Application\Service\CriteriaFieldValidatorInterface;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Infrastructure\Service\CriteriaToQueryBuilderConverter;
-use App\Shared\Infrastructure\Storage\SqlStorageFinder;
-use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Query\QueryBuilder;
+use App\Shared\Infrastructure\Service\CriteriaToDoctrineCriteriaConverterInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
 
 trait SqlCriteriaRepositoryTrait
 {
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
-        private readonly StorageLoaderInterface $storageLoader,
-        private readonly CriteriaToQueryBuilderConverter $criteriaConverter,
-        private readonly CriteriaStorageFieldValidatorInterface $criteriaValidator
+        private readonly CriteriaToDoctrineCriteriaConverterInterface $converter,
+        private readonly CriteriaFieldValidatorInterface $validator
     ) {
-        $this->initMetadata();
-    }
-
-    abstract private function initMetadata(): void;
-
-    private function findAllByCriteriaInternal(
-        QueryBuilder $builder,
-        Criteria $criteria,
-        StorageMetadataInterface $metadata
-    ): array {
-        $builder->select($metadata->getStorageName() . '.*');
-        $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria, $metadata);
-
-        $rawItems = $this->storageLoader->loadAll(new SqlStorageFinder($builder), $metadata);
-        $result = [];
-        foreach ($rawItems as [$item, $version]) {
-            $result[] = $item;
-        }
-
-        return $result;
     }
 
     /**
-     * @throws Exception
+     * @param EntityRepository $repository
+     * @param Criteria $criteria
+     * @return array
+     * @throws QueryException
      */
-    private function findCountByCriteriaInternal(
-        QueryBuilder $builder,
-        Criteria $criteria,
-        StorageMetadataInterface $metadata
-    ): int {
-        $builder->select('count(*)')
-            ->from($metadata->getStorageName());
-        $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria, $metadata);
+    private function findAllByCriteriaInternal(EntityRepository $repository, Criteria $criteria): array
+    {
+        $this->validator->validate($criteria, $repository->getClassName());
 
-        $builder->setFirstResult(0);
-        $builder->setMaxResults(null);
-
-        return $builder->fetchOne();
+        return $repository->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getArrayResult();
     }
 
-    private function findByCriteriaInternal(
-        QueryBuilder $builder,
-        Criteria $criteria,
-        StorageMetadataInterface $metadata
-    ): array {
-        $builder = $builder->select($metadata->getStorageName() . '.*');
-        $this->criteriaValidator->validate($criteria, $metadata);
-        $this->criteriaConverter->convert($builder, $criteria, $metadata);
+    /**
+     * @param EntityRepository $repository
+     * @param Criteria $criteria
+     * @param string $column
+     * @return int
+     * @throws QueryException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    private function findCountByCriteriaInternal(EntityRepository $repository, Criteria $criteria): int
+    {
+        $this->validator->validate($criteria, $repository->getClassName());
 
-        return $this->storageLoader->load(new SqlStorageFinder($builder), $metadata);
+        $doctrineCriteria = $this->converter->convert($criteria);
+        $doctrineCriteria->setFirstResult(null);
+        $doctrineCriteria->setMaxResults(null);
+        return $repository->createQueryBuilder('t')
+            ->select('count(t)')
+            ->addCriteria($doctrineCriteria)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param EntityRepository $repository
+     * @param Criteria $criteria
+     * @throws NonUniqueResultException
+     * @throws QueryException
+     */
+    private function findByCriteriaInternal(EntityRepository $repository, Criteria $criteria): mixed
+    {
+        $this->validator->validate($criteria, $repository->getClassName());
+
+        return $repository->createQueryBuilder('t')
+            ->addCriteria($this->converter->convert($criteria))
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
