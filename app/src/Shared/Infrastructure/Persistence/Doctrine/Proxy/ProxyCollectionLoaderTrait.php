@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\Collection\CollectionInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use LogicException;
 
@@ -11,9 +12,13 @@ trait ProxyCollectionLoaderTrait
 {
     private function loadCollection(
         CollectionInterface $collection,
-        PersistentCollection $persistentCollection,
+        Collection $persistentCollection,
         DoctrineProxyInterface $owner
     ): void {
+        // The collections of newly created parent are empty and not yet wrapped
+        if ($persistentCollection->isEmpty() && !($persistentCollection instanceof PersistentCollection)) {
+            return;
+        }
         $class = $persistentCollection->getTypeClass()->getName();
         if (!is_a($class, DoctrineProxyCollectionItemInterface::class, true)) {
             throw new LogicException('DoctrineProxyCollectionItemInterface');
