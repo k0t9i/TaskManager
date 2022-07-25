@@ -15,6 +15,8 @@ use App\Tasks\Application\Command\DeleteLinkCommand;
 use App\Tasks\Application\Command\UpdateTaskInformationCommand;
 use App\Tasks\Application\Query\GetProjectTasksQuery;
 use App\Tasks\Application\Query\GetProjectTasksQueryResponse;
+use App\Tasks\Application\Query\GetTaskLinksQuery;
+use App\Tasks\Application\Query\GetTaskLinksQueryResponse;
 use App\Tasks\Application\Query\GetTaskQuery;
 use App\Tasks\Application\Query\GetTaskQueryResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -114,6 +116,22 @@ final class TaskController
         $envelope = $this->queryBus->dispatch(
             new GetProjectTasksQuery(
                 $projectId,
+                $this->criteriaBuilder->build($request->query->all())
+            )
+        );
+
+        $response = $this->responseFormatter->format($envelope->getPagination());
+
+        return new JsonResponse($response);
+    }
+
+    #[Route('/{id}/links/', name: 'getAllLinksInTask', methods: ['GET'])]
+    public function getAllLinksInTask(string $id, Request $request): JsonResponse
+    {
+        /** @var GetTaskLinksQueryResponse $envelope */
+        $envelope = $this->queryBus->dispatch(
+            new GetTaskLinksQuery(
+                $id,
                 $this->criteriaBuilder->build($request->query->all())
             )
         );
