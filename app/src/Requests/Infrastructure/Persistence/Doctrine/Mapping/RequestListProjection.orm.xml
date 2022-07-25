@@ -12,5 +12,6 @@
         <field name="userFirstname" />
         <field name="userLastname" />
         <field name="userEmail" />
+        <field name="projectOwnerId" />
     </entity>
 </doctrine-mapping>

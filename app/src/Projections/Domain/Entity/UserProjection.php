@@ -22,6 +22,7 @@ final class UserProjection
         $this->lastname = $lastname;
     }
 
+    //@FIXME always empty ownerId
     public function updateOwner(string $ownerId, self $other): void
     {
         if ($this->userId === $this->ownerId) {
