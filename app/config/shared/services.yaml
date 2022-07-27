@@ -19,11 +19,8 @@ services:
         exclude:
             - '../../src/**/Application/Command/*'
             - '../../src/**/Application/Query/*'
-            - '../../src/**/Application/Hydrator/Accessor/*'
-            - '../../src/**/Application/Hydrator/Mutator/*'
-            - '../../src/**/Application/Hydrator/Metadata/*'
-            - '../../src/**/Infrastructure/Persistence/*'
-            - '../../src/**/Infrastructure/Exception/*'
+            - '../../src/**/Mapping/*'
+            - '../../src/**/Exception/*'
             - '../../src/**/ValueObject/*'
             - '../../src/**/DTO/*'
             - '../../src/Shared/Infrastructure/Kernel.php'

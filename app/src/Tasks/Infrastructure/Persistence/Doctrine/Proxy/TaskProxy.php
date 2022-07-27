@@ -6,9 +6,9 @@ namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTrait;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\ValueObject\TaskBrief;
@@ -24,8 +24,6 @@ use Doctrine\ORM\PersistentCollection;
 
 final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
-    use ProxyCollectionLoaderTrait;
-
     private string $id;
     private string $name;
     private string $brief;
@@ -53,7 +51,7 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
         return $this->id;
     }
 
-    public function refresh(): void
+    public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
         $this->name = $this->entity->getInformation()->name->value;
@@ -69,7 +67,11 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
         );
         $this->ownerId = $this->entity->getOwnerId()->value;
         $this->status = $this->entity->getStatus()->getScalar();
-        $this->loadLinks();
+        $loader->loadInto(
+            $this->links,
+            $this->entity->getLinks(),
+            $this
+        );
     }
 
     public function createEntity(): Task
@@ -99,14 +101,5 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
     public function getKey(): string
     {
         return $this->id;
-    }
-
-    private function loadLinks(): void
-    {
-        $this->loadCollection(
-            $this->entity->getLinks(),
-            $this->links,
-            $this
-        );
     }
 }

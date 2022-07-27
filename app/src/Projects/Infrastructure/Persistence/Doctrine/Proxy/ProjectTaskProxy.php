@@ -7,6 +7,7 @@ use App\Projects\Domain\Entity\ProjectTask;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
@@ -29,7 +30,7 @@ final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface, Do
         return $this->id;
     }
 
-    public function refresh(): void
+    public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
         $this->taskId = $this->entity->getTaskId()->value;

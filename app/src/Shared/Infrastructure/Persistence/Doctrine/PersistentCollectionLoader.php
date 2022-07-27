@@ -1,43 +1,42 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Persistence\Doctrine\Proxy;
+namespace App\Shared\Infrastructure\Persistence\Doctrine;
 
 use App\Shared\Domain\Collection\CollectionInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use LogicException;
 
-trait ProxyCollectionLoaderTrait
+class PersistentCollectionLoader implements PersistentCollectionLoaderInterface
 {
-    private function loadCollection(
-        CollectionInterface $collection,
-        Collection $persistentCollection,
-        DoctrineProxyInterface $owner
-    ): void {
+    public function loadInto(Collection $target, CollectionInterface $source, DoctrineProxyInterface $owner): void
+    {
         // The collections of newly created parent are empty and not yet wrapped
-        if ($persistentCollection->isEmpty() && !($persistentCollection instanceof PersistentCollection)) {
+        if ($target->isEmpty() && !($target instanceof PersistentCollection)) {
             return;
         }
-        $class = $persistentCollection->getTypeClass()->getName();
+        $class = $target->getTypeClass()->getName();
         if (!is_a($class, DoctrineProxyCollectionItemInterface::class, true)) {
             throw new LogicException('DoctrineProxyCollectionItemInterface');
         }
 
-        $proxies = $this->prepareProxies($collection, $persistentCollection);
+        $proxies = $this->prepareProxies($source, $target);
 
-        foreach ($collection->getItems() as $child) {
+        foreach ($source->getItems() as $child) {
             $proxy = $proxies[$child->getHash()];
             if ($proxy === null) {
+                //FIXME how do I know that the constructor has these arguments
                 $proxy = new $class($owner, $child);
-                $persistentCollection->add($proxy);
+                $target->add($proxy);
             }
-            $proxy->refresh();
+            $proxy->refresh($this);
         }
-        /** @var DoctrineProxyCollectionItemInterface $proxy */
-        foreach ($persistentCollection->toArray() as $key => $proxy) {
-            if (!$collection->hashExists($proxy->getKey())) {
-                unset($persistentCollection[$key]);
+        foreach ($target->toArray() as $key => $proxy) {
+            if (!$source->hashExists($proxy->getKey())) {
+                unset($target[$key]);
             }
         }
     }

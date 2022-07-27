@@ -13,17 +13,15 @@ use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 
 final class RequestManagerProxy implements DoctrineVersionedProxyInterface, DoctrineProxyInterface
 {
-    use ProxyCollectionLoaderTrait;
-
     private string $id;
     private string $projectId;
     private int $status;
@@ -51,14 +49,22 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface, Doct
         return $this->version;
     }
 
-    public function refresh(): void
+    public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
         $this->projectId = $this->entity->getProjectId()->value;
         $this->status = $this->entity->getStatus()->getScalar();
         $this->ownerId = $this->entity->getOwner()->userId->value;
-        $this->loadParticipants();
-        $this->loadRequests();
+        $loader->loadInto(
+            $this->participants,
+            $this->entity->getParticipants()->getCollection(),
+            $this
+        );
+        $loader->loadInto(
+            $this->requests,
+            $this->entity->getRequests()->getCollection(),
+            $this
+        );
     }
 
     public function createEntity(): RequestManager
@@ -83,23 +89,5 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface, Doct
         }
 
         return $this->entity;
-    }
-
-    private function loadParticipants(): void
-    {
-        $this->loadCollection(
-            $this->entity->getParticipants()->getCollection(),
-            $this->participants,
-            $this
-        );
-    }
-
-    private function loadRequests(): void
-    {
-        $this->loadCollection(
-            $this->entity->getRequests()->getCollection(),
-            $this->requests,
-            $this
-        );
     }
 }

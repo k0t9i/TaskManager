@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\ValueObject\Users\UserId;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
@@ -24,7 +25,7 @@ final class ProjectParticipantProxy implements DoctrineProxyCollectionItemInterf
         return $this->userId;
     }
 
-    public function refresh(): void
+    public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->userId = $this->entity->value;
     }

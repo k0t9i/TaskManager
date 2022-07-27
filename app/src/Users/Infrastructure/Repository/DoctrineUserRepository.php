@@ -6,6 +6,7 @@ namespace App\Users\Infrastructure\Repository;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
@@ -19,7 +20,8 @@ final class DoctrineUserRepository implements UserRepositoryInterface
     use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PersistentCollectionLoaderInterface $collectionLoader
     ) {
     }
 
@@ -65,7 +67,7 @@ final class DoctrineUserRepository implements UserRepositoryInterface
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->refresh();
+        $proxy->refresh($this->collectionLoader);
 
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();

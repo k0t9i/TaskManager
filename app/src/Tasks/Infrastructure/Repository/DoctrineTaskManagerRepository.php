@@ -6,6 +6,7 @@ namespace App\Tasks\Infrastructure\Repository;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
@@ -20,7 +21,8 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
     use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PersistentCollectionLoaderInterface $collectionLoader
     ) {
     }
 
@@ -68,7 +70,7 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->refresh();
+        $proxy->refresh($this->collectionLoader);
 
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();

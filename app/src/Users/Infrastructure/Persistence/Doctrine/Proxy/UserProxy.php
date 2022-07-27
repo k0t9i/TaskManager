@@ -7,6 +7,7 @@ use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Domain\ValueObject\Users\UserLastname;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
 use App\Users\Domain\Entity\User;
@@ -33,7 +34,7 @@ final class UserProxy implements DoctrineVersionedProxyInterface, DoctrineProxyI
         return $this->version;
     }
 
-    public function refresh(): void
+    public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
         $this->email = $this->entity->getEmail()->value;

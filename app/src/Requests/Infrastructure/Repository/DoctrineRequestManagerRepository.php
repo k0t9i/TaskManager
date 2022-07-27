@@ -9,6 +9,7 @@ use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxy;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
+use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,7 +21,8 @@ final class DoctrineRequestManagerRepository implements RequestManagerRepository
     use DoctrineOptimisticLockTrait;
 
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PersistentCollectionLoaderInterface $collectionLoader
     ) {
     }
 
@@ -70,7 +72,7 @@ final class DoctrineRequestManagerRepository implements RequestManagerRepository
 
         $this->lock($this->entityManager, $proxy);
 
-        $proxy->refresh();
+        $proxy->refresh($this->collectionLoader);
 
         $this->entityManager->persist($proxy);
         $this->entityManager->flush();
