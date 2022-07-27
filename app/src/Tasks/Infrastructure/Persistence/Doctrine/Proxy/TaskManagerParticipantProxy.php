@@ -5,8 +5,9 @@ namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
-final class TaskManagerParticipantProxy implements DoctrineProxyCollectionItemInterface
+final class TaskManagerParticipantProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private TaskManagerProxy $manager;
     private string $userId;

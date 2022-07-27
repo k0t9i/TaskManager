@@ -5,8 +5,9 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
-final class ProjectParticipantProxy implements DoctrineProxyCollectionItemInterface
+final class ProjectParticipantProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private ProjectProxy $project;
     private string $userId;

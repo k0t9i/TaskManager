@@ -5,8 +5,9 @@ namespace App\Requests\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
-final class RequestManagerParticipantProxy implements DoctrineProxyCollectionItemInterface
+final class RequestManagerParticipantProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private RequestManagerProxy $manager;
     private string $userId;

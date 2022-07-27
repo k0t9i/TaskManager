@@ -5,9 +5,10 @@ namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Tasks\Domain\ValueObject\TaskLink;
 
-final class TaskLinkProxy implements DoctrineProxyCollectionItemInterface
+final class TaskLinkProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private TaskProxy $task;
     private string $toTaskId;

@@ -9,9 +9,10 @@ use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Requests\RequestStatus;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use DateTime as PhpDateTime;
 
-final class RequestProxy implements DoctrineProxyCollectionItemInterface
+final class RequestProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private string $id;
     private string $userId;

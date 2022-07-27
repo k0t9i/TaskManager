@@ -7,6 +7,7 @@ use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\ProxyCollectionLoaderTrait;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Entity\Task;
@@ -21,7 +22,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 
-final class TaskProxy implements DoctrineProxyCollectionItemInterface
+final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     use ProxyCollectionLoaderTrait;
 

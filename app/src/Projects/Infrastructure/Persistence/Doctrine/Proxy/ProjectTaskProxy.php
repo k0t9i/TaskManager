@@ -8,8 +8,9 @@ use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
+use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
-final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface
+final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
 {
     private string $id;
     private string $taskId;
