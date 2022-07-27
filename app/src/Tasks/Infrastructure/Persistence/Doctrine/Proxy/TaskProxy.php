@@ -57,14 +57,8 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
         $this->name = $this->entity->getInformation()->name->value;
         $this->brief = $this->entity->getInformation()->brief->value;
         $this->description = $this->entity->getInformation()->description->value;
-        $this->startDate = PhpDateTime::createFromFormat(
-            DateTime::DEFAULT_FORMAT,
-            $this->entity->getInformation()->startDate->getValue()
-        );
-        $this->finishDate = PhpDateTime::createFromFormat(
-            DateTime::DEFAULT_FORMAT,
-            $this->entity->getInformation()->finishDate->getValue()
-        );
+        $this->startDate = $this->entity->getInformation()->startDate->getPhpDateTime();
+        $this->finishDate = $this->entity->getInformation()->finishDate->getPhpDateTime();
         $this->ownerId = $this->entity->getOwnerId()->value;
         $this->status = $this->entity->getStatus()->getScalar();
         $loader->loadInto(

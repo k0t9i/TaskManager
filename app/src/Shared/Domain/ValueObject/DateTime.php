@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
+use DateTime as PhpDateTime;
 use DateTimeImmutable;
 use Exception;
 use Stringable;
@@ -49,5 +50,10 @@ class DateTime implements Stringable
     public function isEqual(self $other): bool
     {
         return $this->getValue() === $other->getValue();
+    }
+
+    public function getPhpDateTime(): PhpDateTime
+    {
+        return PhpDateTime::createFromImmutable($this->dateTime);
     }
 }

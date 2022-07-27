@@ -58,10 +58,7 @@ final class TaskManagerProxy implements DoctrineVersionedProxyInterface, Doctrin
         $this->projectId = $this->entity->getProjectId()->value;
         $this->status = $this->entity->getStatus()->getScalar();
         $this->ownerId = $this->entity->getOwner()->userId->value;
-        $this->finishDate = PhpDateTime::createFromFormat(
-            DateTime::DEFAULT_FORMAT,
-            $this->entity->getFinishDate()->getValue()
-        );
+        $this->finishDate = $this->entity->getFinishDate()->getPhpDateTime();
         $loader->loadInto(
             $this->participants,
             $this->entity->getParticipants()->getCollection(),

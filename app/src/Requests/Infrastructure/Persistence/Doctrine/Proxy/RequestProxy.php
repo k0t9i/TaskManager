@@ -38,10 +38,7 @@ final class RequestProxy implements DoctrineProxyCollectionItemInterface, Doctri
         $this->id = $this->entity->getId()->value;
         $this->userId = $this->entity->getUserId()->value;
         $this->status = $this->entity->getStatus()->getScalar();
-        $this->changeDate = PhpDateTime::createFromFormat(
-            DateTime::DEFAULT_FORMAT,
-            $this->entity->getChangeDate()->getValue()
-        );
+        $this->changeDate = $this->entity->getChangeDate()->getPhpDateTime();
     }
 
     public function createEntity(): Request

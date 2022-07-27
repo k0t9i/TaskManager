@@ -60,10 +60,7 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrinePro
         $this->id = $this->entity->getId()->value;
         $this->name = $this->entity->getInformation()->name->value;
         $this->description = $this->entity->getInformation()->description->value;
-        $this->finishDate = PhpDateTime::createFromFormat(
-            DateTime::DEFAULT_FORMAT,
-            $this->entity->getInformation()->finishDate->getValue()
-        );
+        $this->finishDate = $this->entity->getInformation()->finishDate->getPhpDateTime();
         $this->status = $this->entity->getStatus()->getScalar();
         $this->ownerId = $this->entity->getOwner()->userId->value;
         $loader->loadInto(
