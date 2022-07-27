@@ -11,6 +11,7 @@ use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Tasks\Domain\Entity\TaskManager;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskManagerProxy;
+use App\Tasks\Infrastructure\Persistence\Doctrine\Proxy\TaskManagerProxyFactory;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -22,7 +23,8 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PersistentCollectionLoaderInterface $collectionLoader
+        private readonly PersistentCollectionLoaderInterface $collectionLoader,
+        private readonly TaskManagerProxyFactory $managerProxyFactory,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
             'projectId' => $id->value
         ]);
 
-        return $proxy?->createEntity();
+        return $this->managerProxyFactory->createEntity($proxy);
     }
 
     /**
@@ -56,7 +58,7 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
             ->getQuery()
             ->getOneOrNullResult();
 
-        return $proxy?->createEntity();
+        return $this->managerProxyFactory->createEntity($proxy);
     }
 
     /**

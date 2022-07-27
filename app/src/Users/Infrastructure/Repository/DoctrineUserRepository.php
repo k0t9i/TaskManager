@@ -11,6 +11,7 @@ use App\Shared\Infrastructure\Service\DoctrineOptimisticLockTrait;
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
 use App\Users\Infrastructure\Persistence\Doctrine\Proxy\UserProxy;
+use App\Users\Infrastructure\Persistence\Doctrine\Proxy\UserProxyFactory;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -21,7 +22,8 @@ final class DoctrineUserRepository implements UserRepositoryInterface
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PersistentCollectionLoaderInterface $collectionLoader
+        private readonly PersistentCollectionLoaderInterface $collectionLoader,
+        private readonly UserProxyFactory $userProxyFactory
     ) {
     }
 
@@ -37,7 +39,7 @@ final class DoctrineUserRepository implements UserRepositoryInterface
             'id' => $id->value
         ]);
 
-        return $proxy?->createEntity();
+        return $this->userProxyFactory->createEntity($proxy);
     }
 
     /**
@@ -52,7 +54,7 @@ final class DoctrineUserRepository implements UserRepositoryInterface
             'email' => $email->value
         ]);
 
-        return $proxy?->createEntity();
+        return $this->userProxyFactory->createEntity($proxy);
     }
 
     /**

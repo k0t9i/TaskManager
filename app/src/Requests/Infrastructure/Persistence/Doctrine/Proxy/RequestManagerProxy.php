@@ -3,16 +3,7 @@ declare(strict_types=1);
 
 namespace App\Requests\Infrastructure\Persistence\Doctrine\Proxy;
 
-use App\Requests\Domain\Collection\RequestCollection;
 use App\Requests\Domain\Entity\RequestManager;
-use App\Requests\Domain\ValueObject\RequestManagerId;
-use App\Requests\Domain\ValueObject\Requests;
-use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\ValueObject\Owner;
-use App\Shared\Domain\ValueObject\Participants;
-use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
@@ -29,19 +20,49 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface, Doct
     /**
      * @var Collection|PersistentCollection|RequestManagerParticipantProxy[]
      */
-    public Collection $participants;
+    private Collection $participants;
     /**
      * @var Collection|PersistentCollection|RequestProxy[]
      */
     private Collection $requests;
     private int $version;
-    public ?RequestManager $entity = null;
+    private ?RequestManager $entity = null;
 
     public function __construct(RequestManager $entity)
     {
         $this->participants = new ArrayCollection();
         $this->requests = new ArrayCollection();
         $this->entity = $entity;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getProjectId(): string
+    {
+        return $this->projectId;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function getOwnerId(): string
+    {
+        return $this->ownerId;
+    }
+
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function getRequests(): Collection
+    {
+        return $this->requests;
     }
 
     public function getVersion(): int
@@ -67,27 +88,8 @@ final class RequestManagerProxy implements DoctrineVersionedProxyInterface, Doct
         );
     }
 
-    public function createEntity(): RequestManager
+    public function changeEntity(RequestManager $entity): void
     {
-        if ($this->entity === null) {
-            $participants = new UserIdCollection(array_map(function (RequestManagerParticipantProxy $item){
-                return $item->createEntity();
-            }, $this->participants->toArray()));
-            $requests = new RequestCollection(array_map(function (RequestProxy $item){
-                return $item->createEntity();
-            }, $this->requests->toArray()));
-            $this->entity = new RequestManager(
-                new RequestManagerId($this->id),
-                new ProjectId($this->projectId),
-                ProjectStatus::createFromScalar($this->status),
-                new Owner(
-                    new UserId($this->ownerId)
-                ),
-                new Participants($participants),
-                new Requests($requests)
-            );
-        }
-
-        return $this->entity;
+        $this->entity = $entity;
     }
 }

@@ -30,12 +30,9 @@ final class RequestManagerParticipantProxy implements DoctrineProxyCollectionIte
         $this->userId = $this->entity->value;
     }
 
-    public function createEntity(): UserId
+    public function changeEntity(UserId $entity): void
     {
-        if ($this->entity === null) {
-            $this->entity = new UserId($this->userId);
-        }
-        return $this->entity;
+        $this->entity = $entity;
     }
 
     public function getKey(): string

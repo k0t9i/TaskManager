@@ -3,20 +3,11 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
-use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\Tasks\TaskId;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
-use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Entity\Task;
-use App\Tasks\Domain\ValueObject\TaskBrief;
-use App\Tasks\Domain\ValueObject\TaskDescription;
-use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskLink;
-use App\Tasks\Domain\ValueObject\TaskName;
-use App\Tasks\Domain\ValueObject\TaskStatus;
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -51,6 +42,46 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
         return $this->id;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getBrief(): string
+    {
+        return $this->brief;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getStartDate(): PhpDateTime
+    {
+        return $this->startDate;
+    }
+
+    public function getFinishDate(): PhpDateTime
+    {
+        return $this->finishDate;
+    }
+
+    public function getOwnerId(): string
+    {
+        return $this->ownerId;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function getLinks(): Collection
+    {
+        return $this->links;
+    }
+
     public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
@@ -68,28 +99,9 @@ final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineP
         );
     }
 
-    public function createEntity(): Task
+    public function changeEntity(Task $entity): void
     {
-        if ($this->entity === null) {
-            $links = new TaskLinkCollection(array_map(function (TaskLinkProxy $item){
-                return $item->createEntity();
-            }, $this->links->toArray()));
-
-            $this->entity = new Task(
-                new TaskId($this->id),
-                new TaskInformation(
-                    new TaskName($this->name),
-                    new TaskBrief($this->brief),
-                    new TaskDescription($this->description),
-                    new DateTime($this->startDate->format(DateTime::DEFAULT_FORMAT)),
-                    new DateTime($this->finishDate->format(DateTime::DEFAULT_FORMAT)),
-                ),
-                new UserId($this->ownerId),
-                TaskStatus::createFromScalar($this->status),
-                $links
-            );
-        }
-        return $this->entity;
+        $this->entity = $entity;
     }
 
     public function getKey(): string

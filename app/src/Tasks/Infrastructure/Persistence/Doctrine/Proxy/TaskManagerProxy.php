@@ -3,20 +3,10 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
-use App\Shared\Domain\Collection\UserIdCollection;
-use App\Shared\Domain\ValueObject\DateTime;
-use App\Shared\Domain\ValueObject\Owner;
-use App\Shared\Domain\ValueObject\Participants;
-use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
-use App\Tasks\Domain\Collection\TaskCollection;
 use App\Tasks\Domain\Entity\TaskManager;
-use App\Tasks\Domain\ValueObject\TaskManagerId;
-use App\Tasks\Domain\ValueObject\Tasks;
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -47,6 +37,41 @@ final class TaskManagerProxy implements DoctrineVersionedProxyInterface, Doctrin
         $this->entity = $entity;
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getProjectId(): string
+    {
+        return $this->projectId;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function getOwnerId(): string
+    {
+        return $this->ownerId;
+    }
+
+    public function getFinishDate(): PhpDateTime
+    {
+        return $this->finishDate;
+    }
+
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
     public function getVersion(): int
     {
         return $this->version;
@@ -71,29 +96,8 @@ final class TaskManagerProxy implements DoctrineVersionedProxyInterface, Doctrin
         );
     }
 
-    public function createEntity(): TaskManager
+    public function changeEntity(TaskManager $entity): void
     {
-        if ($this->entity === null) {
-            $participants = new UserIdCollection(array_map(function (TaskManagerParticipantProxy $item){
-                return $item->createEntity();
-            }, $this->participants->toArray()));
-            $tasks = new TaskCollection(array_map(function (TaskProxy $item){
-                return $item->createEntity();
-            }, $this->tasks->toArray()));
-
-            $this->entity = new TaskManager(
-                new TaskManagerId($this->id),
-                new ProjectId($this->projectId),
-                ProjectStatus::createFromScalar($this->status),
-                new Owner(
-                    new UserId($this->ownerId)
-                ),
-                new DateTime($this->finishDate->format(DateTime::DEFAULT_FORMAT)),
-                new Participants($participants),
-                new Tasks($tasks)
-            );
-        }
-
-        return $this->entity;
+        $this->entity = $entity;
     }
 }

@@ -7,6 +7,7 @@ use App\Requests\Domain\Entity\RequestManager;
 use App\Requests\Domain\Repository\RequestManagerRepositoryInterface;
 use App\Requests\Domain\ValueObject\RequestId;
 use App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxy;
+use App\Requests\Infrastructure\Persistence\Doctrine\Proxy\RequestManagerProxyFactory;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
@@ -22,7 +23,8 @@ final class DoctrineRequestManagerRepository implements RequestManagerRepository
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PersistentCollectionLoaderInterface $collectionLoader
+        private readonly PersistentCollectionLoaderInterface $collectionLoader,
+        private readonly RequestManagerProxyFactory $managerProxyFactory
     ) {
     }
 
@@ -38,7 +40,7 @@ final class DoctrineRequestManagerRepository implements RequestManagerRepository
             'projectId' => $id->value
         ]);
 
-        return $proxy?->createEntity();
+        return $this->managerProxyFactory->createEntity($proxy);
     }
 
     /**
@@ -58,7 +60,7 @@ final class DoctrineRequestManagerRepository implements RequestManagerRepository
             ->getQuery()
             ->getOneOrNullResult();
 
-        return $proxy?->createEntity();
+        return $this->managerProxyFactory->createEntity($proxy);
     }
 
     /**

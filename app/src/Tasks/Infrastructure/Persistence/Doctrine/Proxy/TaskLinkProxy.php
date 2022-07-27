@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
-use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
@@ -21,19 +20,19 @@ final class TaskLinkProxy implements DoctrineProxyCollectionItemInterface, Doctr
         $this->entity = $entity;
     }
 
+    public function getToTaskId(): string
+    {
+        return $this->toTaskId;
+    }
+
     public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->toTaskId = $this->entity->toTaskId->value;
     }
 
-    public function createEntity(): TaskLink
+    public function changeEntity(TaskLink $entity): void
     {
-        if ($this->entity === null) {
-            $this->entity = new TaskLink(
-                new TaskId($this->toTaskId)
-            );
-        }
-        return $this->entity;
+        $this->entity = $entity;
     }
 
     public function getKey(): string

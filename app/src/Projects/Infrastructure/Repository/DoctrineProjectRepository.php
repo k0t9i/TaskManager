@@ -6,6 +6,7 @@ namespace App\Projects\Infrastructure\Repository;
 use App\Projects\Domain\Entity\Project;
 use App\Projects\Domain\Repository\ProjectRepositoryInterface;
 use App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxy;
+use App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxyFactory;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Infrastructure\Exception\OptimisticLockException;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
@@ -20,7 +21,8 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PersistentCollectionLoaderInterface $collectionLoader
+        private readonly PersistentCollectionLoaderInterface $collectionLoader,
+        private readonly ProjectProxyFactory $projectProxyFactory
     ) {
     }
 
@@ -36,7 +38,7 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
             'id' => $id->value
         ]);
 
-        return $proxy?->createEntity();
+        return $this->projectProxyFactory->createEntity($proxy);
     }
 
     /**

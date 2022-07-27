@@ -56,4 +56,9 @@ class DateTime implements Stringable
     {
         return PhpDateTime::createFromImmutable($this->dateTime);
     }
+
+    public static function createFromPhpDateTime(PhpDateTime $dateTime): self
+    {
+        return new self($dateTime->format(self::DEFAULT_FORMAT));
+    }
 }

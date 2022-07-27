@@ -4,9 +4,6 @@ declare(strict_types=1);
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Projects\Domain\Entity\ProjectTask;
-use App\Projects\Domain\ValueObject\ProjectTaskId;
-use App\Shared\Domain\ValueObject\Tasks\TaskId;
-use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
@@ -30,6 +27,16 @@ final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface, Do
         return $this->id;
     }
 
+    public function getTaskId(): string
+    {
+        return $this->taskId;
+    }
+
+    public function getOwnerId(): string
+    {
+        return $this->ownerId;
+    }
+
     public function refresh(PersistentCollectionLoaderInterface $loader): void
     {
         $this->id = $this->entity->getId()->value;
@@ -37,16 +44,9 @@ final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface, Do
         $this->ownerId = $this->entity->getOwnerId()->value;
     }
 
-    public function createEntity(): ProjectTask
+    public function changeEntity(ProjectTask $entity): void
     {
-        if ($this->entity === null) {
-            $this->entity = new ProjectTask(
-                new ProjectTaskId($this->id),
-                new TaskId($this->taskId),
-                new UserId($this->ownerId),
-            );
-        }
-        return $this->entity;
+        $this->entity = $entity;
     }
 
     public function getKey(): string
