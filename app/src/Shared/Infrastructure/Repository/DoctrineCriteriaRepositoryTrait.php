@@ -51,8 +51,11 @@ trait DoctrineCriteriaRepositoryTrait
         $this->validator->validate($criteria, $repository->getClassName());
 
         $doctrineCriteria = $this->converter->convert($criteria);
+
         $doctrineCriteria->setFirstResult(null);
         $doctrineCriteria->setMaxResults(null);
+        $doctrineCriteria->orderBy([]);
+
         return $repository->createQueryBuilder('t')
             ->select('count(t)')
             ->addCriteria($doctrineCriteria)
