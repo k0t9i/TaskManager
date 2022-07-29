@@ -25,6 +25,13 @@
                 <cascade-persist />
             </cascade>
         </one-to-many>
+        <one-to-many field="requests"
+                     target-entity="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\RequestProxy"
+                     mapped-by="project">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
         <field name="version" type="integer" version="true" />
         <indexes>
             <index columns="owner_id" />

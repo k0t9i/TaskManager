@@ -16,7 +16,6 @@ framework:
                     queues:
                         projects: ~
                         users: ~
-                        requests: ~
                         tasks: ~
                         projections: ~
             sync: 'sync://'

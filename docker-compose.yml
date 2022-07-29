@@ -55,22 +55,6 @@ services:
             - ./logs/supervisor/users:/var/log/supervisor
         ports:
             - '8081:8080'
-    php-fpm-requests:
-        <<: *php-template
-        container_name: task_manager-php-requests
-        build:
-            <<: *php-template-build
-            args:
-                COMMON_NAME: requests
-        volumes:
-            - ./app/src/Shared:/var/www/src/Shared
-            - ./app/symfony:/var/www/symfony
-            - ./app/config/shared:/var/www/config/shared
-            - ./app/src/Requests:/var/www/src/Requests
-            - ./app/config/requests:/var/www/config/app
-            - ./logs/supervisor/requests:/var/log/supervisor
-        ports:
-            - '8082:8080'
     php-fpm-tasks:
         <<: *php-template
         container_name: task_manager-php-tasks
@@ -86,7 +70,7 @@ services:
             - ./app/config/tasks:/var/www/config/app
             - ./logs/supervisor/tasks:/var/log/supervisor
         ports:
-            - '8083:8080'
+            - '8082:8080'
     php-fpm-projections:
         <<: *php-template
         container_name: task_manager-php-projections

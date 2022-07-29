@@ -28,6 +28,10 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrinePro
      * @var Collection|PersistentCollection|ProjectTaskProxy[]
      */
     private Collection $tasks;
+    /**
+     * @var Collection|PersistentCollection|RequestProxy[]
+     */
+    private Collection $requests;
     private int $version;
     private ?Project $entity = null;
 
@@ -35,6 +39,7 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrinePro
     {
         $this->participants = new ArrayCollection();
         $this->tasks = new ArrayCollection();
+        $this->requests = new ArrayCollection();
         $this->entity = $entity;
     }
 
@@ -78,6 +83,11 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrinePro
         return $this->tasks;
     }
 
+    public function getRequests(): Collection
+    {
+        return $this->requests;
+    }
+
     public function getVersion(): int
     {
         return $this->version;
@@ -99,6 +109,11 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrinePro
         $loader->loadInto(
             $this->tasks,
             $this->entity->getTasks()->getCollection(),
+            $this
+        );
+        $loader->loadInto(
+            $this->requests,
+            $this->entity->getRequests()->getCollection(),
             $this
         );
     }

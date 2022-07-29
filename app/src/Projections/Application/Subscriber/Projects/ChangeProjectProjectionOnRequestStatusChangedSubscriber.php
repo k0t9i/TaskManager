@@ -28,7 +28,7 @@ final class ChangeProjectProjectionOnRequestStatusChangedSubscriber implements E
     {
         $status = RequestStatus::createFromScalar((int) $event->status);
         if (!$status->isPending()) {
-            $projections = $this->projectionRepository->findAllById($event->projectId);
+            $projections = $this->projectionRepository->findAllById($event->aggregateId);
 
             foreach ($projections as $projection) {
                 $projection->decrementPendingRequestsCount();

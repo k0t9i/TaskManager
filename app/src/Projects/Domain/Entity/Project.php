@@ -7,6 +7,8 @@ use App\Projects\Domain\Exception\InsufficientPermissionsToChangeProjectParticip
 use App\Projects\Domain\ValueObject\ProjectInformation;
 use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Projects\Domain\ValueObject\ProjectTasks;
+use App\Projects\Domain\ValueObject\RequestId;
+use App\Projects\Domain\ValueObject\Requests;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Event\Projects\ProjectInformationWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
@@ -14,6 +16,8 @@ use App\Shared\Domain\Event\Projects\ProjectParticipantWasAddedEvent;
 use App\Shared\Domain\Event\Projects\ProjectParticipantWasRemovedEvent;
 use App\Shared\Domain\Event\Projects\ProjectStatusWasChangedEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
+use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
+use App\Shared\Domain\Event\Requests\RequestWasCreatedEvent;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Projects\ActiveProjectStatus;
@@ -32,7 +36,8 @@ final class Project extends AggregateRoot
         private ProjectStatus      $status,
         private Owner              $owner,
         private Participants       $participants,
-        private ProjectTasks       $tasks
+        private ProjectTasks       $tasks,
+        private Requests           $requests
     ) {
     }
 
@@ -48,7 +53,8 @@ final class Project extends AggregateRoot
             $status,
             $owner,
             new Participants(),
-            new ProjectTasks()
+            new ProjectTasks(),
+            new Requests()
         );
 
         $project->registerEvent(new ProjectWasCreatedEvent(
@@ -143,21 +149,60 @@ final class Project extends AggregateRoot
         ));
     }
 
+    public function createRequest(
+        RequestId $id,
+        UserId    $userId,
+    ): Request {
+        $this->status->ensureAllowsModification();
+
+        $request = Request::create($id, $userId);
+
+        $this->ensureIsUserAlreadyInProject($userId);
+        $this->requests->ensureUserDoesNotHavePendingRequest($userId, $this->id);
+
+        $this->requests = $this->requests->add($request);
+
+        $this->registerEvent(new RequestWasCreatedEvent(
+            $this->id->value,
+            $request->getId()->value,
+            $userId->value,
+            (string) $request->getStatus()->getScalar(),
+            $request->getChangeDate()->getValue()
+        ));
+
+        return $request;
+    }
+
+    public function changeRequestStatus(
+        RequestId $id,
+        RequestStatus $status,
+        UserId $currentUserId
+    ): void {
+        $this->status->ensureAllowsModification();
+        $this->owner->ensureIsOwner($currentUserId);
+        $this->requests->ensureRequestExists($id);
+
+        /** @var Request $request */
+        $request = $this->requests->get($id);
+        $request->changeStatus($status);
+
+        if ($status->isConfirmed()) {
+            $this->addParticipant($request->getUserId());
+        }
+
+        $this->registerEvent(new RequestStatusWasChangedEvent(
+            $this->id->value,
+            $request->getId()->value,
+            $request->getUserId()->value,
+            (string) $request->getStatus()->getScalar(),
+            $request->getChangeDate()->getValue()
+        ));
+    }
+
     public function createTask(ProjectTaskId $id, TaskId $taskId, UserId $ownerId): void
     {
         $task = new ProjectTask($id, $taskId, $ownerId);
         $this->tasks = $this->tasks->add($task);
-    }
-
-    public function addParticipantAfterConfirmation(UserId $participantId, RequestStatus $status): void
-    {
-        if ($status->isConfirmed()) {
-            $this->participants = $this->participants->add($participantId);
-            $this->registerEvent(new ProjectParticipantWasAddedEvent(
-                $this->id->value,
-                $participantId->value
-            ));
-        }
     }
 
     public function getId(): ProjectId
@@ -188,5 +233,25 @@ final class Project extends AggregateRoot
     public function getTasks(): ProjectTasks
     {
         return $this->tasks;
+    }
+
+    public function getRequests(): Requests
+    {
+        return $this->requests;
+    }
+
+    private function ensureIsUserAlreadyInProject(UserId $userId): void
+    {
+        $this->participants->ensureIsNotParticipant($userId);
+        $this->owner->ensureIsNotOwner($userId);
+    }
+
+    private function addParticipant(UserId $participantId): void
+    {
+        $this->participants = $this->participants->add($participantId);
+        $this->registerEvent(new ProjectParticipantWasAddedEvent(
+            $this->id->value,
+            $participantId->value
+        ));
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\RequestProxy" table="requests">
+        <id name="id" length="36" />
+        <field name="userId" length="36" />
+        <field name="status" type="integer" />
+        <field name="changeDate" type="datetimetz" length="6" />
+        <many-to-one field="project" target-entity="App\Projects\Infrastructure\Persistence\Doctrine\Proxy\ProjectProxy" inversed-by="requests" />
+        <indexes>
+            <index columns="user_id" />
+            <index columns="project_id" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

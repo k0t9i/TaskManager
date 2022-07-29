@@ -41,7 +41,7 @@ final class CreateOnRequestCreated implements EventSubscriberInterface
 
         $projection = new RequestProjection(
             $event->requestId,
-            $event->projectId,
+            $event->aggregateId,
             (int) $event->status,
             new DateTime($event->changeDate),
             $event->userId,

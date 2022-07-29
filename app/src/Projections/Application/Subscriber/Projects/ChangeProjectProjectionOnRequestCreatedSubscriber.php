@@ -25,7 +25,7 @@ final class ChangeProjectProjectionOnRequestCreatedSubscriber implements EventSu
 
     public function __invoke(RequestWasCreatedEvent $event): void
     {
-        $projections = $this->projectionRepository->findAllById($event->projectId);
+        $projections = $this->projectionRepository->findAllById($event->aggregateId);
 
         foreach ($projections as $projection) {
             $projection->incrementPendingRequestsCount();

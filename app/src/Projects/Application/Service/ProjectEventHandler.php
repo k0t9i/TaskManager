@@ -9,11 +9,9 @@ use App\Projects\Domain\ValueObject\ProjectTaskId;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Event\DomainEvent;
-use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
-use App\Shared\Domain\ValueObject\Requests\RequestStatus;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 
@@ -34,10 +32,6 @@ final class ProjectEventHandler
             $aggregateRoot = $this->getProject($event->projectId);
             $this->createTask($aggregateRoot, $event);
         }
-        elseif ($event instanceof RequestStatusWasChangedEvent) {
-            $aggregateRoot = $this->getProject($event->projectId);
-            $this->addParticipantAfterConfirmation($aggregateRoot, $event);
-        }
 
         if ($aggregateRoot !== null) {
             $this->repository->save($aggregateRoot);
@@ -52,14 +46,6 @@ final class ProjectEventHandler
             new TaskId($event->taskId),
             new UserId($event->ownerId)
         );
-    }
-
-    private function addParticipantAfterConfirmation(Project $aggregateRoot, RequestStatusWasChangedEvent $event): void
-    {
-        $status = RequestStatus::createFromScalar((int)$event->status);
-        if ($status->isConfirmed()) {
-            $aggregateRoot->addParticipantAfterConfirmation(new UserId($event->userId), $status);
-        }
     }
 
     private function getProject(string $projectId): Project

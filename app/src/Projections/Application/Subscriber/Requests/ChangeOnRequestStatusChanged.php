@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Projections\Application\Subscriber\Requests;
 
 use App\Projections\Domain\Repository\RequestProjectionRepositoryInterface;
-use App\Requests\Domain\Exception\RequestNotExistsException;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Requests\RequestStatusWasChangedEvent;
+use App\Shared\Domain\Exception\RequestNotExistsException;
 use DateTime;
 use Exception;
 
