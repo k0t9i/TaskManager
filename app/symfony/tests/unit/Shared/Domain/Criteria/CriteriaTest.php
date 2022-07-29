@@ -70,7 +70,7 @@ class CriteriaTest extends TestCase
             if (is_array($value)) {
                 $operator = ExpressionOperand::OPERATOR_IN;
             }
-            $expression->andOperand(new ExpressionOperand($name, $operator, $value));
+            $expression->andOperand(new ExpressionOperand((string) $name, $operator, $value));
         }
 
         $criteria->loadScalarFilters($scalarFilters);
@@ -93,7 +93,7 @@ class CriteriaTest extends TestCase
         }
 
         foreach ($scalarOrders as $name => $isAsc) {
-            $orders[] = new Order($name, $isAsc);
+            $orders[] = new Order((string) $name, $isAsc);
         }
 
         $criteria->loadScalarOrders($scalarOrders);

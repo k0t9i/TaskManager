@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\unit\Users\Domain\ValueObject;
+namespace App\Tests\unit\Shared\Domain\ValueObject\Users;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
-use App\Shared\Domain\ValueObject\Users\UserLastname;
+use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class UserLastnameTest extends TestCase
+class UserFirstnameTest extends TestCase
 {
     private Generator $faker;
 
@@ -23,8 +23,8 @@ class UserLastnameTest extends TestCase
         $random = $this->faker->text(255);
         $maxPossible = $this->faker->regexify('.{255}');
 
-        $randomObject = new UserLastname($random);
-        $maxPossibleObject = new UserLastname($maxPossible);
+        $randomObject = new UserFirstname($random);
+        $maxPossibleObject = new UserFirstname($maxPossible);
 
         self::assertEquals($random, $randomObject->value);
         self::assertEquals($maxPossible, $maxPossibleObject->value);
@@ -33,15 +33,15 @@ class UserLastnameTest extends TestCase
     public function testEmpty(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('"User lastname" cannot be blank.');
-        new UserLastname('');
+        self::expectExceptionMessage('"User firstname" cannot be blank.');
+        new UserFirstname('');
     }
 
     public function testInvalidMaxLength(): void
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('"User lastname" should contain at most 255 characters.');
-        new UserLastname($this->faker->regexify('.{256}'));
+        self::expectExceptionMessage('"User firstname" should contain at most 255 characters.');
+        new UserFirstname($this->faker->regexify('.{256}'));
     }
 }
 

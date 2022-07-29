@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Tests\unit\Shared\Domain\ValueObject;
+namespace App\Tests\unit\Shared\Domain\ValueObject\Users;
 
 use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
