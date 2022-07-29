@@ -31,7 +31,7 @@ class SymfonyPasswordHasherTest extends TestCase
         $this->hasher = new SymfonyPasswordHasher($this->symfonyHasher);
     }
 
-    public function testVerifyPassword()
+    public function testVerifyPassword(): void
     {
         $value = $this->faker->regexify('.{20}');
         $return = $this->faker->regexify('.{20}');
@@ -44,7 +44,7 @@ class SymfonyPasswordHasherTest extends TestCase
         self::assertEquals($return, $this->hasher->hashPassword($value));
     }
 
-    public function testHashPassword()
+    public function testHashPassword(): void
     {
         $hashed = $this->faker->regexify('.{20}');
         $plain = $this->faker->regexify('.{20}');

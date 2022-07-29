@@ -31,7 +31,7 @@ class RamseyUuid4GeneratorTest extends TestCase
         $this->generator = new RamseyUuid4Generator($this->uuid);
     }
 
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $return = $this->faker->regexify('.{20}');
         $this->uuid
