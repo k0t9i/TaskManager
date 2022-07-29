@@ -1,24 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace unit\Shared\Domain\Criteria;
+namespace App\Tests\unit\Shared\Domain\Criteria;
 
 use App\Shared\Domain\Criteria\ExpressionOperand;
 use App\Shared\Domain\Exception\LogicException;
-use Faker\Factory;
-use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
 class ExpressionOperandTest extends TestCase
 {
-    private Generator $faker;
-
-    protected function setUp(): void
-    {
-        $this->faker = Factory::create();
-    }
-
     public function testValidOperatorAndValue()
     {
         $operators = [
@@ -33,10 +24,7 @@ class ExpressionOperandTest extends TestCase
         ];
 
         foreach ($operators as $operator => $value) {
-            $property = $this->faker->regexify('.{1,20}');
-            $operatorWithSpaces = $this->faker->regexify(' {1,5}') . $operator .
-                $this->faker->regexify(' {1,20}');
-            $operand = new ExpressionOperand($property, $operatorWithSpaces, $value);
+            [$operand, $property, $operator, $value] = Helper::getRandomOperand($operator);
 
             static::assertEquals($operand->property, $property);
             static::assertEquals($operand->operator, $operator);
