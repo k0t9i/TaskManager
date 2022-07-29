@@ -8,9 +8,9 @@ use App\Shared\Domain\ValueObject\Status;
 
 abstract class RequestStatus extends Status
 {
-    private const STATUS_PENDING = 0;
-    private const STATUS_CONFIRMED = 1;
-    private const STATUS_REJECTED = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_CONFIRMED = 1;
+    public const STATUS_REJECTED = 2;
 
     public function allowsModification(): bool
     {

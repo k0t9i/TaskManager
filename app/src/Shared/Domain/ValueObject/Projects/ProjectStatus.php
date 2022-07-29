@@ -8,8 +8,8 @@ use App\Shared\Domain\ValueObject\Status;
 
 abstract class ProjectStatus extends Status
 {
-    private const STATUS_CLOSED = 0;
-    private const STATUS_ACTIVE = 1;
+    public const STATUS_CLOSED = 0;
+    public const STATUS_ACTIVE = 1;
 
     public function getScalar(): int
     {
