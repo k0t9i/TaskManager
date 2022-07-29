@@ -10,7 +10,7 @@ use Throwable;
 
 class ExpressionOperandTest extends TestCase
 {
-    public function testValidOperatorAndValue()
+    public function testValidOperatorAndValue(): void
     {
         $operators = [
             ExpressionOperand::OPERATOR_EQ => 0,
@@ -32,7 +32,7 @@ class ExpressionOperandTest extends TestCase
         }
     }
 
-    public function testInvalidValidOperator()
+    public function testInvalidValidOperator(): void
     {
         $operator = 'invalid operator';
 
@@ -41,7 +41,7 @@ class ExpressionOperandTest extends TestCase
         new ExpressionOperand('property', $operator, 0);
     }
 
-    public function testInvalidValidValue()
+    public function testInvalidValidValue(): void
     {
         $operators = [
             ExpressionOperand::OPERATOR_EQ => [],

@@ -17,7 +17,7 @@ class ExpressionTest extends TestCase
         $this->faker = Factory::create();
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $emptyExpression = new Expression();
         [$operand] = Helper::getRandomOperand();
@@ -28,12 +28,12 @@ class ExpressionTest extends TestCase
         self::assertEquals($result, $expression->getOperands());
     }
 
-    public function testAddOperands()
+    public function testAddOperands(): void
     {
         $expression = new Expression();
 
         $expected = [];
-        for ($i = 0; $i < mt_rand(1, 10); $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $operator = $this->faker->randomElement([Expression::OPERATOR_OR, Expression::OPERATOR_AND]);
             [$operand] = Helper::getRandomOperand();
             $expected[] = [$operator, $operand];
