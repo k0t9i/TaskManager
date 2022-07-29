@@ -44,7 +44,7 @@ final class ExpressionOperand
     private function ensureIsValidOperator(string $operator): void
     {
         if (!in_array($operator, self::$operators)) {
-            throw new LogicException(sprintf('Invalid criteria operator "%s', $operator));
+            throw new LogicException(sprintf('Invalid criteria operator "%s"', $operator));
         }
     }
 
@@ -52,7 +52,7 @@ final class ExpressionOperand
     {
         $isArrayOperator = in_array($operator, [self::OPERATOR_IN, self::OPERATOR_NIN]);
         if ($isArrayOperator && !is_array($value) || !$isArrayOperator && is_array($value)) {
-            throw new LogicException(sprintf('Invalid criteria value type "%s', gettype($value)));
+            throw new LogicException(sprintf('Invalid criteria value type "%s"', gettype($value)));
         }
     }
 }
