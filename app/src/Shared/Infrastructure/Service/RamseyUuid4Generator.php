@@ -5,12 +5,19 @@ namespace App\Shared\Infrastructure\Service;
 
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class RamseyUuid4Generator implements UuidGeneratorInterface
 {
+    public function __construct(private readonly ?UuidInterface $uuid = null)
+    {
+        if ($this->uuid === null) {
+            $this->uuid = Uuid::uuid4();
+        }
+    }
 
     public function generate(): string
     {
-        return Uuid::uuid4()->toString();
+        return $this->uuid->toString();
     }
 }
