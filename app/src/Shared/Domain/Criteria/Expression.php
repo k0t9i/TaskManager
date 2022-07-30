@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Criteria;
@@ -12,7 +13,7 @@ final class Expression
 
     public function __construct(?ExpressionOperand $operand = null)
     {
-        if ($operand !== null) {
+        if (null !== $operand) {
             $this->andOperand($operand);
         }
     }
@@ -21,7 +22,7 @@ final class Expression
     {
         $this->operands[] = [
             self::OPERATOR_AND,
-            $operand
+            $operand,
         ];
         return $this;
     }
@@ -30,7 +31,7 @@ final class Expression
     {
         $this->operands[] = [
             self::OPERATOR_OR,
-            $operand
+            $operand,
         ];
         return $this;
     }

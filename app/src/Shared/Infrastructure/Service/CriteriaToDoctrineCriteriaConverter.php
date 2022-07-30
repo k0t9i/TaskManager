@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -19,7 +20,7 @@ final class CriteriaToDoctrineCriteriaConverter implements CriteriaToDoctrineCri
          * @var ExpressionOperand $operand
          */
         foreach ($criteria->getExpression()->getOperands() as [$operator, $operand]) {
-            if ($operator === Expression::OPERATOR_AND) {
+            if (Expression::OPERATOR_AND === $operator) {
                 $result->andWhere(new Comparison($operand->property, $operand->operator, $operand->value));
             } else {
                 $result->orWhere(new Comparison($operand->property, $operand->operator, $operand->value));

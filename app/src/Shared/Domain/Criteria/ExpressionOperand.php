@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Criteria;
@@ -26,14 +27,14 @@ final class ExpressionOperand
         self::OPERATOR_LT,
         self::OPERATOR_LTE,
         self::OPERATOR_IN,
-        self::OPERATOR_NIN
+        self::OPERATOR_NIN,
     ];
 
     public function __construct(
         public readonly string $property,
         string $operator,
         public readonly mixed $value
-    ){
+    ) {
         $operator = trim($operator);
         $operator = mb_strtoupper($operator);
         $this->ensureIsValidOperator($operator);

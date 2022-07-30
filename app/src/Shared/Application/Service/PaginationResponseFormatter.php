@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Application\Service;
@@ -16,7 +17,7 @@ class PaginationResponseFormatter implements PaginationResponseFormatterInterfac
                 'prev' => $pagination->prev,
                 'next' => $pagination->next,
             ],
-            'items' => $pagination->items
+            'items' => $pagination->items,
         ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Exception;
@@ -7,7 +8,7 @@ final class ProjectNotExistException extends DomainException
 {
     public function __construct(?string $projectId = null)
     {
-        $message = $projectId !== null ? sprintf(
+        $message = null !== $projectId ? sprintf(
             'Project "%s" doesn\'t exist',
             $projectId
         ) : 'Project doesn\'t exist';

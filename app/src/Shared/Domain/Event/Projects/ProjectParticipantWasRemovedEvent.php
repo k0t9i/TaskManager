@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Event\Projects;
@@ -28,7 +29,7 @@ final class ProjectParticipantWasRemovedEvent extends DomainEvent
     public function toPrimitives(): array
     {
         return [
-            'participantId' => $this->participantId
+            'participantId' => $this->participantId,
         ];
     }
 }

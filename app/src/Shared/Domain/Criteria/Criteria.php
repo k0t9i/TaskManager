@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Criteria;
@@ -9,9 +10,7 @@ final class Criteria
 
     /**
      * @param ExpressionOperand[] $filters
-     * @param Order[] $orders
-     * @param int|null $offset
-     * @param int|null $limit
+     * @param Order[]             $orders
      */
     public function __construct(
         array $filters = [],

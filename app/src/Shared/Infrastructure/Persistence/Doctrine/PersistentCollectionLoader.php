@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Persistence\Doctrine;
@@ -27,8 +28,8 @@ class PersistentCollectionLoader implements PersistentCollectionLoaderInterface
 
         foreach ($source->getItems() as $child) {
             $proxy = $proxies[$child->getHash()];
-            if ($proxy === null) {
-                //FIXME how do I know that the constructor has these arguments
+            if (null === $proxy) {
+                // FIXME how do I know that the constructor has these arguments
                 $proxy = new $class($owner, $child);
                 $target->add($proxy);
             }

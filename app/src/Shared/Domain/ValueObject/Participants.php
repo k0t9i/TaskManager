@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
@@ -14,7 +15,7 @@ final class Participants
 
     public function __construct(?UserIdCollection $items = null)
     {
-        if ($items === null) {
+        if (null === $items) {
             $this->participants = new UserIdCollection();
         } else {
             $this->participants = $items;

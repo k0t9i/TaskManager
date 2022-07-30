@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
@@ -29,10 +30,6 @@ abstract class Uuid implements Stringable, Hashable
         return $this->value;
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         return get_class($this) === get_class($other) && $this->getHash() === $other->getHash();

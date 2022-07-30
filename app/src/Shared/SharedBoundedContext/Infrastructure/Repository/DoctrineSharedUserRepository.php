@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\SharedBoundedContext\Infrastructure\Repository;
@@ -22,12 +23,11 @@ final class DoctrineSharedUserRepository implements SharedUserRepositoryInterfac
     public function findById(string $id): ?SharedUser
     {
         return $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
     /**
-     * @param SharedUser $user
      * @throws Exception
      */
     public function save(SharedUser $user): void

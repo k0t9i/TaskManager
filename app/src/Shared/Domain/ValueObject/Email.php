@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
@@ -10,9 +11,7 @@ class Email extends StringValueObject
     protected function ensureValidEmail(string $attributeName): void
     {
         if (!empty($this->value) && !filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException(sprintf(
-                '"%s" is not a valid email address.', $attributeName
-            ));
+            throw new InvalidArgumentException(sprintf('"%s" is not a valid email address.', $attributeName));
         }
     }
 

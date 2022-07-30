@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -11,7 +12,7 @@ class RamseyUuid4Generator implements UuidGeneratorInterface
 {
     public function __construct(private ?UuidInterface $uuid = null)
     {
-        if ($this->uuid === null) {
+        if (null === $this->uuid) {
             $this->uuid = Uuid::uuid4();
         }
     }

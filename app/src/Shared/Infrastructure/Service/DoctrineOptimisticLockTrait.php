@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -13,14 +14,12 @@ use Doctrine\ORM\UnitOfWork;
 trait DoctrineOptimisticLockTrait
 {
     /**
-     * @param object $proxy
-     * @param int $version
      * @throws OptimisticLockException
      */
     private function lock(EntityManagerInterface $entityManager, DoctrineVersionedProxyInterface $proxy): void
     {
         $uow = $entityManager->getUnitOfWork();
-        if ($uow->getEntityState($proxy) === UnitOfWork::STATE_MANAGED) {
+        if (UnitOfWork::STATE_MANAGED === $uow->getEntityState($proxy)) {
             $version = $proxy->getVersion();
             $entityManager->refresh($proxy);
             try {

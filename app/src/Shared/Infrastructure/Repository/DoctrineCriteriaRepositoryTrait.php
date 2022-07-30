@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Repository;
@@ -22,9 +23,6 @@ trait DoctrineCriteriaRepositoryTrait
     }
 
     /**
-     * @param EntityRepository $repository
-     * @param Criteria $criteria
-     * @return array
      * @throws QueryException
      */
     private function findAllByCriteriaInternal(EntityRepository $repository, Criteria $criteria): array
@@ -38,10 +36,6 @@ trait DoctrineCriteriaRepositoryTrait
     }
 
     /**
-     * @param EntityRepository $repository
-     * @param Criteria $criteria
-     * @param string $column
-     * @return int
      * @throws QueryException
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -64,8 +58,6 @@ trait DoctrineCriteriaRepositoryTrait
     }
 
     /**
-     * @param EntityRepository $repository
-     * @param Criteria $criteria
      * @throws NonUniqueResultException
      * @throws QueryException
      */

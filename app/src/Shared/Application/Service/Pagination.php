@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Application\Service;
@@ -25,7 +26,7 @@ final class Pagination
 
     public function getTotalPageCount(): int
     {
-        return (int)ceil($this->totalCount / self::PAGE_SIZE);
+        return (int) ceil($this->totalCount / self::PAGE_SIZE);
     }
 
     public function getCurrentPage(): int
@@ -47,7 +48,7 @@ final class Pagination
 
     private function ensureIsValidCurrentPage(): void
     {
-        if ($this->getTotalPageCount() === 0 and $this->currentPage === 1) {
+        if (0 === $this->getTotalPageCount() and 1 === $this->currentPage) {
             return;
         }
         if ($this->currentPage > $this->getTotalPageCount() || $this->currentPage < 1) {

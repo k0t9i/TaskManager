@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Application\Service;
@@ -21,7 +22,7 @@ final class RequestCriteriaBuilder implements RequestCriteriaBuilderInterface
             foreach ($rawOrders as $rawOrder) {
                 $first = substr($rawOrder, 0, 1);
                 $name = in_array($first, ['-', '+']) ? substr($rawOrder, 1) : $rawOrder;
-                $orders[$name] = $first !== '-';
+                $orders[$name] = '-' !== $first;
             }
         }
 

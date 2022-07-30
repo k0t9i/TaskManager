@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
@@ -18,27 +19,21 @@ abstract class StringValueObject implements Hashable
     protected function ensureValidMaxLength(string $attributeName, int $maxLength): void
     {
         if (mb_strlen($this->value) > $maxLength) {
-            throw new InvalidArgumentException(sprintf(
-                '"%s" should contain at most %s characters.', $attributeName, $maxLength
-            ));
+            throw new InvalidArgumentException(sprintf('"%s" should contain at most %s characters.', $attributeName, $maxLength));
         }
     }
 
     protected function ensureValidMinLength(string $attributeName, int $minLength): void
     {
         if (mb_strlen($this->value) < $minLength) {
-            throw new InvalidArgumentException(sprintf(
-                '"%s" should contain at least %s characters.', $attributeName, $minLength
-            ));
+            throw new InvalidArgumentException(sprintf('"%s" should contain at least %s characters.', $attributeName, $minLength));
         }
     }
 
     protected function ensureNotEmpty(string $attributeName): void
     {
         if (empty($this->value)) {
-            throw new InvalidArgumentException(sprintf(
-                '"%s" cannot be blank.', $attributeName
-            ));
+            throw new InvalidArgumentException(sprintf('"%s" cannot be blank.', $attributeName));
         }
     }
 
@@ -47,10 +42,6 @@ abstract class StringValueObject implements Hashable
         return $this->value;
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         if (get_class($this) !== get_class($other)) {

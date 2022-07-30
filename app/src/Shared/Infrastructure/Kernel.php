@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure;
@@ -9,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use function dirname;
 
 class Kernel extends BaseKernel
 {
@@ -23,19 +23,21 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
-        return dirname(__DIR__, 3) . '/symfony';
+        return dirname(__DIR__, 3).'/symfony';
     }
 
     public function getCacheDir(): string
     {
         $dir = $_SERVER['APP_CACHE_DIR'];
-        return $this->getProjectDir() . '/var/cache/' . $dir . '/' . $this->environment;
+
+        return $this->getProjectDir().'/var/cache/'.$dir.'/'.$this->environment;
     }
 
     public function getLogDir(): string
     {
         $dir = $_SERVER['APP_LOG_DIR'];
-        return $this->getProjectDir() . '/var/log/' . $dir;
+
+        return $this->getProjectDir().'/var/log/'.$dir;
     }
 
     protected function configureContainer(ContainerConfigurator $container): void
@@ -55,7 +57,7 @@ class Kernel extends BaseKernel
      */
     private function getBundlesPath(): string
     {
-        return $this->getConfigDir() . '/shared/bundles.php';
+        return $this->getConfigDir().'/shared/bundles.php';
     }
 
     /**
@@ -63,31 +65,31 @@ class Kernel extends BaseKernel
      */
     private function getConfigDir(): string
     {
-        return dirname($this->getProjectDir()) . '/config';
+        return dirname($this->getProjectDir()).'/config';
     }
 
     private function configureContainerInDir(ContainerConfigurator $container, string $dir): void
     {
-        $configDir = $this->getConfigDir() . '/' . $dir;
+        $configDir = $this->getConfigDir().'/'.$dir;
 
-        $container->import($configDir . '/{packages}/*.yaml');
-        $container->import($configDir . '/{packages}/'.$this->environment.'/*.yaml');
+        $container->import($configDir.'/{packages}/*.yaml');
+        $container->import($configDir.'/{packages}/'.$this->environment.'/*.yaml');
 
-        if (is_file($configDir . '/services.yaml')) {
-            $container->import($configDir . '/services.yaml');
-            $container->import($configDir . '/{services}_'.$this->environment.'.yaml');
+        if (is_file($configDir.'/services.yaml')) {
+            $container->import($configDir.'/services.yaml');
+            $container->import($configDir.'/{services}_'.$this->environment.'.yaml');
         }
     }
 
     private function configureRoutesInDir(RoutingConfigurator $routes, string $dir): void
     {
-        $configDir = $this->getConfigDir() . '/' . $dir;
+        $configDir = $this->getConfigDir().'/'.$dir;
 
-        $routes->import($configDir . '/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($configDir . '/{routes}/*.yaml');
+        $routes->import($configDir.'/{routes}/'.$this->environment.'/*.yaml');
+        $routes->import($configDir.'/{routes}/*.yaml');
 
-        if (is_file($configDir . '/routes.yaml')) {
-            $routes->import($configDir . '/routes.yaml');
+        if (is_file($configDir.'/routes.yaml')) {
+            $routes->import($configDir.'/routes.yaml');
         }
     }
 }

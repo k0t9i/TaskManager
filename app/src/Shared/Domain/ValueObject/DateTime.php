@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject;
@@ -11,7 +12,7 @@ use Stringable;
 
 class DateTime implements Stringable
 {
-    //ATOM with microseconds
+    // ATOM with microseconds
     public const DEFAULT_FORMAT = 'Y-m-d\TH:i:s.uP';
 
     private DateTimeImmutable $dateTime;

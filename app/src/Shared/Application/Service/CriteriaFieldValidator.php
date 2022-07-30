@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Application\Service;
@@ -13,8 +14,6 @@ use ReflectionException;
 final class CriteriaFieldValidator implements CriteriaFieldValidatorInterface
 {
     /**
-     * @param Criteria $criteria
-     * @param string $class
      * @throws ReflectionException
      */
     public function validate(Criteria $criteria, string $class): void
@@ -40,6 +39,6 @@ final class CriteriaFieldValidator implements CriteriaFieldValidatorInterface
     {
         $property = $reflection->hasProperty($propertyName) ? $reflection->getProperty($propertyName) : null;
         // Only scalar types
-        return $property !== null && !class_exists($property->getType()->getName());
+        return null !== $property && !class_exists($property->getType()->getName());
     }
 }

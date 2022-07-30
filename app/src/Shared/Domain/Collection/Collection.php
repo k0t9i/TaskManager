@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\Collection;
@@ -32,17 +33,11 @@ abstract class Collection implements CollectionInterface
         return $this->items;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function count(): int
     {
         return count($this->items);
@@ -93,10 +88,7 @@ abstract class Collection implements CollectionInterface
     private function ensureIsValidType(mixed $value): void
     {
         if (!$value instanceof Hashable) {
-            throw new LogicException(sprintf(
-                'Object must be of type "%s"',
-                Hashable::class
-            ));
+            throw new LogicException(sprintf('Object must be of type "%s"', Hashable::class));
         }
         if (!is_a($value, $this->getType())) {
             throw new LogicException(sprintf('Object must be of type "%s"', $this->getType()));

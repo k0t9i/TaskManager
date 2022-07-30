@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject\Projects;
@@ -25,10 +26,10 @@ abstract class ProjectStatus extends Status
 
     public static function createFromScalar(int $status): static
     {
-        if ($status === self::STATUS_CLOSED) {
+        if (self::STATUS_CLOSED === $status) {
             return new ClosedProjectStatus();
         }
-        if ($status === self::STATUS_ACTIVE) {
+        if (self::STATUS_ACTIVE === $status) {
             return new ActiveProjectStatus();
         }
 
@@ -37,6 +38,6 @@ abstract class ProjectStatus extends Status
 
     public function isClosed(): bool
     {
-        return $this->getScalar() === self::STATUS_CLOSED;
+        return self::STATUS_CLOSED === $this->getScalar();
     }
 }

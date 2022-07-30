@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -18,9 +19,8 @@ final class MapperCompilerPass implements CompilerPassInterface
             $definition = $container->getDefinition($id);
             foreach ($tags as $tag) {
                 if (!isset($tag['target_tag'])) {
-                    throw new InvalidConfigurationException(
-                        sprintf('The tag "%s" must have target_tag field.', self::TARGET_TAG)
-                    );
+                    $message = sprintf('The tag "%s" must have target_tag field.', self::TARGET_TAG);
+                    throw new InvalidConfigurationException($message);
                 }
                 $target = $tag['target_tag'];
                 $childServices = $container->findTaggedServiceIds($target);

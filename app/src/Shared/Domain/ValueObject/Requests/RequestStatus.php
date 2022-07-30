@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Domain\ValueObject\Requests;
@@ -34,13 +35,13 @@ abstract class RequestStatus extends Status
 
     public static function createFromScalar(int $status): static
     {
-        if ($status === self::STATUS_PENDING) {
+        if (self::STATUS_PENDING === $status) {
             return new PendingRequestStatus();
         }
-        if ($status === self::STATUS_CONFIRMED) {
+        if (self::STATUS_CONFIRMED === $status) {
             return new ConfirmedRequestStatus();
         }
-        if ($status === self::STATUS_REJECTED) {
+        if (self::STATUS_REJECTED === $status) {
             return new RejectedRequestStatus();
         }
 
@@ -49,11 +50,11 @@ abstract class RequestStatus extends Status
 
     public function isPending(): bool
     {
-        return $this->getScalar() === self::STATUS_PENDING;
+        return self::STATUS_PENDING === $this->getScalar();
     }
 
     public function isConfirmed(): bool
     {
-        return $this->getScalar() === self::STATUS_CONFIRMED;
+        return self::STATUS_CONFIRMED === $this->getScalar();
     }
 }

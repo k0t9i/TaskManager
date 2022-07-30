@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -15,7 +16,7 @@ final class DomainExceptionToHttpStatusCodeMapper
         DomainException::CODE_UNAUTHORIZED => Response::HTTP_UNAUTHORIZED,
         DomainException::CODE_FORBIDDEN => Response::HTTP_FORBIDDEN,
         DomainException::CODE_NOT_FOUND => Response::HTTP_NOT_FOUND,
-        DomainException::CODE_UNPROCESSABLE_ENTITY => Response::HTTP_UNPROCESSABLE_ENTITY
+        DomainException::CODE_UNPROCESSABLE_ENTITY => Response::HTTP_UNPROCESSABLE_ENTITY,
     ];
 
     public function getHttpStatusCode(Throwable $exception): int

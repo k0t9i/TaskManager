@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -33,7 +34,7 @@ final class ExceptionListener
     private function getParentDomainExceptionIfExists(Throwable $exception): Throwable
     {
         $result = $exception;
-        while ($result !== null) {
+        while (null !== $result) {
             if ($result instanceof DomainException) {
                 return $result;
             }

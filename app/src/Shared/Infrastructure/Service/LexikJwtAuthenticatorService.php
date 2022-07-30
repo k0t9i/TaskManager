@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Service;
@@ -28,9 +29,9 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
         private readonly SharedUserRepositoryInterface $userRepository,
         private $path
     ) {
-        $this->pathRegexp = '/' . str_replace('/', '\/', $this->path) . '/';
+        $this->pathRegexp = '/'.str_replace('/', '\/', $this->path).'/';
         try {
-            preg_match($this->pathRegexp,'');
+            preg_match($this->pathRegexp, '');
         } catch (ErrorException $e) {
             throw new LogicException(sprintf('Invalid path regexp "%s"', $this->path), 0, $e);
         }
@@ -60,7 +61,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
 
         try {
             $token = $this->tokenExtractor->extract($event->getRequest());
-            $token = $token === false ? '' : $token;
+            $token = false === $token ? '' : $token;
 
             try {
                 if (!$payload = $this->tokenManager->parse($token)) {
@@ -81,7 +82,7 @@ class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, Eve
 
             $id = $payload[$idClaim];
             $user = $this->userRepository->findById($id);
-            if ($user === null) {
+            if (null === $user) {
                 throw new AuthenticationException(sprintf('User "%s" doesn\'t exist', $id));
             }
 
