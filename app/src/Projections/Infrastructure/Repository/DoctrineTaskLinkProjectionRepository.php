@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Infrastructure\Repository;
@@ -19,7 +20,7 @@ class DoctrineTaskLinkProjectionRepository implements TaskLinkProjectionReposito
     {
         return $this->getRepository()->findOneBy([
             'id' => $id,
-            'toId' => $toId
+            'toId' => $toId,
         ]);
     }
 

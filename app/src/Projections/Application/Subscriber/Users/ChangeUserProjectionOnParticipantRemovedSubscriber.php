@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Users;
@@ -27,7 +28,7 @@ final class ChangeUserProjectionOnParticipantRemovedSubscriber implements EventS
     public function __invoke(ProjectParticipantWasRemovedEvent $event): void
     {
         $projection = $this->userRepository->findByUserIdAndProjectId($event->participantId, $event->aggregateId);
-        if ($projection === null) {
+        if (null === $projection) {
             throw new UserNotExistException($event->participantId);
         }
 

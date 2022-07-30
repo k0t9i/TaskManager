@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Tasks;
@@ -35,7 +36,7 @@ final class CreateTaskProjectionOnTaskCreated implements EventSubscriberInterfac
     public function __invoke(TaskWasCreatedEvent $event): void
     {
         $user = $this->userRepository->findByUserId($event->ownerId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($event->ownerId);
         }
 

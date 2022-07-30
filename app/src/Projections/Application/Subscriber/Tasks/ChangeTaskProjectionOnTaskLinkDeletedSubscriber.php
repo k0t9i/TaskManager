@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Tasks;
@@ -27,7 +28,7 @@ final class ChangeTaskProjectionOnTaskLinkDeletedSubscriber implements EventSubs
     public function __invoke(TaskLinkWasDeletedEvent $event): void
     {
         $projection = $this->projectionRepository->findById($event->fromTaskId);
-        if ($projection === null) {
+        if (null === $projection) {
             throw new TaskNotExistException($event->fromTaskId);
         }
 

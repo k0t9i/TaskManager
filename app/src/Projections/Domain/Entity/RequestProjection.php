@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Domain\Entity;
@@ -7,21 +8,15 @@ use DateTime;
 
 final class RequestProjection
 {
-    /**
-     * create
-     * change status
-     * change project owner
-     * change owner profile
-     */
     public function __construct(
-        private string   $id,
-        private string   $projectId,
-        private int      $status,
+        private string $id,
+        private string $projectId,
+        private int $status,
         private DateTime $changeDate,
-        private string   $userId,
-        private string   $userFirstname,
-        private string   $userLastname,
-        private string   $userEmail
+        private string $userId,
+        private string $userFirstname,
+        private string $userLastname,
+        private string $userEmail
     ) {
     }
 

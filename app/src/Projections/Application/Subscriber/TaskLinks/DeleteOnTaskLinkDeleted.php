@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\TaskLinks;
@@ -31,7 +32,7 @@ final class DeleteOnTaskLinkDeleted implements EventSubscriberInterface
     public function __invoke(TaskLinkWasDeletedEvent $event): void
     {
         $projection = $this->repository->findById($event->fromTaskId, $event->toTaskId);
-        if ($projection === null) {
+        if (null === $projection) {
             throw new TaskLinkNotExistException($event->fromTaskId, $event->toTaskId);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Users;
@@ -29,7 +30,7 @@ final class ChangeUserProjectionOnProjectCreatedSubscriber implements EventSubsc
     public function __invoke(ProjectWasCreatedEvent $event): void
     {
         $oldProjection = $this->userRepository->findByUserId($event->ownerId);
-        if ($oldProjection === null) {
+        if (null === $oldProjection) {
             throw new UserNotExistException($event->ownerId);
         }
         $projection = $oldProjection->createCopyForProject(

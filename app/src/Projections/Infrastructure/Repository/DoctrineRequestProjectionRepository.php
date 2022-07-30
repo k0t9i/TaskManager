@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Infrastructure\Repository;
@@ -18,14 +19,14 @@ class DoctrineRequestProjectionRepository implements RequestProjectionRepository
     public function findById(string $id): ?RequestProjection
     {
         return $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
     public function findByUserId(string $id): array
     {
         return $this->getRepository()->findBy([
-            'userId' => $id
+            'userId' => $id,
         ]);
     }
 

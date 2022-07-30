@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Requests;
@@ -33,7 +34,7 @@ final class ChangeOnUserProfileChanged implements EventSubscriberInterface
     public function __invoke(UserProfileWasChangedEvent $event): void
     {
         $user = $this->userRepository->findByUserId($event->aggregateId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($event->aggregateId);
         }
 

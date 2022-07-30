@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Requests;
@@ -35,7 +36,7 @@ final class CreateOnRequestCreated implements EventSubscriberInterface
     public function __invoke(RequestWasCreatedEvent $event): void
     {
         $user = $this->userRepository->findByUserId($event->userId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($event->userId);
         }
 

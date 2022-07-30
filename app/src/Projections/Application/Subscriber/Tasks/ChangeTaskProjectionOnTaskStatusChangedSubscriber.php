@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Tasks;
@@ -27,7 +28,7 @@ final class ChangeTaskProjectionOnTaskStatusChangedSubscriber implements EventSu
     public function __invoke(TaskStatusWasChangedEvent $event): void
     {
         $projection = $this->projectionRepository->findById($event->taskId);
-        if ($projection === null) {
+        if (null === $projection) {
             throw new TaskNotExistException($event->taskId);
         }
 

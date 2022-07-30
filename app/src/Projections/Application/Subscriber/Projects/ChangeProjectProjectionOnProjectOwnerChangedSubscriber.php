@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Projects;
@@ -29,7 +30,7 @@ final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements Ev
     public function __invoke(ProjectOwnerWasChangedEvent $event): void
     {
         $user = $this->userRepository->findByUserId($event->ownerId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($event->ownerId);
         }
         $projections = $this->projectionRepository->findAllById($event->aggregateId);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Application\Subscriber\Requests;
@@ -32,11 +33,11 @@ final class ChangeOnRequestStatusChanged implements EventSubscriberInterface
     public function __invoke(RequestStatusWasChangedEvent $event): void
     {
         $projection = $this->requestRepository->findById($event->requestId);
-        if ($projection === null) {
+        if (null === $projection) {
             throw new RequestNotExistsException($event->requestId);
         }
-        var_dump($event->changeDate);
-        $projection->changeStatus((int)$event->status, new DateTime($event->changeDate));
+
+        $projection->changeStatus((int) $event->status, new DateTime($event->changeDate));
 
         $this->requestRepository->save($projection);
     }

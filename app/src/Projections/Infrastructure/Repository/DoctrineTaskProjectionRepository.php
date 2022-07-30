@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Infrastructure\Repository;
@@ -18,7 +19,7 @@ class DoctrineTaskProjectionRepository implements TaskProjectionRepositoryInterf
     public function findById(string $id): ?TaskProjection
     {
         return $this->getRepository()->findOneBy([
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -31,7 +32,7 @@ class DoctrineTaskProjectionRepository implements TaskProjectionRepositoryInterf
     public function findAllByOwnerId(string $id): array
     {
         return $this->getRepository()->findBy([
-            'ownerId' => $id
+            'ownerId' => $id,
         ]);
     }
 

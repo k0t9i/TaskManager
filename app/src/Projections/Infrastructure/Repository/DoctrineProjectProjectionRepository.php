@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Infrastructure\Repository;
@@ -21,18 +22,17 @@ class DoctrineProjectProjectionRepository implements ProjectProjectionRepository
         $this->entityManager->flush();
     }
 
-
     public function findAllById(string $id): array
     {
         return $this->getRepository()->findBy([
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
     public function findAllByOwnerId(string $id): array
     {
         return $this->getRepository()->findBy([
-            'ownerId' => $id
+            'ownerId' => $id,
         ]);
     }
 

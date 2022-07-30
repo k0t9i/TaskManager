@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Domain\Entity;
@@ -80,27 +81,27 @@ final class ProjectProjection
 
     public function incrementTasksCount()
     {
-        $this->tasksCount++;
+        ++$this->tasksCount;
     }
 
     public function incrementParticipantsCount()
     {
-        $this->participantsCount++;
+        ++$this->participantsCount;
     }
 
     public function decrementParticipantsCount()
     {
-        $this->participantsCount--;
+        --$this->participantsCount;
     }
 
     public function incrementPendingRequestsCount()
     {
-        $this->pendingRequestsCount++;
+        ++$this->pendingRequestsCount;
     }
 
     public function decrementPendingRequestsCount()
     {
-        $this->pendingRequestsCount--;
+        --$this->pendingRequestsCount;
     }
 
     public function getUserId(): string

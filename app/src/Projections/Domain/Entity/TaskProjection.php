@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Domain\Entity;
@@ -50,13 +51,14 @@ final class TaskProjection
         $this->ownerFirstname = $ownerFirstname;
         $this->ownerLastname = $ownerLastname;
     }
+
     public function incrementLinksCount()
     {
-        $this->linksCount++;
+        ++$this->linksCount;
     }
 
     public function decrementLinksCount()
     {
-        $this->linksCount--;
+        --$this->linksCount;
     }
 }

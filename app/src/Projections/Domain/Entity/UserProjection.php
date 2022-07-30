@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Domain\Entity;
@@ -22,7 +23,7 @@ final class UserProjection
         $this->lastname = $lastname;
     }
 
-    //@FIXME always empty ownerId
+    // @FIXME always empty ownerId
     public function updateOwner(string $ownerId, self $other): void
     {
         if ($this->userId === $this->ownerId) {

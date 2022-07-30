@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projections\Infrastructure\Repository;
@@ -18,7 +19,7 @@ class DoctrineUserProjectionRepository implements UserProjectionRepositoryInterf
     public function findByUserId(string $id): ?UserProjection
     {
         return $this->getRepository()->findOneBy([
-            'userId' => $id
+            'userId' => $id,
         ]);
     }
 
@@ -26,7 +27,7 @@ class DoctrineUserProjectionRepository implements UserProjectionRepositoryInterf
     {
         return $this->getRepository()->findOneBy([
             'userId' => $id,
-            'projectId' => $projectId
+            'projectId' => $projectId,
         ]);
     }
 
@@ -36,26 +37,23 @@ class DoctrineUserProjectionRepository implements UserProjectionRepositoryInterf
         $this->entityManager->flush();
     }
 
-
     /**
-     * @param string $id
      * @return UserProjection[]
      */
     public function findAllByUserId(string $id): array
     {
         return $this->getRepository()->findBy([
-            'userId' => $id
+            'userId' => $id,
         ]);
     }
 
     /**
-     * @param string $id
      * @return UserProjection[]
      */
     public function findAllByProjectId(string $id): array
     {
         return $this->getRepository()->findBy([
-            'projectId' => $id
+            'projectId' => $id,
         ]);
     }
 
