@@ -9,7 +9,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class RamseyUuid4Generator implements UuidGeneratorInterface
 {
-    public function __construct(private readonly ?UuidInterface $uuid = null)
+    public function __construct(private ?UuidInterface $uuid = null)
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::uuid4();
