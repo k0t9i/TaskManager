@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
@@ -21,8 +22,6 @@ class DoctrineRequestQueryRepository implements RequestQueryRepositoryInterface
     private const MANAGER = 'read';
 
     /**
-     * @param Criteria $criteria
-     * @return array
      * @throws QueryException
      * @throws ReflectionException
      */
@@ -32,8 +31,6 @@ class DoctrineRequestQueryRepository implements RequestQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return int
      * @throws QueryException
      * @throws ReflectionException
      * @throws NoResultException

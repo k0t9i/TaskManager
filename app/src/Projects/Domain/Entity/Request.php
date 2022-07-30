@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
@@ -13,10 +14,10 @@ use App\Shared\Domain\ValueObject\Users\UserId;
 final class Request implements Hashable
 {
     public function __construct(
-        private RequestId     $id,
-        private UserId        $userId,
+        private RequestId $id,
+        private UserId $userId,
         private RequestStatus $status,
-        private DateTime      $changeDate
+        private DateTime $changeDate
     ) {
     }
 
@@ -59,10 +60,6 @@ final class Request implements Hashable
         return $this->getId()->getHash();
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         if (get_class($this) !== get_class($other)) {

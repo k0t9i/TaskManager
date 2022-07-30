@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -24,7 +25,7 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
     public function __invoke(CreateRequestToProjectCommand $command): void
     {
         $project = $this->repository->findById(new ProjectId($command->projectId));
-        if ($project === null) {
+        if (null === $project) {
             throw new ProjectNotExistException($command->projectId);
         }
 

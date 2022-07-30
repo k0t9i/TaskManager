@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
@@ -21,7 +22,6 @@ class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
     private const MANAGER = 'read';
 
     /**
-     * @param Criteria $criteria
      * @return ProjectListProjection[]
      * @throws QueryException
      */
@@ -31,8 +31,6 @@ class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return int
      * @throws QueryException
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -43,8 +41,6 @@ class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return ProjectProjection|null
      * @throws NonUniqueResultException
      * @throws QueryException
      */

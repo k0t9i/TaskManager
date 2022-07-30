@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
@@ -30,17 +31,17 @@ final class ProjectProxyFactory
 
     public function createEntity(?ProjectProxy $proxy): ?Project
     {
-        if ($proxy === null) {
+        if (null === $proxy) {
             return null;
         }
 
-        $participants = new UserIdCollection(array_map(function (ProjectParticipantProxy $item){
+        $participants = new UserIdCollection(array_map(function (ProjectParticipantProxy $item) {
             return $this->participantProxyFactory->createEntity($item);
         }, $proxy->getParticipants()->toArray()));
-        $tasks = new ProjectTaskCollection(array_map(function (ProjectTaskProxy $item){
+        $tasks = new ProjectTaskCollection(array_map(function (ProjectTaskProxy $item) {
             return $this->taskProxyFactory->createEntity($item);
         }, $proxy->getTasks()->toArray()));
-        $requests = new RequestCollection(array_map(function (RequestProxy $item){
+        $requests = new RequestCollection(array_map(function (RequestProxy $item) {
             return $this->requestProxyFactory->createEntity($item);
         }, $proxy->getRequests()->toArray()));
 

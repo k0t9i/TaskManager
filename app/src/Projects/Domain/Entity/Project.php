@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
@@ -31,13 +32,13 @@ use Exception;
 final class Project extends AggregateRoot
 {
     public function __construct(
-        private ProjectId          $id,
+        private ProjectId $id,
         private ProjectInformation $information,
-        private ProjectStatus      $status,
-        private Owner              $owner,
-        private Participants       $participants,
-        private ProjectTasks       $tasks,
-        private Requests           $requests
+        private ProjectStatus $status,
+        private Owner $owner,
+        private Participants $participants,
+        private ProjectTasks $tasks,
+        private Requests $requests
     ) {
     }
 
@@ -86,9 +87,6 @@ final class Project extends AggregateRoot
         ));
     }
 
-    /**
-     * @param ProjectStatus $status
-     */
     public function changeStatus(ProjectStatus $status, UserId $currentUserId): void
     {
         $this->status->ensureCanBeChangedTo($status);
@@ -103,18 +101,13 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @param UserId $participantId
-     * @param UserId $currentUserId
      * @throws Exception
      */
     public function removeParticipant(UserId $participantId, UserId $currentUserId): void
     {
         $this->status->ensureAllowsModification();
         if (!$this->owner->isOwner($currentUserId) && !$participantId->isEqual($currentUserId)) {
-            throw new InsufficientPermissionsToChangeProjectParticipantException(
-                $participantId->value,
-                $this->id->value
-            );
+            throw new InsufficientPermissionsToChangeProjectParticipantException($participantId->value, $this->id->value);
         }
         $this->participants->ensureIsParticipant($participantId);
         $this->tasks->ensureDoesUserHaveTask($participantId);
@@ -128,8 +121,6 @@ final class Project extends AggregateRoot
     }
 
     /**
-     * @param Owner $owner
-     * @param UserId $currentUserId
      * @throws Exception
      */
     public function changeOwner(Owner $owner, UserId $currentUserId): void
@@ -151,7 +142,7 @@ final class Project extends AggregateRoot
 
     public function createRequest(
         RequestId $id,
-        UserId    $userId,
+        UserId $userId,
     ): Request {
         $this->status->ensureAllowsModification();
 

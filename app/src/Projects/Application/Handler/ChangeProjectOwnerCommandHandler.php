@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -27,17 +28,16 @@ final class ChangeProjectOwnerCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @param ChangeProjectOwnerCommand $command
      * @throws Exception
      */
     public function __invoke(ChangeProjectOwnerCommand $command): void
     {
         $project = $this->projectRepository->findById(new ProjectId($command->id));
-        if ($project === null) {
+        if (null === $project) {
             throw new ProjectNotExistException($command->id);
         }
         $user = $this->userRepository->findById($command->ownerId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($command->ownerId);
         }
 

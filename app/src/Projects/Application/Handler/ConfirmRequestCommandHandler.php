@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -25,7 +26,7 @@ final class ConfirmRequestCommandHandler implements CommandHandlerInterface
     {
         $requestId = new RequestId($command->id);
         $project = $this->repository->findByRequestId($requestId);
-        if ($project === null) {
+        if (null === $project) {
             throw new ProjectNotExistException();
         }
 

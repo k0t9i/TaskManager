@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Domain\ValueObject;
@@ -17,7 +18,7 @@ final class Requests
 
     public function __construct(?RequestCollection $items = null)
     {
-        if ($items === null) {
+        if (null === $items) {
             $this->requests = new RequestCollection();
         } else {
             $this->requests = $items;
@@ -49,8 +50,7 @@ final class Requests
     }
 
     /**
-     * @param RequestId $requestId
-     * @return Request|null|Hashable
+     * @return Request|Hashable|null
      */
     public function get(RequestId $requestId): ?Request
     {

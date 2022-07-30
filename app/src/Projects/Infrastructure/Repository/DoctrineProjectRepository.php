@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Infrastructure\Repository;
@@ -29,15 +30,13 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
     }
 
     /**
-     * @param ProjectId $id
-     * @return Project|null
      * @throws Exception
      */
     public function findById(ProjectId $id): ?Project
     {
         /** @var ProjectProxy $proxy */
         $proxy = $this->getRepository()->findOneBy([
-            'id' => $id->value
+            'id' => $id->value,
         ]);
 
         return $this->projectProxyFactory->createEntity($proxy);
@@ -62,7 +61,6 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
     }
 
     /**
-     * @param Project $project
      * @throws Exception
      * @throws OptimisticLockException
      */
@@ -81,9 +79,9 @@ class DoctrineProjectRepository implements ProjectRepositoryInterface
     private function getOrCreate(Project $project): ProjectProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $project->getId()->value
+            'id' => $project->getId()->value,
         ]);
-        if ($result === null) {
+        if (null === $result) {
             $result = new ProjectProxy($project);
         }
         return $result;

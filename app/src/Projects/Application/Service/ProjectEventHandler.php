@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Service;
@@ -21,8 +22,7 @@ final class ProjectEventHandler
         private readonly ProjectRepositoryInterface $repository,
         private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus
-    )
-    {
+    ) {
     }
 
     public function handle(DomainEvent $event): void
@@ -33,7 +33,7 @@ final class ProjectEventHandler
             $this->createTask($aggregateRoot, $event);
         }
 
-        if ($aggregateRoot !== null) {
+        if (null !== $aggregateRoot) {
             $this->repository->save($aggregateRoot);
             $this->eventBus->dispatch(...$aggregateRoot->releaseEvents());
         }
@@ -51,7 +51,7 @@ final class ProjectEventHandler
     private function getProject(string $projectId): Project
     {
         $aggregateRoot = $this->repository->findById(new ProjectId($projectId));
-        if ($aggregateRoot === null) {
+        if (null === $aggregateRoot) {
             throw new ProjectNotExistException($projectId);
         }
         return $aggregateRoot;

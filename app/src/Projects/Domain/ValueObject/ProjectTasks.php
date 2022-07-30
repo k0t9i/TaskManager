@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Domain\ValueObject;
@@ -15,7 +16,7 @@ final class ProjectTasks
 
     public function __construct(?ProjectTaskCollection $items = null)
     {
-        if ($items === null) {
+        if (null === $items) {
             $this->tasks = new ProjectTaskCollection();
         } else {
             $this->tasks = $items;
@@ -23,8 +24,6 @@ final class ProjectTasks
     }
 
     /**
-     * @param UserId $userId
-     * @return bool
      * @throws Exception
      */
     public function ensureDoesUserHaveTask(UserId $userId): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -24,7 +25,7 @@ final class CloseProjectCommandHandler implements CommandHandlerInterface
     public function __invoke(CloseProjectCommand $command): void
     {
         $project = $this->projectRepository->findById(new ProjectId($command->id));
-        if ($project === null) {
+        if (null === $project) {
             throw new ProjectNotExistException($command->id);
         }
 

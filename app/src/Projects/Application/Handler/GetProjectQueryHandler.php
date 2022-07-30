@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -23,16 +24,15 @@ final class GetProjectQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetProjectQuery $query
      * @return GetProjectQueryResponse
      */
     public function __invoke(GetProjectQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $count = $this->projectRepository->findCountByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $query->id)
+            new ExpressionOperand('id', '=', $query->id),
         ]));
-        if ($count === 0) {
+        if (0 === $count) {
             throw new ProjectNotExistException($query->id);
         }
 
@@ -42,7 +42,7 @@ final class GetProjectQueryHandler implements QueryHandlerInterface
                 new ExpressionOperand('userId', '=', $userId->value),
             ])
         );
-        if ($project === null) {
+        if (null === $project) {
             throw new UserIsNotInProjectException($userId->value, $query->id);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Domain\Entity;
@@ -37,10 +38,6 @@ final class ProjectTask implements Hashable
         return $this->getId()->getHash();
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         if (get_class($this) !== get_class($other)) {

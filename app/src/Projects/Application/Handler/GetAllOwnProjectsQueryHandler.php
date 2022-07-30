@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Projects\Application\Handler;
@@ -23,7 +24,6 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetAllOwnProjectsQuery $query
      * @return GetAllOwnProjectsQueryResponse
      */
     public function __invoke(GetAllOwnProjectsQuery $query): QueryResponseInterface
@@ -31,7 +31,7 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
         $userId = $this->authenticatorService->getAuthUser()->getId();
 
         $criteria = new Criteria([
-            new ExpressionOperand('userId', '=', $userId->value)
+            new ExpressionOperand('userId', '=', $userId->value),
         ]);
 
         $result = $this->paginationBuilder->build($this->projectRepository, $criteria, $query->criteria);
@@ -39,3 +39,4 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
         return new GetAllOwnProjectsQueryResponse($result);
     }
 }
+
