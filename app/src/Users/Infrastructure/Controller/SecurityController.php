@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Application\Bus\Command\CommandBusInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Users\Application\Command\RegisterCommand;
 use App\Users\Application\Service\LoginService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,8 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/security', name: 'security.')]
 final class SecurityController
 {
-    public function __construct(private CommandBusInterface $commandBus, private LoginService $loginService)
-    {
+    public function __construct(
+        private readonly CommandBusInterface $commandBus,
+        private readonly LoginService $loginService,
+        private readonly UuidGeneratorInterface $uuidGenerator
+
+    ) {
     }
 
     #[Route('/login/', name: 'login', methods: ['POST'])]
@@ -37,7 +42,12 @@ final class SecurityController
     {
         $parameters = json_decode($request->getContent(), true);
 
-        $this->commandBus->dispatch(RegisterCommand::createFromRequest($parameters));
-        return new JsonResponse(status: Response::HTTP_CREATED);
+        $command = RegisterCommand::createFromRequest(
+            $this->uuidGenerator->generate(),
+            $parameters
+        );
+        $this->commandBus->dispatch($command);
+
+        return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
     }
 }

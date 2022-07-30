@@ -21,6 +21,7 @@ use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
 use App\Shared\Application\Service\PaginationResponseFormatterInterface;
 use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,8 @@ final class ProjectController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
-        private readonly PaginationResponseFormatterInterface $responseFormatter
+        private readonly PaginationResponseFormatterInterface $responseFormatter,
+        private readonly UuidGeneratorInterface $uuidGenerator
     ) {
     }
 
@@ -42,9 +44,13 @@ final class ProjectController
     {
         $parameters = json_decode($request->getContent(), true);
 
-        $this->commandBus->dispatch(CreateProjectCommand::createFromRequest($parameters));
+        $command = CreateProjectCommand::createFromRequest(
+            $this->uuidGenerator->generate(),
+            $parameters
+        );
+        $this->commandBus->dispatch($command);
 
-        return new JsonResponse(status: Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
     }
 
     #[Route('/{id}/activate/', name: 'activate', methods: ['PATCH'])]
@@ -101,9 +107,13 @@ final class ProjectController
     #[Route('/{id}/requests/', name: 'createRequest', methods: ['POST'])]
     public function createRequest(string $id): JsonResponse
     {
-        $this->commandBus->dispatch(new CreateRequestToProjectCommand($id));
+        $command = new CreateRequestToProjectCommand(
+            $this->uuidGenerator->generate(),
+            $id
+        );
+        $this->commandBus->dispatch($command);
 
-        return new JsonResponse();
+        return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
     }
 
     #[Route('/', name: 'getAll', methods: ['GET'])]

@@ -9,7 +9,6 @@ use App\Projects\Domain\ValueObject\RequestId;
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
-use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Exception\ProjectNotExistException;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 
@@ -17,7 +16,6 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
 {
     public function __construct(
         private readonly ProjectRepositoryInterface $repository,
-        private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticatorService,
     ) {
@@ -31,7 +29,7 @@ final class CreateRequestToProjectCommandHandler implements CommandHandlerInterf
         }
 
         $project->createRequest(
-            new RequestId($this->uuidGenerator->generate()),
+            new RequestId($command->id),
             $this->authenticatorService->getAuthUser()->getId()
         );
 

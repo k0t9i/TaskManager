@@ -5,7 +5,6 @@ namespace App\Users\Application\Handler;
 
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
-use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\Users\UserEmail;
 use App\Shared\Domain\ValueObject\Users\UserFirstname;
 use App\Shared\Domain\ValueObject\Users\UserId;
@@ -22,7 +21,6 @@ final class RegisterCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
-        private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly UserPasswordHasher $passwordHasher,
         private readonly EventBusInterface $eventBus
     ) {
@@ -36,7 +34,7 @@ final class RegisterCommandHandler implements CommandHandlerInterface
         }
 
         $newUser = User::create(
-            new UserId($this->uuidGenerator->generate()),
+            new UserId($command->id),
             new UserEmail($command->email),
             new UserProfile(
                 new UserFirstname($command->firstname),

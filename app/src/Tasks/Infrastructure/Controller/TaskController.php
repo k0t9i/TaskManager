@@ -7,6 +7,7 @@ use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
 use App\Shared\Application\Service\PaginationResponseFormatterInterface;
 use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
+use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Tasks\Application\Command\ActivateTaskCommand;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Application\Command\CloseTaskCommand;
@@ -31,7 +32,8 @@ final class TaskController
         private CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
-        private readonly PaginationResponseFormatterInterface $responseFormatter
+        private readonly PaginationResponseFormatterInterface $responseFormatter,
+        private readonly UuidGeneratorInterface $uuidGenerator
     ) {
     }
 
@@ -40,12 +42,14 @@ final class TaskController
     {
         $parameters = json_decode($request->getContent(), true);
 
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+        $command = CreateTaskCommand::createFromRequest(
+            $this->uuidGenerator->generate(),
             $parameters,
             $projectId
-        ));
+        );
+        $this->commandBus->dispatch($command);
 
-        return new JsonResponse(status: Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
     }
 
     #[Route(
@@ -57,13 +61,15 @@ final class TaskController
     {
         $parameters = json_decode($request->getContent(), true);
 
-        $this->commandBus->dispatch(CreateTaskCommand::createFromRequest(
+        $command = CreateTaskCommand::createFromRequest(
+            $this->uuidGenerator->generate(),
             $parameters,
             $projectId,
             $participantId
-        ));
+        );
+        $this->commandBus->dispatch($command);
 
-        return new JsonResponse(status: Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
     }
 
     #[Route('/{id}/activate/', name: 'activate', methods: ['PATCH'])]

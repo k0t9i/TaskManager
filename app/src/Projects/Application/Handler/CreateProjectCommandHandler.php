@@ -12,7 +12,6 @@ use App\Projects\Domain\ValueObject\ProjectName;
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
-use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Owner;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
@@ -21,7 +20,6 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly ProjectRepositoryInterface $projectRepository,
-        private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticatorService,
     ) {
@@ -31,7 +29,7 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
     {
 
         $project = Project::create(
-            new ProjectId($this->uuidGenerator->generate()),
+            new ProjectId($command->id),
             new ProjectInformation(
                 new ProjectName($command->name),
                 new ProjectDescription($command->description),

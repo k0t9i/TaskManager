@@ -8,6 +8,7 @@ use App\Shared\Application\Bus\Command\CommandInterface;
 class CreateTaskCommand implements CommandInterface
 {
     public function __construct(
+        public readonly string $id,
         public readonly string $name,
         public readonly string $brief,
         public readonly string $description,
@@ -18,9 +19,10 @@ class CreateTaskCommand implements CommandInterface
     ) {
     }
 
-    public static function createFromRequest(array $item, string $projectId, ?string $ownerId = null): self
+    public static function createFromRequest(string $id, array $item, string $projectId, ?string $ownerId = null): self
     {
         return new self(
+            $id,
             $item['name'] ?? '',
             $item['brief'] ?? '',
             $item['description'] ?? '',

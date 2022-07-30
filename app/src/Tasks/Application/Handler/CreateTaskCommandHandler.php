@@ -6,7 +6,6 @@ namespace App\Tasks\Application\Handler;
 use App\Shared\Application\Bus\Command\CommandHandlerInterface;
 use App\Shared\Application\Bus\Event\EventBusInterface;
 use App\Shared\Application\Service\AuthenticatorServiceInterface;
-use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Domain\Exception\UserNotExistException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
@@ -26,7 +25,6 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
         private readonly SharedUserRepositoryInterface $userRepository,
-        private readonly UuidGeneratorInterface $uuidGenerator,
         private readonly EventBusInterface $eventBus,
         private readonly AuthenticatorServiceInterface $authenticator
     ) {
@@ -47,7 +45,7 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
         }
 
         $manager->createTask(
-            new TaskId($this->uuidGenerator->generate()),
+            new TaskId($command->id),
             new TaskInformation(
                 new TaskName($command->name),
                 new TaskBrief($command->brief),

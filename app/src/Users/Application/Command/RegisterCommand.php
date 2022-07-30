@@ -8,6 +8,7 @@ use App\Shared\Application\Bus\Command\CommandInterface;
 final class RegisterCommand implements CommandInterface
 {
     public function __construct(
+        public readonly string $id,
         public readonly string $email,
         public readonly string $firstname,
         public readonly string $lastname,
@@ -16,9 +17,10 @@ final class RegisterCommand implements CommandInterface
     ) {
     }
 
-    public static function createFromRequest(array $item): self
+    public static function createFromRequest(string $id, array $item): self
     {
         return new self(
+            $id,
             $item['email'] ?? '',
             $item['firstname'] ?? '',
             $item['lastname'] ?? '',
