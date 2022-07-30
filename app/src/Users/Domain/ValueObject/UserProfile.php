@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Domain\ValueObject;
@@ -20,7 +21,7 @@ final class UserProfile
 
     private function ensureDoPasswordsMatch(): void
     {
-        if ($this->repeatPassword === null) {
+        if (null === $this->repeatPassword) {
             return;
         }
         if ($this->password->value !== $this->repeatPassword->value) {

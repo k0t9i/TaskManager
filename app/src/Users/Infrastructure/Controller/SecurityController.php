@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Controller;
@@ -19,7 +20,6 @@ final class SecurityController
         private readonly CommandBusInterface $commandBus,
         private readonly LoginService $loginService,
         private readonly UuidGeneratorInterface $uuidGenerator
-
     ) {
     }
 
@@ -32,8 +32,9 @@ final class SecurityController
             $parameters['email'],
             $parameters['password'],
         );
+
         return new JsonResponse([
-            'token' => $token
+            'token' => $token,
         ]);
     }
 

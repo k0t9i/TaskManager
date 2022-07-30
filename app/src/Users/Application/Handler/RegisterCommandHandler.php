@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
@@ -29,7 +30,7 @@ final class RegisterCommandHandler implements CommandHandlerInterface
     public function __invoke(RegisterCommand $command): void
     {
         $user = $this->userRepository->findByEmail(new UserEmail($command->email));
-        if ($user !== null) {
+        if (null !== $user) {
             throw new EmailAlreadyTakenException($command->email);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
@@ -21,7 +22,6 @@ class DoctrineUserQueryRepository implements UserQueryRepositoryInterface
     private const MANAGER = 'read';
 
     /**
-     * @param Criteria $criteria
      * @return UserProjection[]
      * @throws QueryException
      */
@@ -31,8 +31,6 @@ class DoctrineUserQueryRepository implements UserQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return int
      * @throws QueryException
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -43,8 +41,6 @@ class DoctrineUserQueryRepository implements UserQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return ProfileProjection|null
      * @throws NonUniqueResultException
      * @throws QueryException
      */

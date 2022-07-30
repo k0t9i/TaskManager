@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Application\Service;
@@ -21,7 +22,7 @@ final class LoginService
     public function login(string $username, string $plainPassword): string
     {
         $user = $this->userRepository->findByEmail(new UserEmail($username));
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($username);
         }
 

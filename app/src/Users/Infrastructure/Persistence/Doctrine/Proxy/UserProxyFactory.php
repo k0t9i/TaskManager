@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Persistence\Doctrine\Proxy;
@@ -15,7 +16,7 @@ final class UserProxyFactory
 {
     public function createEntity(?UserProxy $proxy): ?User
     {
-        if ($proxy === null) {
+        if (null === $proxy) {
             return null;
         }
 

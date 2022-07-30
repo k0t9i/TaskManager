@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
@@ -24,7 +25,6 @@ final class GetProjectUsersQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetProjectUsersQuery $query
      * @return GetProjectUsersQueryResponse
      */
     public function __invoke(GetProjectUsersQuery $query): QueryResponseInterface
@@ -32,14 +32,14 @@ final class GetProjectUsersQueryHandler implements QueryHandlerInterface
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $count = $this->userRepository->findCountByCriteria(new Criteria([
             new ExpressionOperand('projectId', '=', $query->projectId),
-            new ExpressionOperand('id', '=', $userId->value)
+            new ExpressionOperand('id', '=', $userId->value),
         ]));
-        if ($count === 0) {
+        if (0 === $count) {
             throw new UserIsNotInProjectException($userId->value, $query->projectId);
         }
 
         $criteria = new Criteria([
-            new ExpressionOperand('projectId', '=', $query->projectId)
+            new ExpressionOperand('projectId', '=', $query->projectId),
         ]);
 
         $result = $this->paginationBuilder->build($this->userRepository, $criteria, $query->criteria);

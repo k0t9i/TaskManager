@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
@@ -22,16 +23,15 @@ final class GetProfileQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetProfileQuery $query
      * @return GetProfileQueryResponse
      */
     public function __invoke(GetProfileQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $user = $this->userRepository->findProfileByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $userId->value)
+            new ExpressionOperand('id', '=', $userId->value),
         ]));
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($userId->value);
         }
 

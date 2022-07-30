@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Application\Handler;
@@ -29,21 +30,23 @@ final class UpdateProfileCommandHandler implements CommandHandlerInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $user = $this->userRepository->findById($userId);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($userId->value);
         }
 
         $prevProfile = $user->getProfile();
+        $password = null !== $command->password ?
+            $this->passwordHasher->hash(new UserPassword($command->password)) :
+            $prevProfile->password;
+        $repeatPassword = null !== $command->password ?
+            $this->passwordHasher->hash(new UserPassword($command->repeatPassword)) :
+            null;
         $user->changeProfile(
             new UserProfile(
                 new UserFirstname($command->firstname ?? $prevProfile->firstname->value),
                 new UserLastname($command->lastname ?? $prevProfile->lastname->value),
-                $command->password !== null ?
-                    $this->passwordHasher->hash(new UserPassword($command->password)) :
-                    $prevProfile->password,
-                $command->password !== null ?
-                    $this->passwordHasher->hash(new UserPassword($command->repeatPassword)) :
-                    null,
+                $password,
+                $repeatPassword
             )
         );
 

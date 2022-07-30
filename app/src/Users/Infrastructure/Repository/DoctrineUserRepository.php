@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Repository;
@@ -28,38 +29,32 @@ final class DoctrineUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * @param UserId $id
-     * @return User|null
      * @throws Exception
      */
     public function findById(UserId $id): ?User
     {
         /** @var UserProxy $proxy */
         $proxy = $this->getRepository()->findOneBy([
-            'id' => $id->value
+            'id' => $id->value,
         ]);
 
         return $this->userProxyFactory->createEntity($proxy);
     }
 
     /**
-     * @param UserEmail $email
-     * @return User|null
      * @throws Exception
      */
     public function findByEmail(UserEmail $email): ?User
     {
         /** @var UserProxy $proxy */
         $proxy = $this->getRepository()->findOneBy([
-            'email' => $email->value
+            'email' => $email->value,
         ]);
 
         return $this->userProxyFactory->createEntity($proxy);
     }
 
     /**
-     * @param User $user
-     * @throws Exception
      * @throws OptimisticLockException
      */
     public function save(User $user): void
@@ -78,11 +73,12 @@ final class DoctrineUserRepository implements UserRepositoryInterface
     private function getOrCreate(User $user): UserProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $user->getId()->value
+            'id' => $user->getId()->value,
         ]);
-        if ($result === null) {
+        if (null === $result) {
             $result = new UserProxy($user);
         }
+
         return $result;
     }
 
