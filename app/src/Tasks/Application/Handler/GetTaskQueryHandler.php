@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -23,24 +24,23 @@ final class GetTaskQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetTaskQuery $query
      * @return GetTaskQueryResponse
      */
     public function __invoke(GetTaskQuery $query): QueryResponseInterface
     {
         $userId = $this->authenticatorService->getAuthUser()->getId();
         $task = $this->taskRepository->findByCriteria(new Criteria([
-            new ExpressionOperand('id', '=', $query->id)
+            new ExpressionOperand('id', '=', $query->id),
         ]));
-        if ($task === null) {
+        if (null === $task) {
             throw new TaskNotExistException($query->id);
         }
 
         $userTask = $this->taskRepository->findByCriteria(new Criteria([
             new ExpressionOperand('id', '=', $query->id),
-            new ExpressionOperand('userId', '=', $userId->value)
+            new ExpressionOperand('userId', '=', $userId->value),
         ]));
-        if ($userTask === null) {
+        if (null === $userTask) {
             throw new UserIsNotInProjectException($userId->value, $task->projectId);
         }
 

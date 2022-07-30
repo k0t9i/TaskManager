@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
@@ -23,7 +24,7 @@ final class TaskProxyFactory
 
     public function createEntity(TaskProxy $proxy): Task
     {
-        $links = new TaskLinkCollection(array_map(function (TaskLinkProxy $item){
+        $links = new TaskLinkCollection(array_map(function (TaskLinkProxy $item) {
             return $this->taskLinkProxyFactory->createEntity($item);
         }, $proxy->getLinks()->toArray()));
 
@@ -42,6 +43,7 @@ final class TaskProxyFactory
         );
 
         $proxy->changeEntity($entity);
+
         return $entity;
     }
 }

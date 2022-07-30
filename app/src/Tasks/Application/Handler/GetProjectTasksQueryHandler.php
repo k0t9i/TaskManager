@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -23,7 +24,6 @@ final class GetProjectTasksQueryHandler implements QueryHandlerInterface
     }
 
     /**
-     * @param GetProjectTasksQuery $query
      * @return GetProjectTasksQueryResponse
      */
     public function __invoke(GetProjectTasksQuery $query): QueryResponseInterface
@@ -32,7 +32,7 @@ final class GetProjectTasksQueryHandler implements QueryHandlerInterface
 
         $criteria = new Criteria([
             new ExpressionOperand('projectId', '=', $query->projectId),
-            new ExpressionOperand('userId', '=', $userId->value)
+            new ExpressionOperand('userId', '=', $userId->value),
         ]);
         $result = $this->paginationBuilder->build($this->taskRepository, $criteria, $query->criteria);
 

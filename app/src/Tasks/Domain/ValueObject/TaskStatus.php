@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\ValueObject;
@@ -25,10 +26,10 @@ abstract class TaskStatus extends Status
 
     public static function createFromScalar(int $status): static
     {
-        if ($status === self::STATUS_CLOSED) {
+        if (self::STATUS_CLOSED === $status) {
             return new ClosedTaskStatus();
         }
-        if ($status === self::STATUS_ACTIVE) {
+        if (self::STATUS_ACTIVE === $status) {
             return new ActiveTaskStatus();
         }
 

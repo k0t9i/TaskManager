@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -25,7 +26,7 @@ class ActivateTaskCommandHandler implements CommandHandlerInterface
     {
         $taskId = new TaskId($command->id);
         $manager = $this->managerRepository->findByTaskId($taskId);
-        if ($manager === null) {
+        if (null === $manager) {
             throw new TaskManagerNotExistException();
         }
 

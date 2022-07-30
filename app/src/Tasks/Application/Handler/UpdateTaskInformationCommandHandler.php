@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -31,12 +32,12 @@ class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
     {
         $taskId = new TaskId($command->id);
         $manager = $this->managerRepository->findByTaskId($taskId);
-        if ($manager === null) {
+        if (null === $manager) {
             throw new TaskManagerNotExistException();
         }
         /** @var Task $task */
         $task = $manager->getTasks()->get($taskId);
-        if ($task === null) {
+        if (null === $task) {
             throw new TaskNotExistException($command->id);
         }
 

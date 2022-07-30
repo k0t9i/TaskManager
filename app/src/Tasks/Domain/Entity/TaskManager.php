@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\Entity;
@@ -28,21 +29,21 @@ use App\Tasks\Domain\ValueObject\TaskStatus;
 final class TaskManager extends AggregateRoot
 {
     public function __construct(
-        private TaskManagerId  $id,
-        private ProjectId      $projectId,
-        private ProjectStatus  $status,
-        private Owner          $owner,
-        private DateTime       $finishDate,
-        private Participants   $participants,
-        private Tasks          $tasks
+        private TaskManagerId $id,
+        private ProjectId $projectId,
+        private ProjectStatus $status,
+        private Owner $owner,
+        private DateTime $finishDate,
+        private Participants $participants,
+        private Tasks $tasks
     ) {
     }
 
     public function createTask(
-        TaskId          $id,
+        TaskId $id,
         TaskInformation $information,
-        UserId          $ownerId,
-        UserId          $currentUserId
+        UserId $ownerId,
+        UserId $currentUserId
     ): Task {
         $this->status->ensureAllowsModification();
 
@@ -73,7 +74,7 @@ final class TaskManager extends AggregateRoot
             $information->startDate->getValue(),
             $information->finishDate->getValue(),
             $ownerId->value,
-            (string)$status->getScalar()
+            (string) $status->getScalar()
         ));
 
         return $task;

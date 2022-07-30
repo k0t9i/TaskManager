@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\ValueObject;
@@ -18,15 +19,12 @@ final class TaskLink implements Hashable
         return $this->toTaskId->getHash();
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         if (get_class($this) !== get_class($other)) {
             return false;
         }
+
         return $this->getHash() === $other->getHash();
     }
 }

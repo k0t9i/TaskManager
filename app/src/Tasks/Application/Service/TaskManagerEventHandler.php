@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Service;
@@ -67,15 +68,16 @@ final class TaskManagerEventHandler
     private function find(DomainEvent $event): TaskManager
     {
         $aggregateRoot = $this->repository->findByProjectId(new ProjectId($event->aggregateId));
-        if ($aggregateRoot === null) {
+        if (null === $aggregateRoot) {
             throw new TaskManagerNotExistException();
         }
+
         return $aggregateRoot;
     }
 
     private function save(?TaskManager $aggregateRoot): void
     {
-        if ($aggregateRoot !== null) {
+        if (null !== $aggregateRoot) {
             $this->repository->save($aggregateRoot);
             $this->eventBus->dispatch(...$aggregateRoot->releaseEvents());
         }

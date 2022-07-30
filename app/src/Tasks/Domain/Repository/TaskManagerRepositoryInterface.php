@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\Repository;
@@ -10,7 +11,6 @@ use App\Tasks\Domain\Entity\TaskManager;
 interface TaskManagerRepositoryInterface
 {
     /**
-     * @param ProjectId $id
      * @return TaskManager[]
      */
     public function findByProjectId(ProjectId $id): ?TaskManager;

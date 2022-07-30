@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\Entity;
@@ -20,10 +21,10 @@ use App\Tasks\Domain\ValueObject\TaskStatus;
 final class Task implements Hashable
 {
     public function __construct(
-        private TaskId             $id,
-        private TaskInformation    $information,
-        private UserId             $ownerId,
-        private TaskStatus         $status,
+        private TaskId $id,
+        private TaskInformation $information,
+        private UserId $ownerId,
+        private TaskStatus $status,
         private TaskLinkCollection $links
     ) {
         $this->ensureFinishDateGreaterThanStart();
@@ -115,10 +116,6 @@ final class Task implements Hashable
         return $this->id->getHash();
     }
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function isEqual(object $other): bool
     {
         if (get_class($this) !== get_class($other)) {
@@ -132,11 +129,9 @@ final class Task implements Hashable
 
     private function ensureFinishDateGreaterThanStart()
     {
-        if ($this->information->startDate->isGreaterThan($this->information->finishDate)) {
-            throw new TaskStartDateGreaterThanFinishDateException(
-                $this->information->startDate->getValue(),
-                $this->information->finishDate->getValue()
-            );
+        $info = $this->information;
+        if ($this->information->startDate->isGreaterThan($info->finishDate)) {
+            throw new TaskStartDateGreaterThanFinishDateException($info->startDate->getValue(), $info->finishDate->getValue());
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -33,14 +34,14 @@ class CreateTaskCommandHandler implements CommandHandlerInterface
     public function __invoke(CreateTaskCommand $command): void
     {
         $manager = $this->managerRepository->findByProjectId(new ProjectId($command->projectId));
-        if ($manager === null) {
+        if (null === $manager) {
             throw new TaskManagerNotExistException();
         }
-        $userId = $command->ownerId !== null
+        $userId = null !== $command->ownerId
             ? new UserId($command->ownerId)
             : $this->authenticator->getAuthUser()->getId();
         $user = $this->userRepository->findById($userId->value);
-        if ($user === null) {
+        if (null === $user) {
             throw new UserNotExistException($userId->value);
         }
 

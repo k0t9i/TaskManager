@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
@@ -21,7 +22,6 @@ class DoctrineTaskQueryRepository implements TaskQueryRepositoryInterface
     private const MANAGER = 'read';
 
     /**
-     * @param Criteria $criteria
      * @return TaskListProjection[]
      * @throws QueryException
      */
@@ -31,8 +31,6 @@ class DoctrineTaskQueryRepository implements TaskQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return int
      * @throws QueryException
      * @throws NoResultException
      * @throws NonUniqueResultException
@@ -43,8 +41,6 @@ class DoctrineTaskQueryRepository implements TaskQueryRepositoryInterface
     }
 
     /**
-     * @param Criteria $criteria
-     * @return TaskProjection|null
      * @throws NonUniqueResultException
      * @throws QueryException
      */

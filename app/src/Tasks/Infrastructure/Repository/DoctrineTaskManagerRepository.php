@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
@@ -28,23 +29,17 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
     ) {
     }
 
-    /**
-     * @param ProjectId $id
-     * @return TaskManager|null
-     */
     public function findByProjectId(ProjectId $id): ?TaskManager
     {
         /** @var TaskManagerProxy $proxy */
         $proxy = $this->getRepository()->findOneBy([
-            'projectId' => $id->value
+            'projectId' => $id->value,
         ]);
 
         return $this->managerProxyFactory->createEntity($proxy);
     }
 
     /**
-     * @param TaskId $id
-     * @return TaskManager|null
      * @throws NonUniqueResultException
      */
     public function findByTaskId(TaskId $id): ?TaskManager
@@ -62,7 +57,6 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
     }
 
     /**
-     * @param TaskManager $manager
      * @throws Exception
      * @throws OptimisticLockException
      */
@@ -81,11 +75,12 @@ final class DoctrineTaskManagerRepository implements TaskManagerRepositoryInterf
     private function getOrCreate(TaskManager $manager): TaskManagerProxy
     {
         $result = $this->getRepository()->findOneBy([
-            'id' => $manager->getId()->value
+            'id' => $manager->getId()->value,
         ]);
-        if ($result === null) {
+        if (null === $result) {
             $result = new TaskManagerProxy($manager);
         }
+
         return $result;
     }
 

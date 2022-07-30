@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Application\Handler;
@@ -24,7 +25,7 @@ class DeleteLinkCommandHandler implements CommandHandlerInterface
     {
         $fromTaskId = new TaskId($command->fromTaskId);
         $manager = $this->managerRepository->findByTaskId($fromTaskId);
-        if ($manager === null) {
+        if (null === $manager) {
             throw new TaskManagerNotExistException();
         }
 

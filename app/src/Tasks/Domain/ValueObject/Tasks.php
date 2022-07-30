@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Domain\ValueObject;
@@ -18,7 +19,7 @@ final class Tasks
 
     public function __construct(?TaskCollection $items = null)
     {
-        if ($items === null) {
+        if (null === $items) {
             $this->tasks = new TaskCollection();
         } else {
             $this->tasks = $items;
@@ -35,23 +36,17 @@ final class Tasks
     public function ensureIsFinishDateGreaterThanTaskDates(TaskId $taskId, DateTime $date): void
     {
         $task = $this->get($taskId);
-        if ($task === null) {
+        if (null === $task) {
             return;
         }
 
         $startDate = $task->getInformation()->startDate;
         if ($startDate->isGreaterThan($date)) {
-            throw new TaskStartDateGreaterThanProjectFinishDateException(
-                $date->getValue(),
-                $startDate->getValue()
-            );
+            throw new TaskStartDateGreaterThanProjectFinishDateException($date->getValue(), $startDate->getValue());
         }
         $finishDate = $task->getInformation()->finishDate;
         if ($finishDate->isGreaterThan($date)) {
-            throw new TaskFinishDateGreaterThanProjectFinishDateException(
-                $date->getValue(),
-                $finishDate->getValue()
-            );
+            throw new TaskFinishDateGreaterThanProjectFinishDateException($date->getValue(), $finishDate->getValue());
         }
     }
 
@@ -63,12 +58,10 @@ final class Tasks
     }
 
     /**
-     * @param TaskId $taskId
-     * @return Task|null|Hashable
+     * @return Task|Hashable|null
      */
     public function get(TaskId $taskId): ?Task
     {
-        /** @var Task $task */
         return $this->tasks->get($taskId->getHash());
     }
 

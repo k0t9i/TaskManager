@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Repository;
@@ -20,8 +21,6 @@ class DoctrineTaskLinkQueryRepository implements TaskLinkQueryRepositoryInterfac
     private const MANAGER = 'read';
 
     /**
-     * @param Criteria $criteria
-     * @return TaskLinkListProjection[]
      * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array
@@ -30,8 +29,6 @@ class DoctrineTaskLinkQueryRepository implements TaskLinkQueryRepositoryInterfac
     }
 
     /**
-     * @param Criteria $criteria
-     * @return int
      * @throws QueryException
      * @throws NoResultException
      * @throws NonUniqueResultException

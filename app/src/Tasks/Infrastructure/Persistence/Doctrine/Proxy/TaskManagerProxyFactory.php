@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
@@ -25,7 +26,7 @@ final class TaskManagerProxyFactory
 
     public function createEntity(?TaskManagerProxy $proxy): ?TaskManager
     {
-        if ($proxy === null) {
+        if (null === $proxy) {
             return null;
         }
 
@@ -49,6 +50,7 @@ final class TaskManagerProxyFactory
         );
 
         $proxy->changeEntity($entity);
+
         return $entity;
     }
 }
