@@ -9,7 +9,7 @@ use App\Shared\Application\Bus\Command\CommandInterface;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class SymfonyCommandBus implements CommandBusInterface
+final class SymfonyCommandBus implements CommandBusInterface
 {
     use HandleTrait;
 

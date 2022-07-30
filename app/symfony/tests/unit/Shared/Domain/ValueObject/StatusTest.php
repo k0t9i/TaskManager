@@ -9,7 +9,7 @@ use App\Shared\Domain\Exception\ModificationDeniedException;
 use App\Shared\Domain\ValueObject\Status;
 use PHPUnit\Framework\TestCase;
 
-class StatusTest extends TestCase
+final class StatusTest extends TestCase
 {
     public function testCanBeChangedTo(): void
     {

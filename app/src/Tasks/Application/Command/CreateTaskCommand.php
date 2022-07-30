@@ -6,7 +6,7 @@ namespace App\Tasks\Application\Command;
 
 use App\Shared\Application\Bus\Command\CommandInterface;
 
-class CreateTaskCommand implements CommandInterface
+final class CreateTaskCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,

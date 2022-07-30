@@ -12,7 +12,7 @@ use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class OwnerTest extends TestCase
+final class OwnerTest extends TestCase
 {
     private Generator $faker;
     private string $ownerId;

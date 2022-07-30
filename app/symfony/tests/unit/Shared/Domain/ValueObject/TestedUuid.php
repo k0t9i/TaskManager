@@ -6,7 +6,7 @@ namespace App\Tests\unit\Shared\Domain\ValueObject;
 
 use App\Shared\Domain\ValueObject\Uuid;
 
-class TestedUuid extends Uuid
+final class TestedUuid extends Uuid
 {
 
 }

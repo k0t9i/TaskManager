@@ -14,7 +14,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 
-class DoctrineTaskLinkQueryRepository implements TaskLinkQueryRepositoryInterface
+final class DoctrineTaskLinkQueryRepository implements TaskLinkQueryRepositoryInterface
 {
     use DoctrineCriteriaRepositoryTrait;
 

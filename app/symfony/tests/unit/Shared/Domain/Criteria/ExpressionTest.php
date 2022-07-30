@@ -9,7 +9,7 @@ use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class ExpressionTest extends TestCase
+final class ExpressionTest extends TestCase
 {
     private Generator $faker;
 

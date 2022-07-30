@@ -12,7 +12,7 @@ use App\Tasks\Application\Command\DeleteLinkCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
-class DeleteLinkCommandHandler implements CommandHandlerInterface
+final class DeleteLinkCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,

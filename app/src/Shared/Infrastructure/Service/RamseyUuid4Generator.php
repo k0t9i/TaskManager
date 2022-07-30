@@ -8,7 +8,7 @@ use App\Shared\Application\Service\UuidGeneratorInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class RamseyUuid4Generator implements UuidGeneratorInterface
+final class RamseyUuid4Generator implements UuidGeneratorInterface
 {
     public function __construct(private ?UuidInterface $uuid = null)
     {

@@ -10,7 +10,7 @@ use App\Shared\Domain\ValueObject\Requests\RejectedRequestStatus;
 use App\Shared\Domain\ValueObject\Requests\RequestStatus;
 use PHPUnit\Framework\TestCase;
 
-class RequestStatusTest extends TestCase
+final class RequestStatusTest extends TestCase
 {
     public function testGetScalar(): void
     {

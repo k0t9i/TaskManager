@@ -12,7 +12,7 @@ use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class CriteriaTest extends TestCase
+final class CriteriaTest extends TestCase
 {
     private Generator $faker;
 

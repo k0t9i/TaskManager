@@ -11,7 +11,7 @@ use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
-class RamseyUuid4GeneratorTest extends TestCase
+final class RamseyUuid4GeneratorTest extends TestCase
 {
     private UuidInterface $uuid;
     private UuidGeneratorInterface $generator;

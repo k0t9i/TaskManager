@@ -13,7 +13,7 @@ use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\ActiveTaskStatus;
 
-class ActivateTaskCommandHandler implements CommandHandlerInterface
+final class ActivateTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,

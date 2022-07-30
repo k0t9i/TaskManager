@@ -8,7 +8,7 @@ use App\Shared\Domain\Exception\InvalidArgumentException;
 use App\Shared\Domain\ValueObject\DateTime;
 use PHPUnit\Framework\TestCase;
 
-class DateTimeTest extends TestCase
+final class DateTimeTest extends TestCase
 {
     public function testInvalidDate(): void
     {

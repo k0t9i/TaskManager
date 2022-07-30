@@ -12,7 +12,7 @@ use Faker\Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class PaginationItemsDTOTest extends TestCase
+final class PaginationItemsDTOTest extends TestCase
 {
     private Generator $faker;
 

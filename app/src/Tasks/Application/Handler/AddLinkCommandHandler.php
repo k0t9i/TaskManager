@@ -12,7 +12,7 @@ use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 
-class AddLinkCommandHandler implements CommandHandlerInterface
+final class AddLinkCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,

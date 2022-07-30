@@ -19,7 +19,7 @@ use App\Tasks\Domain\ValueObject\TaskDescription;
 use App\Tasks\Domain\ValueObject\TaskInformation;
 use App\Tasks\Domain\ValueObject\TaskName;
 
-class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
+final class UpdateTaskInformationCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,

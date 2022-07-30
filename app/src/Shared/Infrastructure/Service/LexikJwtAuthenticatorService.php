@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, EventSubscriberInterface
+final class LexikJwtAuthenticatorService implements AuthenticatorServiceInterface, EventSubscriberInterface
 {
     private AuthUser $authUser;
     private string $pathRegexp = '';

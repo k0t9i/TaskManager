@@ -15,7 +15,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 
-class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
+final class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInterface
 {
     use DoctrineCriteriaRepositoryTrait;
 

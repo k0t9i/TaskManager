@@ -6,7 +6,7 @@ namespace App\Tests\unit\Shared\Domain\Collection;
 
 use App\Shared\Domain\Collection\Collection;
 
-class TestedCollection extends Collection
+final class TestedCollection extends Collection
 {
     protected function getType(): string
     {

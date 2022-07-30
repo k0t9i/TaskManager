@@ -6,7 +6,7 @@ namespace App\Tests\unit\Shared\Domain\Collection;
 
 use App\Shared\Domain\Collection\Hashable;
 
-class CollectionItem implements Hashable
+final class CollectionItem implements Hashable
 {
     public function __construct(public readonly string $value)
     {

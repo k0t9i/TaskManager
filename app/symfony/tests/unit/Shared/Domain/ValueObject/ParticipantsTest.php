@@ -13,7 +13,7 @@ use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class ParticipantsTest extends TestCase
+final class ParticipantsTest extends TestCase
 {
     private Generator $faker;
     private string $participantId;

@@ -7,7 +7,7 @@ namespace App\Tests\unit\Shared\Domain\Service;
 use App\Shared\Domain\Service\Utils;
 use PHPUnit\Framework\TestCase;
 
-class UtilsTest extends TestCase
+final class UtilsTest extends TestCase
 {
     public function testToSnakeCase(): void
     {

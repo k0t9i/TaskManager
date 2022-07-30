@@ -8,7 +8,7 @@ use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\LogicException;
 use PHPUnit\Framework\TestCase;
 
-class CollectionTest extends TestCase
+final class CollectionTest extends TestCase
 {
     public function testExceptionWhenCreateWithInvalidType(): void
     {

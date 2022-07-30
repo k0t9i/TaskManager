@@ -9,7 +9,7 @@ use App\Shared\Domain\ValueObject\Projects\ClosedProjectStatus;
 use App\Shared\Domain\ValueObject\Projects\ProjectStatus;
 use PHPUnit\Framework\TestCase;
 
-class ProjectStatusTest extends TestCase
+final class ProjectStatusTest extends TestCase
 {
 
     public function testGetScalar(): void

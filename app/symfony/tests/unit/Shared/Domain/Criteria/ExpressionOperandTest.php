@@ -9,7 +9,7 @@ use App\Shared\Domain\Exception\LogicException;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
-class ExpressionOperandTest extends TestCase
+final class ExpressionOperandTest extends TestCase
 {
     public function testValidOperatorAndValue(): void
     {

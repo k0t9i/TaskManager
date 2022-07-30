@@ -6,7 +6,7 @@ namespace App\Shared\Application\Service;
 
 use App\Shared\Application\DTO\PaginationItemsDTO;
 
-class PaginationResponseFormatter implements PaginationResponseFormatterInterface
+final class PaginationResponseFormatter implements PaginationResponseFormatterInterface
 {
     public function format(PaginationItemsDTO $pagination): array
     {

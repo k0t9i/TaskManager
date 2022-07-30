@@ -9,7 +9,7 @@ use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class DoctrineUserProjectionRepository implements UserProjectionRepositoryInterface
+final class DoctrineUserProjectionRepository implements UserProjectionRepositoryInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

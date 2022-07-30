@@ -6,7 +6,7 @@ namespace App\Tasks\Application\Command;
 
 use App\Shared\Application\Bus\Command\CommandInterface;
 
-class UpdateTaskInformationCommand implements CommandInterface
+final class UpdateTaskInformationCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,

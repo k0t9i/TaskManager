@@ -8,7 +8,7 @@ use App\Shared\Domain\Criteria\ExpressionOperand;
 use Faker\Factory;
 use Faker\Generator;
 
-class Helper
+final class Helper
 {
     private static ?Generator $faker = null;
 

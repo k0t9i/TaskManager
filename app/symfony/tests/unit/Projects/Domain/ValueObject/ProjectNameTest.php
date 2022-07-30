@@ -10,7 +10,7 @@ use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
-class ProjectNameTest extends TestCase
+final class ProjectNameTest extends TestCase
 {
     private Generator $faker;
 

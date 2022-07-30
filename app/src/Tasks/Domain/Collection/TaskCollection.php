@@ -7,7 +7,7 @@ namespace App\Tasks\Domain\Collection;
 use App\Shared\Domain\Collection\Collection;
 use App\Tasks\Domain\Entity\Task;
 
-class TaskCollection extends Collection
+final class TaskCollection extends Collection
 {
     protected function getType(): string
     {

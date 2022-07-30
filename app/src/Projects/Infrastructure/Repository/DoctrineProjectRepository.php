@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 
-class DoctrineProjectRepository implements ProjectRepositoryInterface
+final class DoctrineProjectRepository implements ProjectRepositoryInterface
 {
     use DoctrineOptimisticLockTrait;
 

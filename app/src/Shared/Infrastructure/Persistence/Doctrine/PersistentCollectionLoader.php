@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use LogicException;
 
-class PersistentCollectionLoader implements PersistentCollectionLoaderInterface
+final class PersistentCollectionLoader implements PersistentCollectionLoaderInterface
 {
     public function loadInto(Collection $target, CollectionInterface $source, DoctrineProxyInterface $owner): void
     {

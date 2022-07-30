@@ -15,7 +15,7 @@ use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ObjectRepository;
 use ReflectionException;
 
-class DoctrineRequestQueryRepository implements RequestQueryRepositoryInterface
+final class DoctrineRequestQueryRepository implements RequestQueryRepositoryInterface
 {
     use DoctrineCriteriaRepositoryTrait;
 

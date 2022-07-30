@@ -13,7 +13,7 @@ use App\Tasks\Domain\Exception\TaskManagerNotExistException;
 use App\Tasks\Domain\Repository\TaskManagerRepositoryInterface;
 use App\Tasks\Domain\ValueObject\ClosedTaskStatus;
 
-class CloseTaskCommandHandler implements CommandHandlerInterface
+final class CloseTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly TaskManagerRepositoryInterface $managerRepository,
