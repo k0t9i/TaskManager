@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Infrastructure\Service;
@@ -7,7 +8,6 @@ use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Infrastructure\Service\RamseyUuid4Generator;
 use Faker\Factory;
 use Faker\Generator;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
@@ -21,7 +21,6 @@ class RamseyUuid4GeneratorTest extends TestCase
     {
         $this->faker = Factory::create();
 
-        /** @var UuidInterface|MockObject $symfonyHasher */
         $this->uuid = self::getMockForAbstractClass(
             AbstractUuid::class,
             callOriginalConstructor: false,
@@ -42,4 +41,3 @@ class RamseyUuid4GeneratorTest extends TestCase
         self::assertEquals($return, $this->generator->generate());
     }
 }
-

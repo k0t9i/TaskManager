@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\ValueObject;
@@ -10,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
-
     public function testCanBeChangedTo(): void
     {
         $otherStatus = self::getMockForAbstractClass(Status::class);
@@ -22,7 +22,7 @@ class StatusTest extends TestCase
 
         $status = self::getMockForAbstractClass(Status::class);
         $status->method('getNextStatuses')
-            ->will(self::returnValue([self::class])); //random class
+            ->will(self::returnValue([self::class])); // random class
         self::assertFalse($status->canBeChangedTo($otherStatus));
     }
 
@@ -37,7 +37,7 @@ class StatusTest extends TestCase
 
         $status = self::getMockForAbstractClass(Status::class);
         $status->method('getNextStatuses')
-            ->will(self::returnValue([self::class])); //random class
+            ->will(self::returnValue([self::class])); // random class
         self::expectException(InvalidNextStatusException::class);
         $status->ensureCanBeChangedTo($otherStatus);
     }
@@ -56,4 +56,3 @@ class StatusTest extends TestCase
         $status->ensureAllowsModification();
     }
 }
-

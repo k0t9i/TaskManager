@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\ValueObject;
@@ -20,7 +21,7 @@ class UuidTest extends TestCase
 
     public function testValidUuid(): void
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $value = $this->faker->uuid();
             $uuid = self::getMockForAbstractClass(
                 Uuid::class,
@@ -80,4 +81,3 @@ class UuidTest extends TestCase
         self::assertEquals($uuid->value, $otherUuid->value);
     }
 }
-

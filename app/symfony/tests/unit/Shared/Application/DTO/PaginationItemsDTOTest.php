@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Application\DTO;
@@ -31,7 +32,7 @@ class PaginationItemsDTOTest extends TestCase
         $pagination = self::getMockBuilder(Pagination::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
-                'getTotalPageCount', 'getCurrentPage', 'getPrevPage', 'getNextPage'
+                'getTotalPageCount', 'getCurrentPage', 'getPrevPage', 'getNextPage',
             ])
             ->getMock();
         $pagination->expects(self::once())
@@ -49,7 +50,6 @@ class PaginationItemsDTOTest extends TestCase
 
         $items = $this->faker->words(20);
 
-
         $dto = PaginationItemsDTO::create($pagination, $items);
 
         self::assertEquals($items, $dto->items);
@@ -59,4 +59,3 @@ class PaginationItemsDTOTest extends TestCase
         self::assertEquals($next, $dto->next);
     }
 }
-

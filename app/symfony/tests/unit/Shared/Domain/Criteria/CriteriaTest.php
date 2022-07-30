@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Criteria;
@@ -26,7 +27,6 @@ class CriteriaTest extends TestCase
         [$criteria, $expression, $orders, $offset, $limit] = $this->getRandomCriteria();
         $emptyCriteria = new Criteria();
         $emptyExpression = new Expression();
-
 
         self::assertEquals($expression, $criteria->getExpression());
         self::assertEquals($orders, $criteria->getOrders());
@@ -59,8 +59,8 @@ class CriteriaTest extends TestCase
 
         $scalarFilters = [];
         $arrayValue = $this->faker->words(10);
-        for ($i = 0; $i < 10; $i++) {
-            $isArray = mt_rand(0, 1) === 1;
+        for ($i = 0; $i < 10; ++$i) {
+            $isArray = 1 === mt_rand(0, 1);
             $value = $isArray ? $this->faker->shuffleArray($arrayValue) : $this->faker->regexify('.{1,20}');
             $scalarFilters[$this->faker->regexify('.{1,20}')] = $value;
         }
@@ -88,8 +88,8 @@ class CriteriaTest extends TestCase
         [$criteria, $expression, $orders, $offset, $limit] = $this->getRandomCriteria();
 
         $scalarOrders = [];
-        for ($i = 0; $i < 10; $i++) {
-            $scalarOrders[$this->faker->regexify('.{1,20}')] = mt_rand(0, 1) === 1;
+        for ($i = 0; $i < 10; ++$i) {
+            $scalarOrders[$this->faker->regexify('.{1,20}')] = 1 === mt_rand(0, 1);
         }
 
         foreach ($scalarOrders as $name => $isAsc) {
@@ -124,17 +124,17 @@ class CriteriaTest extends TestCase
     {
         $filters = [];
         $expression = new Expression();
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             [$operand] = Helper::getRandomOperand();
             $filters[] = $operand;
             $expression->andOperand($operand);
         }
 
         $orders = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $order = new Order(
                 $this->faker->regexify('.{1,20}'),
-                mt_rand(0, 1) === 1
+                1 === mt_rand(0, 1)
             );
             $orders[] = $order;
         }
@@ -145,4 +145,3 @@ class CriteriaTest extends TestCase
         return [$criteria, $expression, $orders, $offset, $limit];
     }
 }
-

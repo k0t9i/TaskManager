@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Criteria;
@@ -20,7 +21,7 @@ class ExpressionOperandTest extends TestCase
             ExpressionOperand::OPERATOR_LT => 0,
             ExpressionOperand::OPERATOR_LTE => 0,
             ExpressionOperand::OPERATOR_IN => [],
-            ExpressionOperand::OPERATOR_NIN => []
+            ExpressionOperand::OPERATOR_NIN => [],
         ];
 
         foreach ($operators as $operator => $value) {
@@ -37,7 +38,7 @@ class ExpressionOperandTest extends TestCase
         $operator = 'invalid operator';
 
         self::expectException(LogicException::class);
-        self::expectExceptionMessage('Invalid criteria operator "' . mb_strtoupper($operator). '"');
+        self::expectExceptionMessage('Invalid criteria operator "'.mb_strtoupper($operator).'"');
         new ExpressionOperand('property', $operator, 0);
     }
 
@@ -51,15 +52,14 @@ class ExpressionOperandTest extends TestCase
             ExpressionOperand::OPERATOR_LT => [],
             ExpressionOperand::OPERATOR_LTE => [],
             ExpressionOperand::OPERATOR_IN => 0,
-            ExpressionOperand::OPERATOR_NIN => 0
+            ExpressionOperand::OPERATOR_NIN => 0,
         ];
         $expectedExceptions = [];
         foreach ($operators as $value) {
             $expectedExceptions[] = [
-                LogicException::class, 'Invalid criteria value type "' . gettype($value) . '"'
+                LogicException::class, 'Invalid criteria value type "'.gettype($value).'"',
             ];
         }
-
 
         $actualExceptions = [];
         foreach ($operators as $operator => $value) {
@@ -67,7 +67,7 @@ class ExpressionOperandTest extends TestCase
                 new ExpressionOperand('property', $operator, $value);
             } catch (Throwable $expected) {
                 $actualExceptions[] = [
-                    $expected::class, $expected->getMessage()
+                    $expected::class, $expected->getMessage(),
                 ];
             }
         }
@@ -75,4 +75,3 @@ class ExpressionOperandTest extends TestCase
         self::assertEquals($expectedExceptions, $actualExceptions);
     }
 }
-

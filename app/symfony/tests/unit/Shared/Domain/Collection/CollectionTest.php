@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Collection;
@@ -15,7 +16,7 @@ class CollectionTest extends TestCase
             new CollectionItem('1'),
             22,
             'sssss',
-            new CollectionItem('2')
+            new CollectionItem('2'),
         ];
         self::expectException(LogicException::class);
         self::expectExceptionMessage(sprintf('Object must be of type "%s"', Hashable::class));
@@ -24,8 +25,7 @@ class CollectionTest extends TestCase
 
     public function testExceptionWhenCreateWithWrongHashable(): void
     {
-        $hashable = new class implements Hashable
-        {
+        $hashable = new class() implements Hashable {
             public function getHash(): string
             {
                 return '';
@@ -40,7 +40,7 @@ class CollectionTest extends TestCase
         $items = [
             new CollectionItem('1'),
             new CollectionItem('2'),
-            $hashable
+            $hashable,
         ];
         self::expectException(LogicException::class);
         self::expectExceptionMessage(sprintf('Object must be of type "%s"', CollectionItem::class));
@@ -54,7 +54,7 @@ class CollectionTest extends TestCase
         $items = [
             new CollectionItem('3'),
             $exists,
-            new CollectionItem('5')
+            new CollectionItem('5'),
         ];
         $collection = new TestedCollection($items);
         self::assertTrue($collection->exists($exists));
@@ -68,7 +68,7 @@ class CollectionTest extends TestCase
         $items = [
             new CollectionItem('3'),
             $exists,
-            new CollectionItem('5')
+            new CollectionItem('5'),
         ];
         $collection = new TestedCollection($items);
         self::assertTrue($collection->hashExists($exists->getHash()));
@@ -81,7 +81,7 @@ class CollectionTest extends TestCase
         $items = [
             new CollectionItem('3'),
             $item,
-            new CollectionItem('5')
+            new CollectionItem('5'),
         ];
         $collection = new TestedCollection($items);
         self::assertSame($collection->get('1'), $item);
@@ -92,7 +92,7 @@ class CollectionTest extends TestCase
         $item = new CollectionItem('1');
         $items = [
             new CollectionItem('3'),
-            new CollectionItem('5')
+            new CollectionItem('5'),
         ];
         $collection = new TestedCollection($items);
         $newCollection = $collection->add($item);
@@ -107,7 +107,7 @@ class CollectionTest extends TestCase
         $items = [
             new CollectionItem('3'),
             new CollectionItem('5'),
-            $item
+            $item,
         ];
         $collection = new TestedCollection($items);
         $newCollection = $collection->remove($item);
@@ -116,4 +116,3 @@ class CollectionTest extends TestCase
         self::assertCount(2, $newCollection);
     }
 }
-

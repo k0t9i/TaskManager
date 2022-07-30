@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Criteria;
@@ -33,11 +34,11 @@ class ExpressionTest extends TestCase
         $expression = new Expression();
 
         $expected = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $operator = $this->faker->randomElement([Expression::OPERATOR_OR, Expression::OPERATOR_AND]);
             [$operand] = Helper::getRandomOperand();
             $expected[] = [$operator, $operand];
-            if ($operator === Expression::OPERATOR_AND) {
+            if (Expression::OPERATOR_AND === $operator) {
                 $expression->andOperand($operand);
             } else {
                 $expression->orOperand($operand);

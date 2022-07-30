@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Infrastructure\Service;
@@ -7,7 +8,6 @@ use App\Shared\Application\Service\PasswordHasherInterface;
 use App\Shared\Infrastructure\Service\SymfonyPasswordHasher;
 use Faker\Factory;
 use Faker\Generator;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface as SymfonyPasswordHasherInterface;
 
@@ -21,7 +21,6 @@ class SymfonyPasswordHasherTest extends TestCase
     {
         $this->faker = Factory::create();
 
-        /** @var SymfonyPasswordHasherInterface|MockObject $symfonyHasher */
         $this->symfonyHasher = self::getMockForAbstractClass(
             SymfonyPasswordHasherInterface::class,
             callOriginalConstructor: false,
@@ -58,4 +57,3 @@ class SymfonyPasswordHasherTest extends TestCase
         self::assertEquals($return, $this->hasher->verifyPassword($hashed, $plain));
     }
 }
-

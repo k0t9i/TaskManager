@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\ValueObject;
@@ -25,7 +26,7 @@ class ParticipantsTest extends TestCase
         $this->participantId = $this->faker->uuid();
 
         $users = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $users[] = new UserId($this->faker->uuid());
         }
 
@@ -79,4 +80,3 @@ class ParticipantsTest extends TestCase
         self::assertNotSame($participants, $this->participants);
     }
 }
-

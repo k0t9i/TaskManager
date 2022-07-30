@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Criteria;
@@ -13,10 +14,10 @@ class Helper
 
     public static function getRandomOperand(?string $operator = null): array
     {
-        if (self::$faker === null) {
+        if (null === self::$faker) {
             self::$faker = Factory::create();
         }
-        
+
         $arrayValue = self::$faker->words(10);
         $operators = [
             ExpressionOperand::OPERATOR_EQ => self::$faker->randomElement($arrayValue),
@@ -26,7 +27,7 @@ class Helper
             ExpressionOperand::OPERATOR_LT => self::$faker->randomElement($arrayValue),
             ExpressionOperand::OPERATOR_LTE => self::$faker->randomElement($arrayValue),
             ExpressionOperand::OPERATOR_IN => self::$faker->shuffleArray($arrayValue),
-            ExpressionOperand::OPERATOR_NIN => self::$faker->shuffleArray($arrayValue)
+            ExpressionOperand::OPERATOR_NIN => self::$faker->shuffleArray($arrayValue),
         ];
         $operator = $operator ?? self::$faker->randomKey($operators);
         $value = $operators[$operator];

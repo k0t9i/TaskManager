@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\Service;
@@ -19,7 +20,7 @@ class UtilsTest extends TestCase
             'snake_case_whatever' => 'snake_case_whatever',
             'A' => 'a',
             '_Ca_meCa_seWi_thUnder_line' => '__ca_me_ca_se_wi_th_under_line',
-            '1234567890' => '1234567890'
+            '1234567890' => '1234567890',
         ];
 
         foreach ($items as $source => $target) {
@@ -27,4 +28,3 @@ class UtilsTest extends TestCase
         }
     }
 }
-
