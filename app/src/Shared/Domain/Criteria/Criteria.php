@@ -42,7 +42,7 @@ final class Criteria
             if (is_array($value)) {
                 $operator = 'IN';
             }
-            $this->expression->andOperand(new ExpressionOperand($name, $operator, $value));
+            $this->expression->andOperand(new ExpressionOperand((string) $name, $operator, $value));
         }
 
         return $this;
@@ -51,7 +51,7 @@ final class Criteria
     public function loadScalarOrders(array $orders): self
     {
         foreach ($orders as $name => $isAsc) {
-            $this->orders[] = new Order($name, $isAsc);
+            $this->orders[] = new Order((string) $name, $isAsc);
         }
 
         return $this;
