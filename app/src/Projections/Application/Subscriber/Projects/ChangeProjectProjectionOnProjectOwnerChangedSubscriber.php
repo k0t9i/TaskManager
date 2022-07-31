@@ -7,7 +7,6 @@ namespace App\Projections\Application\Subscriber\Projects;
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectOwnerWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 
@@ -19,9 +18,6 @@ final class ChangeProjectProjectionOnProjectOwnerChangedSubscriber implements Ev
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [ProjectOwnerWasChangedEvent::class];

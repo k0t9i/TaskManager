@@ -6,7 +6,6 @@ namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Requests\RequestWasCreatedEvent;
 
 final class ChangeProjectProjectionOnRequestCreatedSubscriber implements EventSubscriberInterface
@@ -16,9 +15,6 @@ final class ChangeProjectProjectionOnRequestCreatedSubscriber implements EventSu
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [RequestWasCreatedEvent::class];

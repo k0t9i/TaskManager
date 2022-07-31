@@ -6,7 +6,6 @@ namespace App\Projections\Application\Subscriber\Tasks;
 
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Tasks\TaskLinkWasDeletedEvent;
 use App\Shared\Domain\Exception\TaskNotExistException;
 
@@ -17,9 +16,6 @@ final class ChangeTaskProjectionOnTaskLinkDeletedSubscriber implements EventSubs
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [TaskLinkWasDeletedEvent::class];

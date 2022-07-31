@@ -6,7 +6,6 @@ namespace App\Projections\Application\Subscriber\Tasks;
 
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 
 final class ChangeTaskProjectionOnUserProfileChangedSubscriber implements EventSubscriberInterface
@@ -16,9 +15,6 @@ final class ChangeTaskProjectionOnUserProfileChangedSubscriber implements EventS
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [UserProfileWasChangedEvent::class];

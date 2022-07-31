@@ -6,7 +6,6 @@ namespace App\Projections\Application\Subscriber\Tasks;
 
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Tasks\TaskInformationWasChangedEvent;
 use App\Shared\Domain\Exception\TaskNotExistException;
 use DateTime;
@@ -19,9 +18,6 @@ final class ChangeTaskProjectionOnTaskInformationChangedSubscriber implements Ev
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [TaskInformationWasChangedEvent::class];

@@ -7,7 +7,6 @@ namespace App\Projections\Application\Subscriber\Requests;
 use App\Projections\Domain\Repository\RequestProjectionRepositoryInterface;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use Exception;
@@ -20,9 +19,6 @@ final class ChangeOnUserProfileChanged implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [UserProfileWasChangedEvent::class];

@@ -8,7 +8,6 @@ use App\Projections\Domain\Entity\TaskProjection;
 use App\Projections\Domain\Repository\TaskProjectionRepositoryInterface;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Tasks\TaskWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use DateTime;
@@ -22,9 +21,6 @@ final class CreateTaskProjectionOnTaskCreated implements EventSubscriberInterfac
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [TaskWasCreatedEvent::class];

@@ -6,7 +6,6 @@ namespace App\Projections\Application\Subscriber\Projects;
 
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Users\UserProfileWasChangedEvent;
 
 final class ChangeProjectProjectionOnUserProfileChangedSubscriber implements EventSubscriberInterface
@@ -16,9 +15,6 @@ final class ChangeProjectProjectionOnUserProfileChangedSubscriber implements Eve
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [UserProfileWasChangedEvent::class];

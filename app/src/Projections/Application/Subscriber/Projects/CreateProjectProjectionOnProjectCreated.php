@@ -8,7 +8,6 @@ use App\Projections\Domain\Entity\ProjectProjection;
 use App\Projections\Domain\Repository\ProjectProjectionRepositoryInterface;
 use App\Projections\Domain\Repository\UserProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
-use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\Projects\ProjectWasCreatedEvent;
 use App\Shared\Domain\Exception\UserNotExistException;
 use DateTime;
@@ -22,9 +21,6 @@ final class CreateProjectProjectionOnProjectCreated implements EventSubscriberIn
     ) {
     }
 
-    /**
-     * @return DomainEvent[]
-     */
     public function subscribeTo(): array
     {
         return [ProjectWasCreatedEvent::class];
