@@ -35,4 +35,3 @@ final class EmailTest extends TestCase
         new Email($this->faker->regexify('.{255}'));
     }
 }
-

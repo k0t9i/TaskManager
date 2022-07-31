@@ -45,6 +45,7 @@ final class Participants
     {
         $result = new self();
         $result->participants = $this->participants->add($userId);
+
         return $result;
     }
 
@@ -52,6 +53,7 @@ final class Participants
     {
         $result = new self();
         $result->participants = $this->participants->remove($userId);
+
         return $result;
     }
 

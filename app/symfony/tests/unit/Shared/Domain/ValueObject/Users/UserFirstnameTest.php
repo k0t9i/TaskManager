@@ -45,4 +45,3 @@ final class UserFirstnameTest extends TestCase
         new UserFirstname($this->faker->regexify('.{256}'));
     }
 }
-

@@ -54,6 +54,7 @@ final class ProjectEventHandler
         if (null === $aggregateRoot) {
             throw new ProjectNotExistException($projectId);
         }
+
         return $aggregateRoot;
     }
 }

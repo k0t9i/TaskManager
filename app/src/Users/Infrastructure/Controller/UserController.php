@@ -34,6 +34,7 @@ final class UserController
         $parameters = json_decode($request->getContent(), true);
 
         $this->commandBus->dispatch(UpdateProfileCommand::createFromRequest($parameters));
+
         return new JsonResponse();
     }
 
@@ -42,6 +43,7 @@ final class UserController
     {
         /** @var GetProfileQueryResponse $envelop */
         $envelop = $this->queryBus->dispatch(new GetProfileQuery());
+
         return new JsonResponse($envelop->getProfile());
     }
 

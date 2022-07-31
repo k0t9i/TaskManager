@@ -42,7 +42,6 @@ final class Owner implements Hashable
 
     /**
      * @param self $other
-     * @return bool
      */
     public function isEqual(object $other): bool
     {

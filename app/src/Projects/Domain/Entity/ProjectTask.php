@@ -43,6 +43,7 @@ final class ProjectTask implements Hashable
         if (get_class($this) !== get_class($other)) {
             return false;
         }
+
         return $this->id->isEqual($other->id) &&
             $this->taskId->isEqual($other->taskId) &&
             $this->ownerId->isEqual($other->ownerId);

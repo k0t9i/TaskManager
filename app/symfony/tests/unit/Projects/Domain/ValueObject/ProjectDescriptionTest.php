@@ -41,4 +41,3 @@ final class ProjectDescriptionTest extends TestCase
         new ProjectDescription($this->faker->regexify('.{4001}'));
     }
 }
-

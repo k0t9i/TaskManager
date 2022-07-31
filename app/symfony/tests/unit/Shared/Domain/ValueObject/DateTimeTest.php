@@ -59,4 +59,3 @@ final class DateTimeTest extends TestCase
         self::assertTrue($sameDate->isEqual($date));
     }
 }
-

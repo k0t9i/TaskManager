@@ -30,6 +30,7 @@ final class Tasks
     {
         $result = new self();
         $result->tasks = $this->tasks->add($task);
+
         return $result;
     }
 

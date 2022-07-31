@@ -43,4 +43,3 @@ final class OwnerTest extends TestCase
         $this->owner->ensureIsOwner(new UserId($this->faker->uuid()));
     }
 }
-

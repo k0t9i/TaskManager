@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 final class ProjectStatusTest extends TestCase
 {
-
     public function testGetScalar(): void
     {
         self::assertEquals(ProjectStatus::STATUS_CLOSED, (new ClosedProjectStatus())->getScalar());
@@ -53,4 +52,3 @@ final class ProjectStatusTest extends TestCase
         self::assertFalse($closed->canBeChangedTo($closed));
     }
 }
-

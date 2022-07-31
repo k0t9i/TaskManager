@@ -9,5 +9,6 @@ use App\Shared\SharedBoundedContext\Domain\Entity\SharedUser;
 interface SharedUserRepositoryInterface
 {
     public function findById(string $id): ?SharedUser;
+
     public function save(SharedUser $user): void;
 }

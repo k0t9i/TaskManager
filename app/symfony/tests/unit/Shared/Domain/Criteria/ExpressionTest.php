@@ -48,4 +48,3 @@ final class ExpressionTest extends TestCase
         self::assertEquals($expected, $expression->getOperands());
     }
 }
-

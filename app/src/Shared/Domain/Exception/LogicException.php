@@ -6,5 +6,4 @@ namespace App\Shared\Domain\Exception;
 
 final class LogicException extends DomainException
 {
-
 }

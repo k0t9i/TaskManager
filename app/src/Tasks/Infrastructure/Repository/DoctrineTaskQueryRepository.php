@@ -23,6 +23,7 @@ final class DoctrineTaskQueryRepository implements TaskQueryRepositoryInterface
 
     /**
      * @return TaskListProjection[]
+     *
      * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array

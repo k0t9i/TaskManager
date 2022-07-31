@@ -12,6 +12,8 @@ interface RequestProjectionRepositoryInterface
      * @return RequestProjection[]
      */
     public function findByUserId(string $id): array;
+
     public function findById(string $id): ?RequestProjection;
+
     public function save(RequestProjection $projection): void;
 }

@@ -23,6 +23,7 @@ final class DoctrineUserQueryRepository implements UserQueryRepositoryInterface
 
     /**
      * @return UserProjection[]
+     *
      * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array

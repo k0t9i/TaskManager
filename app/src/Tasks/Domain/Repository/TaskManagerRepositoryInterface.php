@@ -14,6 +14,8 @@ interface TaskManagerRepositoryInterface
      * @return TaskManager[]
      */
     public function findByProjectId(ProjectId $id): ?TaskManager;
+
     public function findByTaskId(TaskId $id): ?TaskManager;
+
     public function save(TaskManager $manager): void;
 }

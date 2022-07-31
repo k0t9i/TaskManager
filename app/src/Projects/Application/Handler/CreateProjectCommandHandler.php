@@ -28,7 +28,6 @@ final class CreateProjectCommandHandler implements CommandHandlerInterface
 
     public function __invoke(CreateProjectCommand $command): void
     {
-
         $project = Project::create(
             new ProjectId($command->id),
             new ProjectInformation(

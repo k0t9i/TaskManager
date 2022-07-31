@@ -39,4 +39,3 @@ final class GetAllOwnProjectsQueryHandler implements QueryHandlerInterface
         return new GetAllOwnProjectsQueryResponse($result);
     }
 }
-

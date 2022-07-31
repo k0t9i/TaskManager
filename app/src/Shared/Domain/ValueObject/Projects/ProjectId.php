@@ -8,5 +8,4 @@ use App\Shared\Domain\ValueObject\Uuid;
 
 final class ProjectId extends Uuid
 {
-
 }

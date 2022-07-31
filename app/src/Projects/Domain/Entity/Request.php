@@ -25,6 +25,7 @@ final class Request implements Hashable
     {
         $status = new PendingRequestStatus();
         $changeDate = new DateTime();
+
         return new Request($id, $userId, $status, $changeDate);
     }
 
@@ -65,6 +66,7 @@ final class Request implements Hashable
         if (get_class($this) !== get_class($other)) {
             return false;
         }
+
         return $this->id->isEqual($other->id) &&
             $this->userId->isEqual($other->userId) &&
             $this->status->isEqual($other->status) &&

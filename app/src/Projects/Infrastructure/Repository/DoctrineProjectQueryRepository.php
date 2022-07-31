@@ -23,6 +23,7 @@ final class DoctrineProjectQueryRepository implements ProjectQueryRepositoryInte
 
     /**
      * @return ProjectListProjection[]
+     *
      * @throws QueryException
      */
     public function findAllByCriteria(Criteria $criteria): array

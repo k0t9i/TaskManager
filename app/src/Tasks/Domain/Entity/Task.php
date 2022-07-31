@@ -121,6 +121,7 @@ final class Task implements Hashable
         if (get_class($this) !== get_class($other)) {
             return false;
         }
+
         return $this->id->isEqual($other->id) &&
             $this->information->isEqual($other->information) &&
             $this->status->isEqual($other->status) &&

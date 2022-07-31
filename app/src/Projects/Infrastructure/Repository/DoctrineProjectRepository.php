@@ -84,6 +84,7 @@ final class DoctrineProjectRepository implements ProjectRepositoryInterface
         if (null === $result) {
             $result = new ProjectProxy($project);
         }
+
         return $result;
     }
 

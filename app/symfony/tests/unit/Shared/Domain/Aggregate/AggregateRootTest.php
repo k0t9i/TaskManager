@@ -29,4 +29,3 @@ final class AggregateRootTest extends TestCase
         self::assertEmpty($root->releaseEvents());
     }
 }
-

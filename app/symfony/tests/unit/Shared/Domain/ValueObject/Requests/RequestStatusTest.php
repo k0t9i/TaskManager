@@ -73,4 +73,3 @@ final class RequestStatusTest extends TestCase
         self::assertFalse($rejected->canBeChangedTo($rejected));
     }
 }
-

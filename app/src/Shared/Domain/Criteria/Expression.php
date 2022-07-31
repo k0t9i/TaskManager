@@ -24,6 +24,7 @@ final class Expression
             self::OPERATOR_AND,
             $operand,
         ];
+
         return $this;
     }
 
@@ -33,6 +34,7 @@ final class Expression
             self::OPERATOR_OR,
             $operand,
         ];
+
         return $this;
     }
 

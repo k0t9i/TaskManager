@@ -57,6 +57,7 @@ final class PersistentCollectionLoader implements PersistentCollectionLoaderInte
                 $proxies[$item->getHash()] = null;
             }
         }
+
         return $proxies;
     }
 }

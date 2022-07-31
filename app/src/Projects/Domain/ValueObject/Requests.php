@@ -39,6 +39,7 @@ final class Requests
     {
         $result = new self();
         $result->requests = $this->requests->add($request);
+
         return $result;
     }
 

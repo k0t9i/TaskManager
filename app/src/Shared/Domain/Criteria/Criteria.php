@@ -31,6 +31,7 @@ final class Criteria
         $this->orders = [];
         $this->offset = null;
         $this->limit = null;
+
         return $this;
     }
 
@@ -43,6 +44,7 @@ final class Criteria
             }
             $this->expression->andOperand(new ExpressionOperand($name, $operator, $value));
         }
+
         return $this;
     }
 
@@ -51,6 +53,7 @@ final class Criteria
         foreach ($orders as $name => $isAsc) {
             $this->orders[] = new Order($name, $isAsc);
         }
+
         return $this;
     }
 
@@ -58,6 +61,7 @@ final class Criteria
     {
         $this->offset = $offset;
         $this->limit = $limit;
+
         return $this;
     }
 

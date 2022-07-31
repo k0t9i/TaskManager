@@ -10,10 +10,15 @@ use IteratorAggregate;
 interface CollectionInterface extends Countable, IteratorAggregate
 {
     public function get(string $key): Hashable;
+
     public function exists(Hashable $item): bool;
+
     public function hashExists(string $hash): bool;
+
     public function add(Hashable $item): static;
+
     public function remove(Hashable $item): static;
+
     /**
      * @return Hashable[]
      */

@@ -70,6 +70,7 @@ abstract class Collection implements CollectionInterface
     public function exists(Hashable $item): bool
     {
         $this->ensureIsValidType($item);
+
         return array_key_exists($item->getHash(), $this->items);
     }
 
@@ -82,6 +83,7 @@ abstract class Collection implements CollectionInterface
     {
         $collection = new static();
         $collection->items = $other->items;
+
         return $collection;
     }
 

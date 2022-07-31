@@ -7,5 +7,6 @@ namespace App\Shared\Application\Service;
 interface AuthenticatorServiceInterface
 {
     public function getAuthUser(): AuthUserInterface;
+
     public function getToken(string $id): string;
 }

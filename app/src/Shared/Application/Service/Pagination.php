@@ -21,6 +21,7 @@ final class Pagination
     {
         $offset = ($page - 1) * Pagination::PAGE_SIZE;
         $limit = Pagination::PAGE_SIZE;
+
         return [$offset, $limit];
     }
 
@@ -37,12 +38,14 @@ final class Pagination
     public function getNextPage(): ?int
     {
         $next = $this->getCurrentPage() + 1;
+
         return $next > $this->getTotalPageCount() ? null : $next;
     }
 
     public function getPrevPage(): ?int
     {
         $prev = $this->getCurrentPage() - 1;
+
         return $prev <= 0 ? null : $prev;
     }
 

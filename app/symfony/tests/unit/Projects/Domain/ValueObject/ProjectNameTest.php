@@ -45,4 +45,3 @@ final class ProjectNameTest extends TestCase
         new ProjectName($this->faker->regexify('.{256}'));
     }
 }
-

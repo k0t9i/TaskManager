@@ -22,6 +22,7 @@ final class RequestProxyFactory
         );
 
         $proxy->changeEntity($entity);
+
         return $entity;
     }
 }

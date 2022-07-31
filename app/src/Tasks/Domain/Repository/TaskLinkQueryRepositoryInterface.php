@@ -12,5 +12,4 @@ use App\Shared\Domain\Service\PageableRepositoryInterface;
  */
 interface TaskLinkQueryRepositoryInterface extends PageableRepositoryInterface
 {
-
 }

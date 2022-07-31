@@ -18,6 +18,7 @@ final class DomainEventMapper
     public function getMap(): array
     {
         $this->indexMap();
+
         return $this->map;
     }
 

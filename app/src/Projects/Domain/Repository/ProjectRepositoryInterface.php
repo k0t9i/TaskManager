@@ -11,6 +11,8 @@ use App\Shared\Domain\ValueObject\Projects\ProjectId;
 interface ProjectRepositoryInterface
 {
     public function findById(ProjectId $id): ?Project;
+
     public function findByRequestId(RequestId $id): ?Project;
+
     public function save(Project $project): void;
 }
