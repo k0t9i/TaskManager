@@ -6,23 +6,22 @@ namespace App\Tasks\Infrastructure\Controller;
 
 use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
+use App\Shared\Application\DTO\RequestCriteriaDTO;
 use App\Shared\Application\Service\PaginationResponseFormatterInterface;
-use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Tasks\Application\Command\ActivateTaskCommand;
 use App\Tasks\Application\Command\AddLinkCommand;
 use App\Tasks\Application\Command\CloseTaskCommand;
-use App\Tasks\Application\Command\CreateTaskCommand;
 use App\Tasks\Application\Command\DeleteLinkCommand;
-use App\Tasks\Application\Command\UpdateTaskInformationCommand;
 use App\Tasks\Application\Query\GetProjectTasksQuery;
 use App\Tasks\Application\Query\GetProjectTasksQueryResponse;
 use App\Tasks\Application\Query\GetTaskLinksQuery;
 use App\Tasks\Application\Query\GetTaskLinksQueryResponse;
 use App\Tasks\Application\Query\GetTaskQuery;
 use App\Tasks\Application\Query\GetTaskQueryResponse;
+use App\Tasks\Infrastructure\Symfony\DTO\TaskCreateDTO;
+use App\Tasks\Infrastructure\Symfony\DTO\TaskUpdateDTO;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,22 +31,15 @@ final class TaskController
     public function __construct(
         private CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
-        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
         private readonly PaginationResponseFormatterInterface $responseFormatter,
         private readonly UuidGeneratorInterface $uuidGenerator
     ) {
     }
 
     #[Route('/in-project/{projectId}/', name: 'createInProject', methods: ['POST'])]
-    public function createInProject(string $projectId, Request $request): JsonResponse
+    public function createInProject(string $projectId, TaskCreateDTO $dto): JsonResponse
     {
-        $parameters = json_decode($request->getContent(), true);
-
-        $command = CreateTaskCommand::createFromRequest(
-            $this->uuidGenerator->generate(),
-            $parameters,
-            $projectId
-        );
+        $command = $dto->createCommand($this->uuidGenerator->generate(), $projectId);
         $this->commandBus->dispatch($command);
 
         return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
@@ -58,16 +50,9 @@ final class TaskController
         name: 'createForParticipant',
         methods: ['POST']
     )]
-    public function createTaskForParticipant(string $projectId, string $participantId, Request $request): JsonResponse
+    public function createTaskForParticipant(string $projectId, string $participantId, TaskCreateDTO $dto): JsonResponse
     {
-        $parameters = json_decode($request->getContent(), true);
-
-        $command = CreateTaskCommand::createFromRequest(
-            $this->uuidGenerator->generate(),
-            $parameters,
-            $projectId,
-            $participantId
-        );
+        $command = $dto->createCommand($this->uuidGenerator->generate(), $projectId, $participantId);
         $this->commandBus->dispatch($command);
 
         return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
@@ -90,12 +75,9 @@ final class TaskController
     }
 
     #[Route('/{id}/', name: 'update', methods: ['PATCH'])]
-    public function update(string $id, Request $request): JsonResponse
+    public function update(string $id, TaskUpdateDTO $dto): JsonResponse
     {
-        $parameters = json_decode($request->getContent(), true);
-        $parameters['id'] = $id;
-
-        $this->commandBus->dispatch(UpdateTaskInformationCommand::createFromRequest($parameters));
+        $this->commandBus->dispatch($dto->createCommand($id));
 
         return new JsonResponse();
     }
@@ -117,15 +99,10 @@ final class TaskController
     }
 
     #[Route('/in-project/{projectId}/', name: 'getAllInProject', methods: ['GET'])]
-    public function getAllInProject(string $projectId, Request $request): JsonResponse
+    public function getAllInProject(string $projectId, RequestCriteriaDTO $dto): JsonResponse
     {
         /** @var GetProjectTasksQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(
-            new GetProjectTasksQuery(
-                $projectId,
-                $this->criteriaBuilder->build($request->query->all())
-            )
-        );
+        $envelope = $this->queryBus->dispatch(new GetProjectTasksQuery($projectId, $dto));
 
         $response = $this->responseFormatter->format($envelope->getPagination());
 
@@ -133,15 +110,10 @@ final class TaskController
     }
 
     #[Route('/{id}/links/', name: 'getAllLinksInTask', methods: ['GET'])]
-    public function getAllLinksInTask(string $id, Request $request): JsonResponse
+    public function getAllLinksInTask(string $id, RequestCriteriaDTO $dto): JsonResponse
     {
         /** @var GetTaskLinksQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(
-            new GetTaskLinksQuery(
-                $id,
-                $this->criteriaBuilder->build($request->query->all())
-            )
-        );
+        $envelope = $this->queryBus->dispatch(new GetTaskLinksQuery($id, $dto));
 
         $response = $this->responseFormatter->format($envelope->getPagination());
 

@@ -19,18 +19,4 @@ final class CreateTaskCommand implements CommandInterface
         public readonly ?string $ownerId = null,
     ) {
     }
-
-    public static function createFromRequest(string $id, array $item, string $projectId, ?string $ownerId = null): self
-    {
-        return new self(
-            $id,
-            $item['name'] ?? '',
-            $item['brief'] ?? '',
-            $item['description'] ?? '',
-            $item['start_date'] ?? '',
-            $item['finish_date'] ?? '',
-            $projectId,
-            $ownerId,
-        );
-    }
 }

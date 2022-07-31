@@ -15,14 +15,4 @@ final class UpdateProfileCommand implements CommandInterface
         public readonly ?string $repeatPassword
     ) {
     }
-
-    public static function createFromRequest(array $item): self
-    {
-        return new self(
-            $item['firstname'] ?? null,
-            $item['lastname'] ?? null,
-            $item['password'] ?? null,
-            $item['repeat_password'] ?? null,
-        );
-    }
 }

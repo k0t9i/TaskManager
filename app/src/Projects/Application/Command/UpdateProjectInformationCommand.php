@@ -15,14 +15,4 @@ final class UpdateProjectInformationCommand implements CommandInterface
         public readonly ?string $finishDate
     ) {
     }
-
-    public static function createFromRequest(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['name'] ?? null,
-            $item['description'] ?? null,
-            $item['finish_date'] ?? null,
-        );
-    }
 }

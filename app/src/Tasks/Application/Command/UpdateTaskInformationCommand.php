@@ -17,16 +17,4 @@ final class UpdateTaskInformationCommand implements CommandInterface
         public readonly ?string $finishDate
     ) {
     }
-
-    public static function createFromRequest(array $item): self
-    {
-        return new self(
-            $item['id'],
-            $item['name'] ?? null,
-            $item['brief'] ?? null,
-            $item['description'] ?? null,
-            $item['start_date'] ?? null,
-            $item['finish_date'] ?? null,
-        );
-    }
 }

@@ -17,16 +17,4 @@ final class RegisterCommand implements CommandInterface
         public readonly string $repeatPassword,
     ) {
     }
-
-    public static function createFromRequest(string $id, array $item): self
-    {
-        return new self(
-            $id,
-            $item['email'] ?? '',
-            $item['firstname'] ?? '',
-            $item['lastname'] ?? '',
-            $item['password'] ?? '',
-            $item['repeat_password'] ?? '',
-        );
-    }
 }

@@ -7,24 +7,23 @@ namespace App\Projects\Infrastructure\Controller;
 use App\Projects\Application\Command\ActivateProjectCommand;
 use App\Projects\Application\Command\ChangeProjectOwnerCommand;
 use App\Projects\Application\Command\CloseProjectCommand;
-use App\Projects\Application\Command\CreateProjectCommand;
 use App\Projects\Application\Command\CreateRequestToProjectCommand;
 use App\Projects\Application\Command\LeaveProjectCommand;
 use App\Projects\Application\Command\RemoveProjectParticipantCommand;
-use App\Projects\Application\Command\UpdateProjectInformationCommand;
 use App\Projects\Application\Query\GetAllOwnProjectsQuery;
 use App\Projects\Application\Query\GetAllOwnProjectsQueryResponse;
 use App\Projects\Application\Query\GetProjectQuery;
 use App\Projects\Application\Query\GetProjectQueryResponse;
 use App\Projects\Application\Query\GetProjectRequestsQueryResponse;
 use App\Projects\Application\Query\GetProjectsRequestsQuery;
+use App\Projects\Infrastructure\Symfony\DTO\ProjectCreateDTO;
+use App\Projects\Infrastructure\Symfony\DTO\ProjectUpdateDTO;
 use App\Shared\Application\Bus\Command\CommandBusInterface;
 use App\Shared\Application\Bus\Query\QueryBusInterface;
+use App\Shared\Application\DTO\RequestCriteriaDTO;
 use App\Shared\Application\Service\PaginationResponseFormatterInterface;
-use App\Shared\Application\Service\RequestCriteriaBuilderInterface;
 use App\Shared\Application\Service\UuidGeneratorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,21 +33,15 @@ final class ProjectController
     public function __construct(
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
-        private readonly RequestCriteriaBuilderInterface $criteriaBuilder,
         private readonly PaginationResponseFormatterInterface $responseFormatter,
         private readonly UuidGeneratorInterface $uuidGenerator
     ) {
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
+    public function create(ProjectCreateDTO $dto): JsonResponse
     {
-        $parameters = json_decode($request->getContent(), true);
-
-        $command = CreateProjectCommand::createFromRequest(
-            $this->uuidGenerator->generate(),
-            $parameters
-        );
+        $command = $dto->createCommand($this->uuidGenerator->generate());
         $this->commandBus->dispatch($command);
 
         return new JsonResponse(['id' => $command->id], Response::HTTP_CREATED);
@@ -71,12 +64,9 @@ final class ProjectController
     }
 
     #[Route('/{id}/', name: 'update', methods: ['PATCH'])]
-    public function update(string $id, Request $request): JsonResponse
+    public function update(string $id, ProjectUpdateDTO $dto): JsonResponse
     {
-        $parameters = json_decode($request->getContent(), true);
-        $parameters['id'] = $id;
-
-        $this->commandBus->dispatch(UpdateProjectInformationCommand::createFromRequest($parameters));
+        $this->commandBus->dispatch($dto->createCommand($id));
 
         return new JsonResponse();
     }
@@ -118,14 +108,10 @@ final class ProjectController
     }
 
     #[Route('/', name: 'getAll', methods: ['GET'])]
-    public function getAll(Request $request): JsonResponse
+    public function getAll(RequestCriteriaDTO $dto): JsonResponse
     {
         /** @var GetAllOwnProjectsQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(
-            new GetAllOwnProjectsQuery(
-                $this->criteriaBuilder->build($request->query->all())
-            )
-        );
+        $envelope = $this->queryBus->dispatch(new GetAllOwnProjectsQuery($dto));
 
         $response = $this->responseFormatter->format($envelope->getPagination());
 
@@ -142,15 +128,10 @@ final class ProjectController
     }
 
     #[Route('/{id}/requests/', name: 'getAllRequests', methods: ['GET'])]
-    public function getAllRequests(string $id, Request $request): JsonResponse
+    public function getAllRequests(string $id, RequestCriteriaDTO $dto): JsonResponse
     {
         /** @var GetProjectRequestsQueryResponse $envelope */
-        $envelope = $this->queryBus->dispatch(
-            new GetProjectsRequestsQuery(
-                $id,
-                $this->criteriaBuilder->build($request->query->all())
-            )
-        );
+        $envelope = $this->queryBus->dispatch(new GetProjectsRequestsQuery($id, $dto));
 
         $response = $this->responseFormatter->format($envelope->getPagination());
 
