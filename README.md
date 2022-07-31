@@ -19,7 +19,7 @@ The application contains 4 nodes:
 
 Each node is a separate bound context, communication between them occurs only through the event bus.
 ## Database
-All data is stored on the same server in different databases, you can see the structure of the databases via adminer http://127.0.0.1:9080/.
+All data is stored on one server in different databases, you can see the database structure via adminer http://127.0.0.1:9080/.
 ## Repository structure
 All source code is in app directory:
 ```scala
@@ -45,7 +45,7 @@ app
     |-- Users
     `-- bootstrap.php // Common for all nodes
 ```
-After starting a docker containers, local directories are mapped in the same way for all containers, for example for projects:
+After starting docker containers, local directories are mapped in the same way for all containers, for example for projects:
 - ./app/symfony:/var/www/symfony
 - ./logs/supervisor/projects:/var/log/supervisor
 - ./app/config/shared:/var/www/config/shared
@@ -84,4 +84,4 @@ After starting a docker containers, local directories are mapped in the same way
 ## Buses
 Command and query buses are synchronous, implemented via the symfony messenger.
 
-The event bus is asynchronous implemented via the symfony messenger and RabbitMQ (http://127.0.0.1:15672/). Events are received from RabbitMQ through the Symphony Messenger, which is launched using the supervisor.
+The event bus is asynchronous, implemented via the symfony messenger and RabbitMQ (http://127.0.0.1:15672/). Events are received from RabbitMQ through the Symfony Messenger, which is launched using the supervisor.
