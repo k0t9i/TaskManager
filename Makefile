@@ -38,6 +38,13 @@ clean-cache:
 		docker exec task_manager-php-$$node php symfony/bin/console cache:warmup ; \
 	done
 
+.PHONY: create-db
+create-db:
+	for node in $(NODES); do\
+		echo create-db $$node ; \
+		docker exec task_manager-php-$$node php symfony/bin/console doctrine:database:create ; \
+	done
+
 .PHONY: migrate
 migrate:
 	for node in $(NODES); do\
@@ -51,3 +58,6 @@ supervisor-reload:
 		echo supervisor-reload $$node ; \
 		docker exec task_manager-php-$$node supervisorctl reload ; \
 	done
+
+.PHONY: setup
+setup: composer-install create-db migrate clean-cache supervisor-reload

@@ -16,7 +16,7 @@ jobs:
 
       - run: docker-compose pull
 
-      - run: docker-compose up -d
+      - run: docker-compose up -d --build
 
       - run: make composer-install
 
