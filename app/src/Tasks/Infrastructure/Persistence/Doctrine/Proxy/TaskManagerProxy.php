@@ -10,7 +10,6 @@ use App\Tasks\Domain\Entity\TaskManager;
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\PersistentCollection;
 
 final class TaskManagerProxy implements DoctrineVersionedProxyInterface
 {
@@ -19,13 +18,7 @@ final class TaskManagerProxy implements DoctrineVersionedProxyInterface
     private int $status;
     private string $ownerId;
     private PhpDateTime $finishDate;
-    /**
-     * @var Collection|PersistentCollection|TaskManagerParticipantProxy[]
-     */
     private Collection $participants;
-    /**
-     * @var Collection|PersistentCollection|TaskProxy[]
-     */
     private Collection $tasks;
     private int $version;
     private ?TaskManager $entity = null;

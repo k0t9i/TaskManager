@@ -76,6 +76,7 @@ final class UuidTest extends TestCase
             Uuid::class,
             [$this->faker->uuid()]
         );
+        /** @psalm-var TestedUuid $otherUuid */
         $otherUuid = TestedUuid::createFrom($uuid);
         self::assertInstanceOf(TestedUuid::class, $otherUuid);
         self::assertEquals($uuid->value, $otherUuid->value);

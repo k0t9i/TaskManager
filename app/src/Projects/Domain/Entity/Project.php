@@ -174,7 +174,7 @@ final class Project extends AggregateRoot
         $this->requests->ensureRequestExists($id);
 
         /** @var Request $request */
-        $request = $this->requests->get($id);
+        $request = $this->requests->getCollection()->get($id->getHash());
         $request->changeStatus($status);
 
         if ($status->isConfirmed()) {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tasks\Domain\ValueObject;
 
-use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\TaskNotExistException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
@@ -36,7 +35,8 @@ final class Tasks
 
     public function ensureIsFinishDateGreaterThanTaskDates(TaskId $taskId, DateTime $date): void
     {
-        $task = $this->get($taskId);
+        /** @var Task $task */
+        $task = $this->tasks->get($taskId->getHash());
         if (null === $task) {
             return;
         }
@@ -56,14 +56,6 @@ final class Tasks
         if (!$this->tasks->hashExists($taskId->getHash())) {
             throw new TaskNotExistException($taskId->value);
         }
-    }
-
-    /**
-     * @return Task|Hashable|null
-     */
-    public function get(TaskId $taskId): ?Task
-    {
-        return $this->tasks->get($taskId->getHash());
     }
 
     public function getCollection(): TaskCollection

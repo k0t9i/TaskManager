@@ -8,12 +8,13 @@ use App\Shared\Application\Service\PasswordHasherInterface;
 use App\Shared\Infrastructure\Service\SymfonyPasswordHasher;
 use Faker\Factory;
 use Faker\Generator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface as SymfonyPasswordHasherInterface;
 
 final class SymfonyPasswordHasherTest extends TestCase
 {
-    private SymfonyPasswordHasherInterface $symfonyHasher;
+    private SymfonyPasswordHasherInterface|MockObject $symfonyHasher;
     private PasswordHasherInterface $hasher;
     private Generator $faker;
 

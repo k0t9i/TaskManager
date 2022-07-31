@@ -6,7 +6,11 @@ namespace App\Tests\unit\Shared\Infrastructure\Service;
 
 use Ramsey\Uuid\UuidInterface;
 
-// due to depreciation notice
+/**
+ * Due to depreciation notice.
+ *
+ * @psalm-immutable
+ */
 abstract class AbstractUuid implements UuidInterface
 {
     public function __serialize(): array

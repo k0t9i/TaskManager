@@ -89,7 +89,7 @@ final class TaskManager extends AggregateRoot
         $this->tasks->ensureTaskExists($taskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($taskId);
+        $task = $this->tasks->getCollection()->get($taskId->getHash());
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
 
         $task->changeInformation($information);
@@ -113,7 +113,7 @@ final class TaskManager extends AggregateRoot
         $this->tasks->ensureTaskExists($taskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($taskId);
+        $task = $this->tasks->getCollection()->get($taskId->getHash());
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->changeStatus($status);
 
@@ -135,12 +135,12 @@ final class TaskManager extends AggregateRoot
         $this->tasks->ensureTaskExists($toTaskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($fromTaskId);
+        $task = $this->tasks->getCollection()->get($fromTaskId->getHash());
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->addLink($toTaskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($toTaskId);
+        $task = $this->tasks->getCollection()->get($toTaskId->getHash());
         $task->addLink($fromTaskId);
 
         $this->registerEvent(new TaskLinkWasAddedEvent(
@@ -165,12 +165,12 @@ final class TaskManager extends AggregateRoot
         $this->tasks->ensureTaskExists($toTaskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($fromTaskId);
+        $task = $this->tasks->getCollection()->get($fromTaskId->getHash());
         $this->ensureCanChangeTask($task->getOwnerId(), $currentUserId);
         $task->deleteLink($toTaskId);
 
         /** @var Task $task */
-        $task = $this->tasks->get($toTaskId);
+        $task = $this->tasks->getCollection()->get($toTaskId->getHash());
         $task->deleteLink($fromTaskId);
 
         $this->registerEvent(new TaskLinkWasDeletedEvent(

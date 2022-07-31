@@ -7,7 +7,6 @@ namespace App\Projects\Domain\ValueObject;
 use App\Projects\Domain\Collection\RequestCollection;
 use App\Projects\Domain\Entity\Request;
 use App\Projects\Domain\Exception\UserAlreadyHasPendingRequestException;
-use App\Shared\Domain\Collection\Hashable;
 use App\Shared\Domain\Exception\RequestNotExistsException;
 use App\Shared\Domain\ValueObject\Projects\ProjectId;
 use App\Shared\Domain\ValueObject\Users\UserId;
@@ -50,17 +49,6 @@ final class Requests
         }
     }
 
-    /**
-     * @return Request|Hashable|null
-     */
-    public function get(RequestId $requestId): ?Request
-    {
-        return $this->requests->get($requestId->getHash());
-    }
-
-    /**
-     * @return RequestCollection|Request[]
-     */
     public function getCollection(): RequestCollection
     {
         return $this->requests;

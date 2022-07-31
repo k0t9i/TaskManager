@@ -8,12 +8,13 @@ use App\Shared\Application\Service\UuidGeneratorInterface;
 use App\Shared\Infrastructure\Service\RamseyUuid4Generator;
 use Faker\Factory;
 use Faker\Generator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
 
 final class RamseyUuid4GeneratorTest extends TestCase
 {
-    private UuidInterface $uuid;
+    private UuidInterface|MockObject $uuid;
     private UuidGeneratorInterface $generator;
     private Generator $faker;
 

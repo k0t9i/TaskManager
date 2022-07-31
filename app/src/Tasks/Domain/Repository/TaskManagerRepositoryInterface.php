@@ -10,9 +10,6 @@ use App\Tasks\Domain\Entity\TaskManager;
 
 interface TaskManagerRepositoryInterface
 {
-    /**
-     * @return TaskManager[]
-     */
     public function findByProjectId(ProjectId $id): ?TaskManager;
 
     public function findByTaskId(TaskId $id): ?TaskManager;

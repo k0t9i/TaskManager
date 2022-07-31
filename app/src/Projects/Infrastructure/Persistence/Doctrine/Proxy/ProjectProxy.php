@@ -10,7 +10,6 @@ use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyI
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\PersistentCollection;
 
 final class ProjectProxy implements DoctrineVersionedProxyInterface
 {
@@ -20,17 +19,8 @@ final class ProjectProxy implements DoctrineVersionedProxyInterface
     private PhpDateTime $finishDate;
     private int $status;
     private string $ownerId;
-    /**
-     * @var Collection|PersistentCollection|ProjectParticipantProxy[]
-     */
     private Collection $participants;
-    /**
-     * @var Collection|PersistentCollection|ProjectTaskProxy[]
-     */
     private Collection $tasks;
-    /**
-     * @var Collection|PersistentCollection|RequestProxy[]
-     */
     private Collection $requests;
     private int $version;
     private ?Project $entity = null;

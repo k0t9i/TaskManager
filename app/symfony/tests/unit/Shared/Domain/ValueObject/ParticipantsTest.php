@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\unit\Shared\Domain\ValueObject;
 
-use App\Projects\Domain\Exception\ProjectParticipantNotExistException;
 use App\Shared\Domain\Collection\UserIdCollection;
+use App\Shared\Domain\Exception\ProjectParticipantNotExistException;
 use App\Shared\Domain\Exception\UserIsAlreadyParticipantException;
 use App\Shared\Domain\ValueObject\Participants;
 use App\Shared\Domain\ValueObject\Users\UserId;
