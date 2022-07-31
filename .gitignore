@@ -1,4 +1,5 @@
 /data/
 /logs/
 /.idea/
+/app/config/shared/jwt/*.pem
 .php-cs-fixer.cache
