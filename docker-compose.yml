@@ -31,12 +31,15 @@ services:
             args:
                 COMMON_NAME: projects
         volumes:
-            - ./app/src/Shared:/var/www/src/Shared
             - ./app/symfony:/var/www/symfony
-            - ./app/config/shared:/var/www/config/shared
-            - ./app/src/Projects:/var/www/src/Projects
-            - ./app/config/projects:/var/www/config/app
             - ./logs/supervisor/projects:/var/log/supervisor
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/projects:/var/www/config/app
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Projects:/var/www/src/Projects
+            - ./app/tests/Shared:/var/www/tests/Shared
+            - ./app/tests/Projects:/var/www/tests/Projects
+            - ./app/tests/bootstrap.php:/var/www/tests/bootstrap.php
         ports:
             - '8080:8080'
     php-fpm-users:
@@ -47,12 +50,15 @@ services:
             args:
                 COMMON_NAME: users
         volumes:
-            - ./app/src/Shared:/var/www/src/Shared
             - ./app/symfony:/var/www/symfony
-            - ./app/config/shared:/var/www/config/shared
-            - ./app/src/Users:/var/www/src/Users
-            - ./app/config/users:/var/www/config/app
             - ./logs/supervisor/users:/var/log/supervisor
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/users:/var/www/config/app
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Users:/var/www/src/Users
+            - ./app/tests/Shared:/var/www/tests/Shared
+            - ./app/tests/Users:/var/www/tests/Users
+            - ./app/tests/bootstrap.php:/var/www/tests/bootstrap.php
         ports:
             - '8081:8080'
     php-fpm-tasks:
@@ -63,12 +69,15 @@ services:
             args:
                 COMMON_NAME: tasks
         volumes:
-            - ./app/src/Shared:/var/www/src/Shared
             - ./app/symfony:/var/www/symfony
-            - ./app/config/shared:/var/www/config/shared
-            - ./app/src/Tasks:/var/www/src/Tasks
-            - ./app/config/tasks:/var/www/config/app
             - ./logs/supervisor/tasks:/var/log/supervisor
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/tasks:/var/www/config/app
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Tasks:/var/www/src/Tasks
+            - ./app/tests/Shared:/var/www/tests/Shared
+            - ./app/tests/Tasks:/var/www/tests/Tasks
+            - ./app/tests/bootstrap.php:/var/www/tests/bootstrap.php
         ports:
             - '8082:8080'
     php-fpm-projections:
@@ -79,12 +88,15 @@ services:
             args:
                 COMMON_NAME: projections
         volumes:
-            - ./app/src/Shared:/var/www/src/Shared
             - ./app/symfony:/var/www/symfony
-            - ./app/config/shared:/var/www/config/shared
-            - ./app/src/Projections:/var/www/src/Projections
-            - ./app/config/projections:/var/www/config/app
             - ./logs/supervisor/projections:/var/log/supervisor
+            - ./app/config/shared:/var/www/config/shared
+            - ./app/config/projections:/var/www/config/app
+            - ./app/src/Shared:/var/www/src/Shared
+            - ./app/src/Projections:/var/www/src/Projections
+            - ./app/tests/Shared:/var/www/tests/Shared
+            - ./app/tests/Projections:/var/www/tests/Projections
+            - ./app/tests/bootstrap.php:/var/www/tests/bootstrap.php
     db:
         container_name: task_manager-db
         image: postgres:14.2-alpine3.15

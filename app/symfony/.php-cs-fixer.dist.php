@@ -3,7 +3,7 @@
 $finder = (new PhpCsFixer\Finder())
     ->in([
         dirname(__DIR__).'/src/',
-        __DIR__.'/tests',
+        dirname(__DIR__).'/tests/',
     ]);
 
 return (new PhpCsFixer\Config())
