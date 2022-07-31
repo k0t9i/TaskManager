@@ -40,12 +40,9 @@ final class Owner implements Hashable
         return $this->userId->getHash();
     }
 
-    /**
-     * @param self $other
-     */
     public function isEqual(object $other): bool
     {
-        if (get_class($this) !== get_class($other)) {
+        if (!($other instanceof self)) {
             return false;
         }
 

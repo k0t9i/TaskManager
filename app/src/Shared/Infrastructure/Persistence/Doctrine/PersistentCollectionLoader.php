@@ -16,6 +16,7 @@ final class PersistentCollectionLoader implements PersistentCollectionLoaderInte
     public function loadInto(Collection $target, CollectionInterface $source, DoctrineProxyInterface $owner): void
     {
         // The collections of newly created parent are empty and not yet wrapped
+        /** @var PersistentCollection $target */
         if ($target->isEmpty() && !($target instanceof PersistentCollection)) {
             return;
         }
@@ -44,6 +45,7 @@ final class PersistentCollectionLoader implements PersistentCollectionLoaderInte
 
     /**
      * @return DoctrineProxyCollectionItemInterface[]
+     * @psalm-return array<string,DoctrineProxyCollectionItemInterface|null>
      */
     private function prepareProxies(CollectionInterface $collection, PersistentCollection $persistentCollection): array
     {

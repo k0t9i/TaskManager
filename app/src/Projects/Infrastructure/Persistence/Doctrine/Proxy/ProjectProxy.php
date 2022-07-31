@@ -6,14 +6,13 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Projects\Domain\Entity\Project;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
 use DateTime as PhpDateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 
-final class ProjectProxy implements DoctrineVersionedProxyInterface, DoctrineProxyInterface
+final class ProjectProxy implements DoctrineVersionedProxyInterface
 {
     private string $id;
     private string $name;

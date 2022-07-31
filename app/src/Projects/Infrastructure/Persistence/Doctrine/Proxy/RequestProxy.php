@@ -7,10 +7,9 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 use App\Projects\Domain\Entity\Request;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use DateTime as PhpDateTime;
 
-final class RequestProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
+final class RequestProxy implements DoctrineProxyCollectionItemInterface
 {
     private string $id;
     private string $userId;

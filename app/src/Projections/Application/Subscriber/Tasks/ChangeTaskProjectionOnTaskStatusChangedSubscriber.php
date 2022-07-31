@@ -28,9 +28,7 @@ final class ChangeTaskProjectionOnTaskStatusChangedSubscriber implements EventSu
             throw new TaskNotExistException($event->taskId);
         }
 
-        if ($projection) {
-            $projection->changeStatus((int) $event->status);
-            $this->projectionRepository->save($projection);
-        }
+        $projection->changeStatus((int) $event->status);
+        $this->projectionRepository->save($projection);
     }
 }

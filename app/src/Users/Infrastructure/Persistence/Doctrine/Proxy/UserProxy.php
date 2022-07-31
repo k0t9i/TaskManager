@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Users\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineVersionedProxyInterface;
 use App\Users\Domain\Entity\User;
 
-final class UserProxy implements DoctrineVersionedProxyInterface, DoctrineProxyInterface
+final class UserProxy implements DoctrineVersionedProxyInterface
 {
     private string $id;
     private string $email;

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tasks\Domain\Exception;
-
-use App\Shared\Domain\Exception\DomainException;
+namespace App\Shared\Domain\Exception;
 
 final class TaskLinkNotExistException extends DomainException
 {

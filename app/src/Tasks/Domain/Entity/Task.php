@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tasks\Domain\Entity;
 
 use App\Shared\Domain\Collection\Hashable;
+use App\Shared\Domain\Exception\TaskLinkNotExistException;
 use App\Shared\Domain\ValueObject\DateTime;
 use App\Shared\Domain\ValueObject\Tasks\TaskId;
 use App\Shared\Domain\ValueObject\Users\UserId;
 use App\Tasks\Domain\Collection\TaskLinkCollection;
 use App\Tasks\Domain\Exception\TaskLinkAlreadyExistsException;
-use App\Tasks\Domain\Exception\TaskLinkNotExistException;
 use App\Tasks\Domain\Exception\TasksOfTaskLinkAreEqualException;
 use App\Tasks\Domain\Exception\TaskStartDateGreaterThanFinishDateException;
 use App\Tasks\Domain\ValueObject\ClosedTaskStatus;

@@ -10,6 +10,7 @@ use App\Shared\Domain\Exception\CriteriaFilterNotExistException;
 use App\Shared\Domain\Exception\CriteriaOrderNotExistException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
 
 final class CriteriaFieldValidator implements CriteriaFieldValidatorInterface
 {
@@ -38,7 +39,16 @@ final class CriteriaFieldValidator implements CriteriaFieldValidatorInterface
     private function checkProperty(ReflectionClass $reflection, string $propertyName): bool
     {
         $property = $reflection->hasProperty($propertyName) ? $reflection->getProperty($propertyName) : null;
+        if (null === $property) {
+            return false;
+        }
+
+        $type = $property->getType();
+        if (!($type instanceof ReflectionNamedType)) {
+            return false;
+        }
+
         // Only scalar types
-        return null !== $property && !class_exists($property->getType()->getName());
+        return !class_exists($type->getName());
     }
 }

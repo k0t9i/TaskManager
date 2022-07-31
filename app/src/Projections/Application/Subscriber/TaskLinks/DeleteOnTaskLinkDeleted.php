@@ -7,7 +7,7 @@ namespace App\Projections\Application\Subscriber\TaskLinks;
 use App\Projections\Domain\Repository\TaskLinkProjectionRepositoryInterface;
 use App\Shared\Application\Bus\Event\EventSubscriberInterface;
 use App\Shared\Domain\Event\Tasks\TaskLinkWasDeletedEvent;
-use App\Tasks\Domain\Exception\TaskLinkNotExistException;
+use App\Shared\Domain\Exception\TaskLinkNotExistException;
 use Exception;
 
 final class DeleteOnTaskLinkDeleted implements EventSubscriberInterface

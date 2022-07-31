@@ -6,7 +6,6 @@ namespace App\Tasks\Infrastructure\Persistence\Doctrine\Proxy;
 
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 use App\Tasks\Domain\Entity\Task;
 use App\Tasks\Domain\ValueObject\TaskLink;
 use DateTime as PhpDateTime;
@@ -14,7 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 
-final class TaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
+final class TaskProxy implements DoctrineProxyCollectionItemInterface
 {
     private string $id;
     private string $name;

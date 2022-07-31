@@ -7,9 +7,8 @@ namespace App\Projects\Infrastructure\Persistence\Doctrine\Proxy;
 use App\Projects\Domain\Entity\ProjectTask;
 use App\Shared\Infrastructure\Persistence\Doctrine\PersistentCollectionLoaderInterface;
 use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyCollectionItemInterface;
-use App\Shared\Infrastructure\Persistence\Doctrine\Proxy\DoctrineProxyInterface;
 
-final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface, DoctrineProxyInterface
+final class ProjectTaskProxy implements DoctrineProxyCollectionItemInterface
 {
     private string $id;
     private string $taskId;

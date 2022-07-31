@@ -9,7 +9,7 @@ use App\Shared\Domain\Exception\LogicException;
 // todo to application
 final class DomainEventMapper
 {
-    private ?array $map = null;
+    private array $map = [];
 
     public function __construct(private readonly array $events)
     {
@@ -24,8 +24,7 @@ final class DomainEventMapper
 
     private function indexMap(): void
     {
-        if (null === $this->map) {
-            $this->map = [];
+        if (empty($this->map)) {
             foreach ($this->events as $eventClass) {
                 $eventName = $eventClass::getEventName();
                 if (isset($this->map[$eventName])) {

@@ -16,7 +16,7 @@ abstract class Collection implements CollectionInterface
     private array $items = [];
 
     /**
-     * @param array|Hashable $items
+     * @param array|Hashable[] $items
      */
     public function __construct(array $items = [])
     {
