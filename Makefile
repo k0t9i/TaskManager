@@ -25,6 +25,10 @@ test:
 .PHONY: check-all
 check-all: code-style static-analysis test
 
+.PHONY: composer-install
+composer-install:
+	docker exec task_manager-php-projects composer install -d ./symfony --ignore-platform-reqs
+
 .PHONY: clean-cache
 clean-cache:
 	for node in $(NODES); do\
