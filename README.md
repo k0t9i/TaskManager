@@ -4,7 +4,7 @@
 1) Install Docker
 2) Clone the project: `git clone https://github.com/k0t9i/TaskManager.git`
 3) Run docker containers: `docker-compose up -d --build`
-4) Setup application: `make setup`. This step installs the composer dependency, creates databases, runs migrations, warm ups the cache and reloads the supervisor.
+4) Setup application: `make setup`. This step installs the composer dependency, generates JWT keys, creates databases, runs migrations, warms up the cache and reloads the supervisor.
 ## Performing checks
 - `make test` - phpunit tests
 - `make code-style` - php-cs-fixer checks

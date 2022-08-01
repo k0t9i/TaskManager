@@ -29,6 +29,10 @@ check-all: code-style static-analysis test
 composer-install:
 	docker exec task_manager-php-projects composer install -d ./symfony --ignore-platform-reqs
 
+.PHONY: generate-ssl-keys
+generate-ssl-keys:
+	docker exec task_manager-php-projects php symfony/bin/console lexik:jwt:generate-keypair --overwrite
+
 .PHONY: clean-cache
 clean-cache:
 	for node in $(NODES); do\
@@ -60,4 +64,4 @@ supervisor-reload:
 	done
 
 .PHONY: setup
-setup: composer-install create-db migrate clean-cache supervisor-reload
+setup: composer-install generate-ssl-keys create-db migrate clean-cache supervisor-reload
